@@ -128,3 +128,38 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Compiled output
+/build
+/dist
+
+# Logs and databases
+*.log
+*.sqlite
+*.sqlite3
+
+# Environment variables
+.env
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE specific files
+.vscode/
+.idea/
+
+# Dependency lock files
+yarn.lock
+package-lock.json
+
+# MongoDB data directory
+/data
+/db
+
+# MongoDB log files
+/mongodb.log
+/mongod.lock
+
+# MongoDB backup directory
+/dump
