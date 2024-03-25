@@ -26,7 +26,7 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background: grey;
+    background: rgba(0, 0, 0, 0.3);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -45,7 +45,9 @@
     width: 500px;
     background: white;
     border-radius: 6px; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
     transform: scale(0);
+    padding: 30px;
   }
 
   .popup-container.active .popup-box{
@@ -56,10 +58,13 @@
 
   .popup-box .close-btn {
     width: 100%;
-    height: 100%;
-    background: blue;
+    height: 45px;
+    background: lightblue;
     border-radius: 6px; 
     border: none;
-    cursor: pointer;
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    cursor: pointer; 
+
   }
 

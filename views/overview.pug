@@ -2,8 +2,17 @@ extends layout
 
 block content
   html 
+  link(rel='stylesheet', href='/stylesheets/overview.css')
+  div.popup-container
+      div.popup-box
+        h3 Edit income / expenses 
+        p Please enter your income and expenses
+        p Add income: 
+          input
+        p Add expense: 
+          input
+        button.close-btn CLOSE
   body
-    link(rel='stylesheet', href='/stylesheets/overview.css')
     h1= title
     div.row
       div.column 
@@ -11,7 +20,6 @@ block content
         p Total Amount: #{totalAmount}
         p Spent: #{spentAmount}
         p Available: #{leftAmount}
-
         button.show-popup Click Me!
       div.column
         h2 Categories
@@ -19,10 +27,4 @@ block content
         h2 Add custom
     div.tips
       h2 Financial Advice
-    div.popup-container
-          div.popup-box
-            h3 Edit income / expenses 
-            p TEST TEST TEST TESTTEST TESTTEST TESTTEST TESTTEST TESTTEST TESTTEST TEST
-            input
-            button.close-btn CLOSE
-  script(src="/scripts/overviewScripts.js")
+  script(src="/javascripts/overviewScripts.js")
