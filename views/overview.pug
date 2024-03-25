@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  html 
+  body
+    link(rel='stylesheet', href='/stylesheets/overview.css')
+    h1= title
+    div.row
+      div.column 
+        h2 Primary budget overview
+        p Total Amount: #{totalAmount}
+        p Spent: #{spentAmount}
+        p Available: #{leftAmount}
+        button.show-popup Show Popup  
+        div.popup-container
+          div.popup-box
+            h3 Edit income / expenses 
+            p TEST TEST TEST TESTTEST TESTTEST TESTTEST TESTTEST TESTTEST TESTTEST TEST
+            button.close.btn CLOSE
+      div.column
+        h2 Categories
+      div.column
+        h2 Add custom
+    div.tips
+      h2 Financial Advice

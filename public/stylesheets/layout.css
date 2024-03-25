@@ -1,0 +1,44 @@
+body{
+  margin: 0px;
+  font-family: 'Open Sans', sans-serif;
+}
+main{
+  margin-left: 20px;
+  margin-right: 20px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.navbar-default ul{
+  list-style-type: none;
+  background-color: grey;
+  overflow: hidden;
+}
+.navbar-default a{
+  color: yellow;
+  text-decoration: none;
+  padding: 10px;
+  display: block;
+  text-align: center;
+}
+
+.navbar-default .el:hover{
+  color: lightgoldenrodyellow;
+  background-color: black;
+}
+
+.navbar-default li{
+  float: left;
+}
+
+.navbar-default .right{
+  float: right;
+} 
+
+.navbar-default #logo {
+  position: absolute;
+  top:0.2%; 
+  left:0.1%;
+  width:5%;
+  height:auto;
+  overflow:hidden;
+}
