@@ -9,6 +9,25 @@
     display: table;
     clear: both;
   }
-  .row{
+  .row {
     text-align: center;
+  }
+
+  .tips {
+    text-align: center;
+  }
+  
+  .show-popup {
+    border-radius: 5px;
+  }
+
+  .popup-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: grey;
+  }
+
+  .popup-container .popup-box {
+    
   }
