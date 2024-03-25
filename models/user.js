@@ -1,20 +1,15 @@
-const mongoose = require("mongoose");
+// import/require important liberys
+const mongoose = require('mongoose');
 
+//sets a mongoose schema
 const Schema = mongoose.Schema;
 
-const UserSchema = new Schema({
-    name: { type: String, required: true },
-    email: { type: String, required: true },
-    budget: { type: Schema.Types.ObjectId, ref: 'Budget' }
-  });
-  
-module.exports = mongoose.model("User", UserSchema);
-  
+// Connect to your MongoDB Atlas database
+mongoose.connect('mongodb+srv://gruppe4:abe54321@budget.lgi0q5b.mongodb.net/budget_database?retryWrites=true&w=majority&appName=Budget');
 
-// Virtual for author's URL
-UserSchema.virtual("url").get(function () {
-  // We don't use an arrow function as we'll need the this object
-  return `/catalog/user/${this._id}`;
+const UserSchema = new Schema({
+  name: { type: String, required: true },
+  budget: { type: Schema.Types.ObjectId, ref: 'Budget' }
 });
 
 
