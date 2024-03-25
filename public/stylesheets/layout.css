@@ -32,14 +32,13 @@ main{
 
 .navbar-default .right{
   float: right;
-}
+} 
 
 .navbar-default #logo {
   position: absolute;
-  top:15px; 
-  left:10px;
-  width:40px;
+  top:0.2%; 
+  left:0.1%;
+  width:5%;
   height:auto;
   overflow:hidden;
-  padding-right: 40px;
 }
