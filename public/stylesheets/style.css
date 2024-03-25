@@ -1,8 +1,45 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+body{
+  margin: 0px;
+  font-family: 'Open Sans', sans-serif;
+}
+main{
+  margin-left: 20px;
+  margin-right: 20px;
+  font-family: 'Open Sans', sans-serif;
 }
 
-a {
-  color: #00B7FF;
+.navbar-default ul{
+  list-style-type: none;
+  background-color: grey;
+  overflow: hidden;
+}
+.navbar-default a{
+  color: yellow;
+  text-decoration: none;
+  padding: 10px;
+  display: block;
+  text-align: center;
+}
+
+.navbar-default .el:hover{
+  color: lightgoldenrodyellow;
+  background-color: black;
+}
+
+.navbar-default li{
+  float: left;
+}
+
+.navbar-default .right{
+  float: right;
+}
+
+.navbar-default #logo {
+  position: absolute;
+  top:15px; 
+  left:10px;
+  width:40px;
+  height:auto;
+  overflow:hidden;
+  padding-right: 40px;
 }

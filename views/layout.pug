@@ -4,4 +4,26 @@ html
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    block content
+    block navbar 
+      nav.navbar-default  
+        ul
+          li 
+            a(href='/')
+              img( src="https://i.pinimg.com/736x/6f/1b/cb/6f1bcbb8d97ecd3214045c5ef2550545.jpg", alt="Good Pic", id="logo")
+          li
+            a.el(href='/') Overview
+          li
+            a.el(href='/users') Financial Tips
+          li
+            a.el Options 3
+          li
+            a.el cum
+          li
+            a.el drakes 8====D
+          div.right 
+            li 
+              a.el log ind
+            li
+              a.el help 
+    main 
+      block content
