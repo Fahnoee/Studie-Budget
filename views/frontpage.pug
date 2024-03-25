@@ -1,7 +1,9 @@
-extends layout
+extends layoutLanding
 
 block content
     html
     body
         h1= title
+        button(onclick="goToOverview()") Go to Overview
         
+        script(src='/javascripts/frontpage.js')
