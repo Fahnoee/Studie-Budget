@@ -2,7 +2,7 @@
     float: left;
     width: 33.33%;
   }
-  
+
   /* Clear floats after the columns */
   .row:after {
     content: "";
@@ -19,15 +19,52 @@
   
   .show-popup {
     border-radius: 5px;
+    cursor: pointer;
   }
 
   .popup-container {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: grey;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .popup-container.active{
+    opacity: 1;
+    pointer-events: auto;
+    transition: .4s ease;
   }
 
   .popup-container .popup-box {
-    
+    width: 500px;
+    background: white;
+    border-radius: 6px; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    transform: scale(0);
+    padding: 30px;
   }
+
+  .popup-container.active .popup-box{
+    transform: scale(1);
+    transition: .4s ease;
+    transition-delay: .25s;
+  }
+
+  .popup-box .close-btn {
+    width: 100%;
+    height: 45px;
+    background: lightblue;
+    border-radius: 6px; 
+    border: none;
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    cursor: pointer; 
+
+  }
+
