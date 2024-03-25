@@ -32,10 +32,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', overviewRouter);
+app.use('/', frontpageRouter);
 app.use('/overview', overviewRouter);
 app.use('/advice', adviceRouter);
-app.use('/frontpage', frontpageRouter);
+//app.use('/frontpage', frontpageRouter);
 
 
 // catch 404 and forward to error handler

@@ -1,0 +1,28 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/layout.css')
+  body
+    block navbar 
+      nav.navbar-default  
+        ul
+          li 
+            a(href='/')
+              img(src="./images/studentBudgetLogo.png", alt="Good Pic", id="logo")
+          div.right 
+            li
+              a.el Log in
+            li 
+              a.el Sign up
+            li 
+              a.el Help
+            li
+              a.el Settings 
+    main 
+      block content
+
+
+
+
+      
