@@ -1,9 +1,36 @@
-extends layoutLanding
+extends layout
+
+block navbar
+    nav.navbar-default  
+        ul
+          li 
+            a(href='/')
+              img(src="./images/studentBudgetLogo.png", alt="Good Pic", id="logo")
+          div.right 
+            li
+              a.el Log in
+            li 
+              a.el Sign up
+            li 
+              a.el Help
+            li
+              a.el Settings
 
 block content
-    html
-    body
-        h1= title
-        button(onclick="goToOverview()") Go to Overview
-        
-        script(src='/javascripts/frontpage.js')
+  html
+    link(rel='stylesheet', href='/stylesheets/frontpage.css')
+    div.row
+        div.column
+          h2  Welcome to #{websiteName} 
+          div.mainText
+            p This service is designed to assist students in managing their finances effectively by providing tools to track their budgets
+          button.btn(onclick="goToOverview()") Log in
+          button.btn(onclick="goToOverview()") Sign In
+        div.column
+          // Picture
+          img.img(src="./images/studentBudgetLogo.png", alt="Good Pic")
+
+    script(src='/javascripts/frontpage.js')
+
+
+
