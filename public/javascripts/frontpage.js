@@ -4,8 +4,10 @@ function goToOverview() {
   window.location.href = '/overview';
 }
 
-
-
+function signIn() {
+  // Navigate to the signUpPage
+  window.location.href = 'signUpPage'; 
+}
 
 
 

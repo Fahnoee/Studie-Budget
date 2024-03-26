@@ -6,4 +6,6 @@ router.get('/', function(req, res, next) {
   res.render('frontpage', { title: 'Frontpage' });
 });
 
+websiteName = "Student Budget";
+
 module.exports = router;
