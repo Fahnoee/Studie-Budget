@@ -7,11 +7,14 @@ block content
       div.popup-box
         h3 Edit income / expenses 
         p Please enter your income and expenses
+        p Use . for decimals
         p Add income: 
-          input
+          input.income
         p Add expense: 
-          input
-        button.close-btn CLOSE
+          input.expense
+        div.buttons
+          button.close-btn CLOSE
+          button.save-btn SAVE
   body
     h1= title
     div.row

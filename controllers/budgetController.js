@@ -1,3 +1,4 @@
+
 const User = require("../models/user.js")
 const Budget = require("../models/budget.js")
 
@@ -36,3 +37,9 @@ updateBudget(username, {
     expenses: expenses,
     goal: goal
 });
+
+module.exports = {
+    fetchUserBudgetId: fetchUserBudgetId,
+    updateBudget: updateBudget
+};
+
