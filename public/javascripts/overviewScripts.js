@@ -44,7 +44,6 @@ saveBtn.onclick = () => {
     .then((response) => response.json())
     .then((data) => {
       console.log("Success:", data);
-      popupContainer.classList.remove("active");
     })
     .catch((error) => {
       console.error("Error:", error);
@@ -68,8 +67,6 @@ function setPiePercentage(percent) {
     pie.classList.remove("animate");    // Reset animation
     void pie.offsetWidth;               // Trigger reflow
     pie.classList.add("animate");       // Start animation
-    
-  
   }
 
 
