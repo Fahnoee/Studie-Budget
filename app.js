@@ -1,5 +1,4 @@
 const createError = require("http-errors");
-const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
@@ -10,16 +9,39 @@ const frontpageRouter = require("./routes/frontpage");
 
 const controller = require("./controllers/budgetController.js");
 
-// Use the function
-let username;
-username = "John Doe";
-controller.updateBudget(username, {
-  income: 4000,
-  expenses: 200,
-  goal: 300,
-});
+const express = require("express");
+const bodyParser = require("body-parser");
 
 const app = express();
+app.use(bodyParser.json());
+
+app.post("/api/update_budget", (req, res) => {
+  // get data sent from the frontend
+  let data = req.body;
+
+  let username = data.username;
+  let incomeVal = data.income;
+  let expenseVal = data.expenses;
+  let goal = data.goal;
+
+  // call your controller's method
+  controller
+    .updateBudget(username, {
+      income: incomeVal,
+      expenses: expenseVal,
+      goal: goal,
+    })
+    .then((result) => {
+      // budget update successful
+      res.json({ message: "Budget updated successfully." });
+    })
+    .catch((err) => {
+      // if anything goes wrong
+      res.status(500).json({ message: "Error in updating budget." });
+    });
+});
+
+// Continue with the rest of your code...
 
 // Set up mongoose connection
 const mongoose = require("mongoose");
