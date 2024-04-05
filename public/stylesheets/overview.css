@@ -136,7 +136,7 @@ p {
   from{--p:0}
 }
 .animate {
-  animation: p 1s .5s both;
+  animation: p 0.75s .5s both;
 }
 
 .pie-line{
