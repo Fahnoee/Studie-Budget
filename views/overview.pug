@@ -20,10 +20,13 @@ block content
     div.row
       div.column 
         h2 Primary budget overview
-        p Total Amount: #{totalAmount}
-        p Spent: #{spentAmount}
-        p Available: #{leftAmount}
-        button.show-popup Click Me!
+        div.pie-line(style="--b:15px;")
+          div.pie.animate(style="--p:60;--b:15px;--c:purple;")
+            p Total Amount: #{totalAmount}
+            p Spent: #{spentAmount}
+            p Available: #{leftAmount}
+        div
+        button.show-popup Add income/expenses
       div.column
         h2 Categories
       div.column

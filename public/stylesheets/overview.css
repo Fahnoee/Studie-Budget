@@ -1,89 +1,163 @@
 .column {
-    float: left;
-    width: 33.33%;
-  }
+  float: left;
+  width: 33.33%;
+}
 
-  /* Clear floats after the columns */
-  .row:after {
-    content: "";
-    display: table;
-    clear: both;
-  }
-  .row {
-    text-align: center;
-  }
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.row {
+  text-align: center;
+}
 
-  .tips {
-    text-align: center;
-  }
+.tips {
+  text-align: center;
+}
+
+.show-popup {
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5%;
+  width: auto;
+  height: 50px;
+}
+
+.popup-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.popup-container.active{
+  opacity: 1;
+  pointer-events: auto;
+  transition: .4s ease;
+}
+
+.popup-container .popup-box {
+  width: 500px;
+  background: white;
+  border-radius: 6px; 
+  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  transform: scale(0);
+  padding: 30px;
+}
+
+.popup-container.active .popup-box{
+  transform: scale(1);
+  transition: .4s ease;
+  transition-delay: .25s;
   
-  .show-popup {
-    border-radius: 5px;
-    cursor: pointer;
-  }
+}
 
-  .popup-container {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 30px;
-    opacity: 0;
-    pointer-events: none;
-  }
+.popup-box .close-btn {
+  width: 45%;
+  height: 40px;
+  background: rgb(193, 200, 203);
+  border-radius: 6px; 
+  border: none;
+  outline: none;
+  margin-right: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  cursor: pointer; 
+}
 
-  .popup-container.active{
-    opacity: 1;
-    pointer-events: auto;
-    transition: .4s ease;
-  }
+.popup-box .save-btn {
+  width: 45%;
+  height: 40px;
+  background: lightblue;
+  border-radius: 6px; 
+  border: none;
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  cursor: pointer; 
+}
 
-  .popup-container .popup-box {
-    width: 500px;
-    background: white;
-    border-radius: 6px; 
-    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-    transform: scale(0);
-    padding: 30px;
-  }
+.popup-box .buttons{
+  text-align: center
+}
 
-  .popup-container.active .popup-box{
-    transform: scale(1);
-    transition: .4s ease;
-    transition-delay: .25s;
+.popup-box input{
+  float: right;
+}
+
+/* Source code for .pie + .pieLine: https://www.freecodecamp.org/news/css-only-pie-chart/ */
+.pie {
+  --w:300px;
+  
+  width: var(--w);
+  position: static;
+  display: inline-grid;
+  place-content: center;
+  margin: 5px;
+  font-size: 25px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+.pie:before {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  inset: 0;
+  background:
+    radial-gradient(farthest-side,var(--c) 98%,#0000) top/var(--b) var(--b) no-repeat,
+    conic-gradient(var(--c) calc(var(--p)*1%),#0000 0);;
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - var(--b)), #000 calc(100% - var(--b)));
+  mask: radial-gradient(farthest-side, #0000 calc(100% - var(--b)), #000 calc(100% - var(--b)));
+}
+.pie:after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  inset: calc(50% - var(--b)/2);
+  background: var(--c);
+  transform: rotate(calc(var(--p)*3.6deg)) translateY(calc(55% - var(--w)/2));
+}
+@property --p{
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+@keyframes p{
+  from{--p:0}
+}
+.animate {
+  animation: p 1s .5s both;
+}
+
+.pie-line{
+  --w:70%;
     
-  }
-  
-  .popup-box .close-btn {
-    width: 45%;
-    height: 40px;
-    background: rgb(193, 200, 203);
-    border-radius: 6px; 
-    border: none;
-    outline: none;
-    margin-right: 15px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-    cursor: pointer; 
-  }
+  width: var(--w);
+  min-width: 50%;
+  max-width: fit-content;
+  aspect-ratio: 1;
+  position: relative;
+  display: inline-grid;
+  place-content: center;
+  margin: 5px;
+  font-size: 25px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
 
-  .popup-box .save-btn {
-    width: 45%;
-    height: 40px;
-    background: lightblue;
-    border-radius: 6px; 
-    border: none;
-    outline: none;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-    cursor: pointer; 
-  }
+.pie-line:before {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  inset: 0;
+  background: conic-gradient(lightgrey 0deg, lightgrey 360deg);
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - var(--b)), #000 calc(100% - var(--b)));
+  mask: radial-gradient(farthest-side, #0000 calc(100% - var(--b)), #000 calc(100% - var(--b)));
 
-  .popup-box .buttons{
-    text-align: center
-  }
-
-  .popup-box input{
-    float: right;
-  }
+}

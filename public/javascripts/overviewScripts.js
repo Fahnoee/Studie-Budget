@@ -1,13 +1,17 @@
-const showPopup = document.querySelector(".show-popup");
-const popupContainer = document.querySelector(".popup-container");
-const body = document.querySelector("body");
-const closeBtn = document.querySelector(".close-btn");
-const saveBtn = document.querySelector(".save-btn");
-
+const showPopup = document.querySelector('.show-popup');
+const popupContainer = document.querySelector('.popup-container');
+const body = document.querySelector('body');
+const closeBtn = document.querySelector('.close-btn');
+const saveBtn = document.querySelector('.save-btn');
+const pie = document.querySelector('div.pie');
 const income = document.querySelector(".income");
 const expense = document.querySelector(".expense");
 
+
 //const controller = require('../controllers/budgetController.js');
+
+// Set current percentage to pie chart when loading the page
+// setPiePercentage(40);
 
 showPopup.onclick = () => {
   popupContainer.classList.add("active");
@@ -18,6 +22,13 @@ closeBtn.onclick = () => {
 };
 
 saveBtn.onclick = () => {
+    // Save changed income/expense to pie chart
+    let getPieStyle = getComputedStyle(pie)
+    let getPieValue = getPieStyle.getPropertyValue('--p');
+    console.log("The value of --p is: " + getPieValue);
+
+    setPiePercentage(20);
+
   let username = "John Doe";
   let incomeVal = income.value;
   let expenseVal = expense.value;
@@ -46,3 +57,9 @@ saveBtn.onclick = () => {
       console.error("Error:", error);
     });
 };
+
+function setPiePercentage(percent) {
+    // Set the value of variable --p to another value (in this case 20)
+    pie.style.setProperty('--p', percent);
+    console.log("The value of --p is: " + pie.style.getPropertyValue('--p'));
+  }
