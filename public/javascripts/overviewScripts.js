@@ -3,7 +3,7 @@ const popupContainer = document.querySelector('.popup-container');
 const body = document.querySelector('body');
 const closeBtn = document.querySelector('.close-btn');
 const saveBtn = document.querySelector('.save-btn');
-const pie = document.querySelector('div.pie');
+const pie = document.querySelector('.pie');
 const income = document.querySelector(".income");
 const expense = document.querySelector(".expense");
 
@@ -22,13 +22,6 @@ closeBtn.onclick = () => {
 };
 
 saveBtn.onclick = () => {
-    // Save changed income/expense to pie chart
-    let getPieStyle = getComputedStyle(pie)
-    let getPieValue = getPieStyle.getPropertyValue('--p');
-    console.log("The value of --p is: " + getPieValue);
-
-    setPiePercentage(20);
-
   let username = "John Doe";
   let incomeVal = income.value;
   let expenseVal = expense.value;
@@ -56,10 +49,28 @@ saveBtn.onclick = () => {
     .catch((error) => {
       console.error("Error:", error);
     });
+
+    popupContainer.classList.remove("active");
+
+  // Save changed income/expense to pie chart
+  let getPieStyle = getComputedStyle(pie)
+  let getPieValue = getPieStyle.getPropertyValue('--p');
+  console.log("The value of --p is: " + getPieValue);
+
+  setPiePercentage(expenseVal/incomeVal * 100);
 };
 
 function setPiePercentage(percent) {
     // Set the value of variable --p to another value (in this case 20)
     pie.style.setProperty('--p', percent);
     console.log("The value of --p is: " + pie.style.getPropertyValue('--p'));
+
+    pie.classList.remove("animate");    // Reset animation
+    void pie.offsetWidth;               // Trigger reflow
+    pie.classList.add("animate");       // Start animation
+    
+  
   }
+
+
+  
