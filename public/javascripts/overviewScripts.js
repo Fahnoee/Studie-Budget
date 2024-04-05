@@ -1,52 +1,61 @@
-
 const showPopup = document.querySelector('.show-popup');
 const popupContainer = document.querySelector('.popup-container');
 const body = document.querySelector('body');
 const closeBtn = document.querySelector('.close-btn');
 const saveBtn = document.querySelector('.save-btn');
 const pie = document.querySelector('div.pie');
+const income = document.querySelector(".income");
+const expense = document.querySelector(".expense");
 
-const income = document.querySelector('.income');
-const expense = document.querySelector('.expense');
+
+//const controller = require('../controllers/budgetController.js');
 
 // Set current percentage to pie chart when loading the page
 // setPiePercentage(40);
 
 showPopup.onclick = () => {
-    popupContainer.classList.add('active');
-}
+  popupContainer.classList.add("active");
+};
 
 closeBtn.onclick = () => {
-    popupContainer.classList.remove('active');
-}
+  popupContainer.classList.remove("active");
+};
 
 saveBtn.onclick = () => {
-
-    //////////////////////////////////////////////HER SKAL DER INDSÆTTES RIGTIGE BRUGER NAVN
-    let username;
-    username = "John Doe";
-
-    let incomeVal = income.value;
-    let expenseVal = expense.value;
-    console.log(incomeVal, expenseVal);
-
-    /*try {
-        await budgetFunctions.updateBudget(username, {     ///bruger username til at updatere budgetten.
-            income: incomeVal,
-            expenses: expenseVal,
-        });
-        popupContainer.classList.remove('active');
-    } catch (error){
-        console.log("fejl:" + error);
-    }*/
-    popupContainer.classList.remove('active');
-
     // Save changed income/expense to pie chart
     let getPieStyle = getComputedStyle(pie)
     let getPieValue = getPieStyle.getPropertyValue('--p');
     console.log("The value of --p is: " + getPieValue);
 
     setPiePercentage(20);
+
+  let username = "John Doe";
+  let incomeVal = income.value;
+  let expenseVal = expense.value;
+
+  let data = {
+    username,
+    income: incomeVal,
+    expenses: expenseVal,
+    goal: 320,
+  };
+
+  fetch("/api/update_budget", {
+    // assuming '/api/update_budget' is your api endpoint in the backend
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Success:", data);
+      popupContainer.classList.remove("active");
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 };
 
 function setPiePercentage(percent) {
