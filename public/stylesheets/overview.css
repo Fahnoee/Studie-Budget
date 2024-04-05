@@ -1,3 +1,7 @@
+p {
+  font-size: large;
+}
+
 .column {
   float: left;
   width: 33.33%;
@@ -92,8 +96,24 @@
 }
 
 /* Source code for .pie + .pieLine: https://www.freecodecamp.org/news/css-only-pie-chart/ */
+
+:root {
+  --b: 15px; /* Adjust as needed */
+  --p: 50; /* Adjust as needed */
+  --c: blue; /* Adjust as needed */
+}
+
+/* Adjust sizes and positions for smaller screens */
+@media screen and (max-width: 768px) {
+  :root {
+    --b: 8%; /* Adjust as needed */
+    --p: 40%; /* Adjust as needed */
+  }
+}
+
+
 .pie {
-  --w:300px;
+  --w:400px;
   
   width: var(--w);
   position: static;
@@ -120,8 +140,8 @@
   position: absolute;
   border-radius: 50%;
   inset: calc(50% - var(--b)/2);
-  background: var(--c);
-  transform: rotate(calc(var(--p)*3.6deg)) translateY(calc(55% - var(--w)/2));
+  background: rgb(0, 0, 56);
+  transform: rotate(calc(var(--p)*3.6deg)) translateY(calc(16.5% - var(--w)/2));
 }
 @property --p{
   syntax: '<number>';
@@ -132,14 +152,14 @@
   from{--p:0}
 }
 .animate {
-  animation: p 1s .5s both;
+  animation: p 0.75s .5s both;
 }
 
 .pie-line{
   --w:70%;
     
   width: var(--w);
-  min-width: 50%;
+  min-width: fit-content;
   max-width: fit-content;
   aspect-ratio: 1;
   position: relative;
