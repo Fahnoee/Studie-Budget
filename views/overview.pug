@@ -3,18 +3,20 @@ extends layout
 block content
   html 
   link(rel='stylesheet', href='/stylesheets/overview.css')
+
+  // div for popup activated by the popup button //
   div.popup-container
-      div.popup-box
-        h3 Edit income / expenses 
-        p Please enter your income and expenses
-        p Use . for decimals
-        p Add income: 
-          input.income
-        p Add expense: 
-          input.expense
-        div.buttons
-          button.close-btn CLOSE
-          button.save-btn SAVE
+    div.popup-box
+      h3 Edit income / expenses 
+      p Please enter your income and expenses
+      p Use . for decimals
+      p Add income: 
+        input.income
+      p Add expense: 
+        input.expense
+      div.buttons
+        button.close-btn CLOSE
+        button.save-btn SAVE
   body
     h1= title
     div.row
@@ -22,9 +24,9 @@ block content
         h2 Primary budget overview
         div.pie-line
           div.pie.animate
-            p Total Amount: #{totalAmount}
-            p Spent: #{spentAmount}
-            p Available: #{leftAmount}
+            p.total Total Amount: 0
+            p.spent Spent: 0
+            p.left Available: 0
         div
         button.show-popup Add income/expenses
       div.column

@@ -27,9 +27,9 @@ async function updateBudget(username, newData) {
     }
 };
 
-let income = 4000.69;
-let expenses = 300;
-let goal = 2000;
+let income;
+let expenses;
+let goal;
 
 // Use the function
 updateBudget(username, {
@@ -39,6 +39,8 @@ updateBudget(username, {
 });
 
 module.exports = {
+    User: User,
+    Budget: Budget,
     fetchUserBudgetId: fetchUserBudgetId,
     updateBudget: updateBudget
 };
