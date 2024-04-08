@@ -1,3 +1,7 @@
+h1 {
+  margin-left: 2.5%;
+}
+
 p {
   font-size: large;
 }
@@ -15,6 +19,7 @@ p {
 }
 .row {
   text-align: center;
+  margin-left: 4%;
 }
 
 .tips {
@@ -99,7 +104,7 @@ p {
 
 :root {
   --b: 15px; /* Adjust as needed */
-  --p: 50; /* Adjust as needed */
+  --p: 0; /* Adjust as needed */
   --c: blue; /* Adjust as needed */
 }
 
@@ -146,7 +151,7 @@ p {
 @property --p{
   syntax: '<number>';
   inherits: true;
-  initial-value: 1;
+  initial-value: 0;
 }
 @keyframes p{
   from{--p:0}

@@ -1,8 +1,10 @@
 doctype html
 html
   head
-    title= title
+    title = title
     link(rel='stylesheet', href='/stylesheets/layout.css')
+  
+  // Navbar block //
   body
     block navbar 
       nav.navbar-default  
@@ -17,7 +19,7 @@ html
           li
             a.el Options 3
           li
-            a.el drakes 8====D
+            a.el Options 4
           div.right           
             li 
               a.el Log ind
@@ -25,16 +27,19 @@ html
               a.el Help 
             li
               a.el Settings
+  
+  // Block for content specified in other views //
   main 
     block content
-      // footer for showing the contact information and other stuff
+  
+  // Footer block for showing the contact information and other stuff //
   footer
     block footer
       .footer
         p(style="font-weight: bold; font-size: 18px") Contact us at
-        p.contact E-mail: drake@peepee.org
+        p.contact E-mail: mail@mail.com
         p.contact Phone: 42069420
-        p.contact Address: Your Moms House
-        p.contact Website: www.urmom.milf
-        p.contact Social Media: @urmomsonlyfans
+        p.contact Address: Aalborgvej 50
+        p.contact Website: www.studiebudget.com
+        p.contact Social Media: @website
         p.contact Other: idk
