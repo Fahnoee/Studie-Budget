@@ -11,6 +11,7 @@ const controller = require("./controllers/budgetController.js");
 
 const express = require("express");
 const bodyParser = require("body-parser");
+require('dotenv').config();
 
 const app = express();
 app.use(bodyParser.json());
@@ -73,8 +74,7 @@ app.get('/api/budget/:budgetID', async (req, res) => {
 //###########################
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
-const mongoDB =
-  "mongodb+srv://gruppe4:abe54321@budget.lgi0q5b.mongodb.net/budget_database?retryWrites=true&w=majority&appName=Budget";
+const mongoDB = process.env.MONGODB_URI;
 
 main().catch((err) => console.log(err));
 async function main() {
