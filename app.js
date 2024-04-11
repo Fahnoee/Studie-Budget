@@ -16,6 +16,20 @@ require('dotenv').config();
 const app = express();
 app.use(bodyParser.json());
 
+//###########################
+// Set up mongoose connection
+//###########################
+const mongoose = require("mongoose");
+mongoose.set("strictQuery", false);
+const mongoDB = process.env.MONGODB_URI;
+
+main().catch((err) => console.log(err));
+async function main() {
+  await mongoose.connect(mongoDB);
+}
+
+
+
 //############################ 
 // UPDATING DATA IN MONGODB 
 //############################ 
@@ -67,19 +81,6 @@ app.get('/api/budget/:budgetID', async (req, res) => {
       res.status(500).send('Internal Server Error');
   }
 });
-
-
-//###########################
-// Set up mongoose connection
-//###########################
-const mongoose = require("mongoose");
-mongoose.set("strictQuery", false);
-const mongoDB = process.env.MONGODB_URI;
-
-main().catch((err) => console.log(err));
-async function main() {
-  await mongoose.connect(mongoDB);
-}
 
 
 // View engine setup
