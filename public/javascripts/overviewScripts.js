@@ -53,6 +53,7 @@ saveBtn.onclick = async() => {
 //############################ 
 // FUNCTIONS FOR DATAHANDELING
 //############################
+
 //GET from database --- read data from database
 async function fetchDatabase() {                  // A function for getting the values from budget from a user in the database and returns the budget.
   try {
@@ -70,7 +71,6 @@ async function fetchDatabase() {                  // A function for getting the 
       throw error; // Re-throw the error to handle it elsewhere if needed
   }
 }
-
 // POST to database --- Update Budget in database
 async function updateBudget(data) {         // A function to update the data by sending a request to the server API endpoint
   try {
