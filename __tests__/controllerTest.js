@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 const { createUserWithBudget, fetchUserBudgetId, updateBudget, addCustomExpense, deleteUser } = require('../controllers/budgetController');
 const User = require('../models/user');
 const Budget = require('../models/budget');
