@@ -23,5 +23,8 @@
   },
   "devDependencies": {
     "mongodb-memory-server": "^9.1.8"
+  },
+  "jest": {
+    "setupFilesAfterEnv": ["<rootDir>/testSetup.js"]
   }
 }

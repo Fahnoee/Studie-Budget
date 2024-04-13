@@ -2,8 +2,8 @@ const User = require("../models/user.js")
 const Budget = require("../models/budget.js")
 
 // Createss a variable for testing
-let username;
-username = "John Doe";
+// let username;
+// username = "John Doe";
 
 /**
  * Fetches the budget ID associated with a given username.
@@ -135,11 +135,11 @@ let expenses;
 let goal;
 
 // Example usage of the updateBudget function
-updateBudget(username, {
-    income: income,
-    expenses: expenses,
-    goal: goal
-});
+// updateBudget(username, {
+//     income: income,
+//     expenses: expenses,
+//     goal: goal
+// });
 
 // Exporting functions and models for external use
 module.exports = {
