@@ -1,56 +1,95 @@
-const budgetTest = require('../controllers/budgetController.js');
+const mongoose = require('mongoose');
+const { createUserWithBudget, fetchUserBudgetId, updateBudget, addCustomExpense, deleteUser } = require('../controllers/budgetController');
+const User = require('../models/user');
+const Budget = require('../models/budget');
 
-// Connect to app.js
-const app = require('../app.js');
+describe('Budget Controller', () => {
 
+  beforeEach(async () => {
+    // Clear the database before each test
+    await User.deleteMany({});
+    await Budget.deleteMany({});
+  });
 
-// Assuming you require mongoose and have access to the `mongoDB` URI in the test suite
-const mongoose = require("mongoose");
-let db;
-  
-//beforeEach is from the jets framework, and does this every time before a test
-beforeEach(async () => {
-  mongoose.set("strictQuery", false);
-  
-  // Connect to MongoDB before each test
-  db = await mongoose.connect(process.env.MONGODB_URI);
-});
-  
-afterEach(async () => {
-  // Disconnect from MongoDB after each test
-  await db.connection.close();
-});
+  describe('createUserWithBudget', () => {
+    it('should create a user with a default budget', async () => {
+      const username = 'TestUser';
+      const user = await createUserWithBudget(username);
 
- 
+      expect(user).toHaveProperty('name', username);
+      expect(user).toHaveProperty('budget');
 
-// Test of the fetchUserBudgetID-function
-describe("Test of fetchUserBudgetID", () => {
-    test('Test for John Doe, should ideally be true', async () => {
-        const result = await budgetTest.fetchUserBudgetId("John Doe");
-        expect(JSON.stringify(result)).toBe(JSON.stringify("660144cf1d605c84aded5926"));
+      const budget = await Budget.findById(user.budget);
+      expect(budget).toHaveProperty('income', 0);
+      expect(budget).toHaveProperty('expenses', 0);
+      expect(budget).toHaveProperty('goal', 0);
+      expect(budget).toHaveProperty('customExpenses', {});
+    });
+  });
+
+  describe('fetchUserBudgetId', () => {
+    it('should fetch the correct budget ID for a given user', async () => {
+      const username = 'TestUser';
+      await createUserWithBudget(username);
+      const budgetId = await fetchUserBudgetId(username);
+
+      const user = await User.findOne({ name: username });
+      expect(budgetId.toString()).toEqual(user.budget.toString());
     });
 
-    test('Test for John Doe med forkert id, should ideally be true (not false)', async () => {
-        const result = await budgetTest.fetchUserBudgetId("John Doe");
-        expect(JSON.stringify(result)).not.toBe(JSON.stringify("101FAKE_NUMBER101"));
+    it('should throw an error if the user does not exist', async () => {
+      await expect(fetchUserBudgetId('NonExistentUser')).rejects.toThrow('No user found with name NonExistentUser');
     });
-    
-    test('Test for non-existent user, should throw an error', async () => {
-        let userForTest = "Non Existent User";
-        await expect(budgetTest.fetchUserBudgetId(userForTest)).rejects.toThrow(`No user found with name ${userForTest}`);
-    });
-    
-});
+  });
 
-// Test of the updateBudget-function
-describe("Test of updateBudget", () => {
-    test('Test for updating John Doe, should ideally be true', async () => {
-        const result = await budgetTest.updateBudget("John Doe", { income: 1000 });
-        expect(JSON.stringify(result.income)).toBe(JSON.stringify(1000));
+  describe('updateBudget', () => {
+    it('should update the budget for a given user', async () => {
+      const username = 'TestUser';
+      await createUserWithBudget(username);
+      const newData = { income: 1000, expenses: 500, goal: 100 };
+
+      const updatedBudget = await updateBudget(username, newData);
+      expect(updatedBudget).toHaveProperty('income', newData.income);
+      expect(updatedBudget).toHaveProperty('expenses', newData.expenses);
+      expect(updatedBudget).toHaveProperty('goal', newData.goal);
     });
-    
-    test('Test for updating John Doe, should ideally be true (not false)', async () => {
-        const result = await budgetTest.updateBudget("John Doe", { income: 1000 });
-        expect(JSON.stringify(result.income)).not.toBe(JSON.stringify(9999));
+
+    it('should throw an error if the newData is not an object', async () => {
+      const username = 'TestUser';
+      await createUserWithBudget(username);
+      await expect(updateBudget(username, null)).rejects.toThrow('newData must be a non-null object');
     });
+  });
+
+  describe('addCustomExpense', () => {
+    it('should add a custom expense to the user\'s budget', async () => {
+      const username = 'TestUser';
+      await createUserWithBudget(username);
+      const category = 'Food';
+      const items = [{ name: 'Pizza', cost: 20 }];
+
+      const updatedBudget = await addCustomExpense(username, { category, items });
+      expect(updatedBudget.customExpenses[category]).toEqual(expect.arrayContaining(items));
+    });
+  });
+
+  describe('deleteUser', () => {
+    it('should delete a user and their associated budget', async () => {
+      const username = 'TestUser';
+      await createUserWithBudget(username);
+
+      // Fetch the user to get the budget ID before deletion
+      const existingUser = await User.findOne({ name: username });
+      const budgetId = existingUser.budget;
+
+      await deleteUser(username);
+
+      const userAfterDeletion = await User.findOne({ name: username });
+      expect(userAfterDeletion).toBeNull();
+
+      // Use the previously fetched budgetId to check if the budget has been deleted
+      const budgetAfterDeletion = await Budget.findById(budgetId);
+      expect(budgetAfterDeletion).toBeNull();
+    });
+  });
 });

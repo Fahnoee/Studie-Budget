@@ -20,5 +20,11 @@
     "morgan": "~1.9.1",
     "nodemon": "^3.1.0",
     "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^9.1.8"
+  },
+  "jest": {
+    "setupFilesAfterEnv": ["<rootDir>/testSetup.js"]
   }
 }
