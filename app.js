@@ -28,11 +28,11 @@ async function main() {
   await mongoose.connect(mongoDB);
 }
 
-
-
 //############################ 
 // UPDATING DATA IN MONGODB 
 //############################ 
+
+// Updating FIXED INCOME/EXPENSES in database
 
 app.post("/api/update_budget", (req, res) => {
   // Get data sent from the frontend
@@ -60,6 +60,59 @@ app.post("/api/update_budget", (req, res) => {
       res.status(500).json({ message: "Error in updating budget." });
     });
 });
+
+// Adding custom expense to MongoDB
+
+app.post("/api/addcustom/expense", (req, res) => {
+  // Get data sent from the frontend
+  let data = req.body;
+
+  let username = data.username;
+  let expenseData = {
+    category: data.category,
+    items: data.customExpense
+  }
+
+  // Call your controller's method
+  controller
+    .addCustomExpense(username, expenseData)
+    .then((result) => {
+      // Budget update successful
+      console.log("Result: \n" + result);
+      res.json({ message: "Expense added successfully: \n" + result });
+    })
+    .catch((err) => {
+      // If anything goes wrong
+      res.status(500).json({ message: "Error in adding expense." });
+    });
+});
+
+// Adding custom income to MongoDB
+
+app.post("/api/addcustom/income", (req, res) => {
+  // Get data sent from the frontend
+  let data = req.body;
+
+  let username = data.username;
+  let incomeData = {
+    category: data.category,
+    items: data.customIncome
+  }
+
+  // Call your controller's method
+  controller
+    .addCustomIncome(username, incomeData)
+    .then((result) => {
+      // Budget update successful
+      console.log("Result: \n" + result);
+      res.json({ message: "Income added successfully: \n" + result });
+    })
+    .catch((err) => {
+      // If anything goes wrong
+      res.status(500).json({ message: "Error in adding expene." });
+    });
+});
+
 
 
 //###########################
