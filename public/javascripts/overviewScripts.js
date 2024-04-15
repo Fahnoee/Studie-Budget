@@ -49,6 +49,30 @@ saveBtn.onclick = async() => {
   console.log("The value of --p is: " + getPieValue);
 };
 
+/*
+let username = "John Doe";
+let category = "testCategory"
+let items = [{"name": "testName", "amount": 6969}]
+
+let dataExpense = {
+  username,
+  customExpense: items,
+  category: category,
+};
+
+let dataIncome = {
+  username,
+  customIncome: items,
+  category: category,
+};
+updateCustomExpense(dataExpense);
+updateCustomIncome(dataIncome);
+*/
+
+
+//Function to add expense
+//Function to add income
+
 
 //############################ 
 // FUNCTIONS FOR DATAHANDELING
@@ -94,6 +118,50 @@ async function updateBudget(data) {         // A function to update the data by 
   }
 }
 
+async function updateCustomExpense(dataIncome) {         // A function to update the custom expense data
+  try {
+    const response = await fetch("/api/addcustom/expense", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataIncome), // convert data to JSON
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update budget");
+    }
+
+    const responseData = await response.json();   // Parse the response as a JSON and put it in responseData
+    console.log("Success:", responseData);
+    //popupContainer.classList.remove("active"); NY POPUP FOR CUSTOM
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+async function updateCustomIncome(dataExpense) {         // A function to update the custom income data
+  try {
+    const response = await fetch("/api/addcustom/income", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataExpense), // convert data to JSON
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update budget");
+    }
+
+    const responseData = await response.json();   // Parse the response as a JSON and put it in responseData
+    console.log("Success:", responseData);
+    //popupContainer.classList.remove("active"); NY POPUP FOR CUSTOM
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
 // Use values from database to display visually in the pie chart --- Uses GET function
 async function updateUserValuesView() {
   try {
@@ -120,4 +188,9 @@ function setPiePercentage(percent) {
     pie.classList.remove("animate");    // Reset animation
     void pie.offsetWidth;               // Trigger reflow
     pie.classList.add("animate");       // Start animation
+}
+
+
+function addCustomExpense(){
+  
 }
