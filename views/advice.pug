@@ -1,5 +1,36 @@
 extends layout
 
 block content
-  h1= title
-  p Test  
+  html 
+  link(rel='stylesheet', href='/stylesheets/advice.css')
+
+  main
+    h1 Financial Tips
+    p Welcome to our financial tips, we provide helpful advice aimed at improving your finacial management
+
+    div.row 
+      div.column_pic
+        img(src="./images/20-30-50-2.jpg", alt="The 20, 30, 50 Budget Rule", style="width: 86%;")
+      div.column_text
+        p For students looking to manage their finances effectively, consider adopting the 50-30-20 rule. Allocate 50% of your income to essential expenses like rent and groceries, 30% to discretionary spending on things like entertainment, and reserve 20% for savings and debt repayment. While this method offers simplicity, be mindful that it may not easily adapt to changing financial circumstances.
+        p 
+        a(href="https://www.forbes.com/advisor/banking/guide-to-50-30-20-budget/") If you want to know more about the 50-30-20 rule, click here.
+        
+        
+    div.row 
+      div.column_pic
+        img(src="./images/emergency_fund2.png", alt="Emergency funding picture", style="width: 90%;")
+      div.column_text 
+        p An emergency fund serves as a financial safety net, providing peace of mind during unexpected situations such as job loss, medical emergencies, or major repairs. This fund, typically equivalent to 3-6 months' worth of living expenses, offers stability and helps prevent reliance on high-interest debt or depleting long-term savings. By prioritizing the establishment of an emergency fund, individuals can navigate unforeseen challenges with greater financial resilience and confidence.
+        p 
+        a(href="https://www.investopedia.com/terms/e/emergency_fund.asp") If you want to know more about Emergency Funding, click here. 
+
+
+    div.row 
+      div.column_pic
+        img(src="./images/stonks2.png", alt="Stonk Photo", style="width: 80%;")
+      div.column_text 
+        p For students with the financial means, investing in stocks can be a valuable opportunity to build wealth over time. By researching potential investments and staying informed about market trends, students can begin to grow their assets and develop valuable financial skills for the future. It's essential to start small, diversify your portfolio, and consider seeking advice from experienced investors or financial professionals to make informed decisions.
+        p 
+        a(href="https://www.sec.gov/investor/pubs/savings-investing-for-students.pdf") If you want to know more about investing in stocks, click here.
+
