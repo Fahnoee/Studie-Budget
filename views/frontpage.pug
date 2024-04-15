@@ -20,16 +20,17 @@ block navbar
 block content
   html
     link(rel='stylesheet', href='/stylesheets/frontpage.css')
-    div.row
-        div.column
-          h2  Welcome to #{websiteName} 
-          div.mainText
-            p This service is designed to assist students in managing their finances effectively by providing tools to track their budgets
-          button.btn(onclick="goToOverview()") Log in
-          button.btn(onclick="goToOverview()") Sign Up
-        div.column2
-          // Picture
-          img.img(src="./images/studentBudgetLogo2.png", alt="Good Pic")
+    div.all
+      div.row
+          div.column
+            h1  Welcome to #{websiteName} 
+            div.mainText
+              p This service is designed to assist students in managing their finances effectively by providing tools to track their budgets
+            button.btn(onclick="goToOverview()") Log in
+            button.btn(onclick="goToOverview()") Sign Up
+          div.column2
+            // Picture
+            img.img(src="./images/studentBudgetLogo2.png", alt="Good Pic")
 
     script(src='/javascripts/frontpage.js')
 

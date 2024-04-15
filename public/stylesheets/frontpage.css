@@ -1,7 +1,7 @@
-main {
-  margin-left: 250px;
-  margin-right: 150px;
-  margin-top: 30px;
+.all {
+  margin-left: 4%;
+  margin-right: 4%;
+  margin-top: 2%
 }
 
 .column {
@@ -9,8 +9,10 @@ main {
 }
 
 .column2 {
-  float: center;
   width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Clear floats after the columns */
@@ -31,7 +33,8 @@ main {
 
 .img {
   width: 50%;
-  position: static;
+  position: relative;
+  float: left;
 }
 
 .btn{
