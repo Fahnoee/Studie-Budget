@@ -1,15 +1,24 @@
 .all {
   margin-left: 4%;
   margin-right: 4%;
-  margin-top: 2%
+  margin-top: 3%
+}
+
+.filler {
+  width: 15%;
 }
 
 .column {
-  width: 50%;
+  width: 30%;
+  /*display:inline;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;*/
 }
 
 .column2 {
-  width: 50%;
+  width: 55%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,6 +34,7 @@
 .row {
   text-align: left;
   display: flex;
+  align-items: center;
 }
 
 .mainText {

@@ -119,7 +119,7 @@ p {
 
 
 .pie {
-  --w:350px;
+  --w:300px;
   width: var(--w);
   position: static;
   display: inline-grid;
