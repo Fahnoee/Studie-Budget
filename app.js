@@ -4,7 +4,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
 const overviewRouter = require("./routes/overview");
-const adviceRouter = require("./routes/advice");
+const financialTipsRouter = require("./routes/financialTips");
 const frontpageRouter = require("./routes/frontpage");
 
 const controller = require("./controllers/budgetController.js");
@@ -152,7 +152,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Routes setup
 app.use("/", frontpageRouter);
 app.use("/overview", overviewRouter);
-app.use("/advice", adviceRouter);
+app.use("/financialTips", financialTipsRouter);
 
 
 // Catch 404 and forward to error handler
