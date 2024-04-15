@@ -1,5 +1,6 @@
-h1 {
-  margin-left: 2.5%;
+.all {
+  padding-left: 4%;
+  padding-right: 4%;
 }
 
 p {
@@ -19,7 +20,6 @@ p {
 }
 .row {
   text-align: center;
-  margin-left: 4%;
 }
 
 .tips {
@@ -42,9 +42,10 @@ p {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 30px;
+  padding: 0px;
   opacity: 0;
   pointer-events: none;
+  z-index: 9999;
 }
 
 .popup-container.active{
@@ -118,8 +119,7 @@ p {
 
 
 .pie {
-  --w:400px;
-  
+  --w:350px;
   width: var(--w);
   position: static;
   display: inline-grid;

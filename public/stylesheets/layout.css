@@ -13,38 +13,65 @@ main{
 }
 
 .navbar-default ul{
+  display: flex;
+  align-items: center;
   list-style-type: none;
   background-color: grey;
   overflow: hidden;
+  height: 50px;
+  margin: 0%;
+  padding-right: 4%;
 }
+
 .navbar-default a{
   color: yellow;
   text-decoration: none;
   padding: 10px;
-  display: block;
   text-align: center;
 }
 
 .navbar-default .el:hover{
   color: lightgoldenrodyellow;
   background-color: black;
+  cursor: pointer;
 }
 
 .navbar-default li{
-  float: left;
+  margin-left: 0.5%;
+  margin-right: 0.5%;
+}
+
+.navbar-default li:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.navbar-default .boxleft {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 70%;
+  height: auto;
 }
 
 .navbar-default .right{
-  float: right;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 30%;
 } 
 
 .navbar-default #logo {
-  position: absolute;
-  top:0.2%; 
-  left:0.1%;
-  width:5%;
-  height:auto;
-  overflow:hidden;
+  position: static;
+  width: 30px;
+  height: auto;
+  overflow: hidden;
+  align-items: left;
+  justify-content: flex-start;
+  float: left;
 }
 
 footer {

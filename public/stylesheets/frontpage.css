@@ -5,7 +5,11 @@ main {
 }
 
 .column {
-  float: left;
+  width: 50%;
+}
+
+.column2 {
+  float: center;
   width: 50%;
 }
 
@@ -18,6 +22,7 @@ main {
 
 .row {
   text-align: left;
+  display: flex;
 }
 
 .mainText {
@@ -26,8 +31,7 @@ main {
 
 .img {
   width: 50%;
-  height: 50%;
-  float: center;
+  position: static;
 }
 
 .btn{
@@ -36,7 +40,17 @@ main {
   margin-right: 2%;
 }
 
+.leftfrontpage {
+  display: flex;
+  justify-content: flex-start;
+  width: 50%;
+}
 
+.rightfrontpage {
+  display: flex;
+  justify-content: flex-end;
+  width: 50%;
+}
 
 
 

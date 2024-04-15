@@ -17,22 +17,23 @@ block content
       div.buttons
         button.close-btn CLOSE
         button.save-btn SAVE
-  body
-    h1= title
-    div.row
-      div.column 
-        h2 Primary budget overview
-        div.pie-line
-          div.pie.animate
-            p.total Total Amount: 0
-            p.spent Spent: 0
-            p.left Available: 0
-        div
-        button.show-popup Add income/expenses
-      div.column
-        h2 Categories
-      div.column
-        h2 Add custom
-    div.tips
-      h2 Financial Advice
+  main
+    div.all
+      h1= title
+      div.row
+        div.column 
+          h2 Primary budget overview
+          div.pie-line
+            div.pie.animate
+              p.total Total Amount: 0
+              p.spent Spent: 0
+              p.left Available: 0
+          div
+          button.show-popup Add income/expenses
+        div.column
+          h2 Categories
+        div.column
+          h2 Add custom
+      div.tips
+        h2 Financial Advice
   script(src="/javascripts/overviewScripts.js")
