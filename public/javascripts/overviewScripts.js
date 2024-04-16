@@ -1,9 +1,16 @@
 
+// const budgetController = require("../../controllers/budgetController");
+const showPopup = document.querySelector('.show-popup');
+const popupContainer = document.querySelector('.popup-container');
+
 const body = document.querySelector('body');
 const pie = document.querySelector('.pie');
 const totalAmount = document.querySelector(".total");
 const spentAmount = document.querySelector(".spent");
 const leftAmount = document.querySelector(".left");
+const categories = document.querySelector(".categories");
+const paragraphs = categories.querySelectorAll("p")
+const pies = categories.querySelectorAll(".pie");
 
 //#####################
 // Q-SELECTORS POPUPS
@@ -42,8 +49,8 @@ updateUserValuesView(); // Paste current user values from database:
 // FUNCTIONS FOR POPUP
 //#####################
 
-////////FIXED INCOMES/ EXPENSES
 
+////////FIXED INCOMES/ EXPENSES
 // Function for popup
 showPopupFixed.onclick = () => {
   popupContainerFixed.classList.add("active");     // Activates popup by adding class to div
@@ -68,6 +75,8 @@ saveBtnFixed.onclick = async() => {
 
   await updateBudget(data);                     // Firstly update the budget  in the database with new values
   await updateUserValuesView();                 // Here we update the userValues showed within the piechart with values from database
+  await createCategory();                       // Create category
+  await updateCategory();                       // Update category
 
   popupContainerFixed.classList.remove("active");    // Deactivates popup by removing class from div
   
@@ -76,6 +85,37 @@ saveBtnFixed.onclick = async() => {
   let getPieValue = getPieStyle.getPropertyValue('--p');
   console.log("The value of --p is: " + getPieValue);
 };
+
+
+// Function for updating values of categories in html and database
+async function updateCategory(pieIndex) {
+  try { 
+    pieIndex = 0;   // Temporary index for testing
+    const data = await fetchDatabase(); //Data from fixed income/expenses 
+    let inc = data.income
+    let exps = data.expenses
+    console.log("Income: " + inc, "Expense: " + exps);
+
+    setPieColor(pies[pieIndex], "red");
+    setPiePercentage((exps / inc * 100), pies[pieIndex]);    // Calculates the percentage that need to be painted
+
+    for (let i = 0; i < paragraphs.length; i++) {
+      paragraphs[i].textContent = 3;
+    }
+
+    paragraphs.forEach(paragraph => {
+      console.log("Here: " + paragraph.textContent);
+      paragraph.textContent = 2;
+    });
+  } catch (error) {
+    console.log("Error: " + error);
+    throw error;
+  }
+}
+
+function setPieColor(piechart, color) {
+  piechart.style.setProperty("--c", color);
+}
 
 
 //////// CUSTOM INCOME /////////////////
@@ -252,7 +292,7 @@ async function updateUserValuesView() {
     totalAmount.textContent = "Total: " + data.income;      // Place data into variables
     spentAmount.textContent = "Spent: " + data.expenses;
     leftAmount.textContent = "Available: " + (data.income - data.expenses);
-    setPiePercentage(data.expenses / data.income * 100);    // Calculates the percentage that need to be painted
+    setPiePercentage((data.expenses / data.income * 100), pie);    // Calculates the percentage that need to be painted
   } catch (error) {
     // Handle any errors
     console.error("Error: ", error);
@@ -260,17 +300,52 @@ async function updateUserValuesView() {
 }
 
 // Method for opdating the circle on the pie charts
-function setPiePercentage(percent) {
+function setPiePercentage(percent, piechart) {
     // Set the value of variable --p to another value (in this case 20)
-    pie.style.setProperty('--p', percent);
-    console.log("The value of --p is: " + pie.style.getPropertyValue('--p'));
+    piechart.style.setProperty('--p', percent);
+    console.log("The value of --p is: " + piechart.style.getPropertyValue('--p'));
 
-    pie.classList.remove("animate");    // Reset animation
-    void pie.offsetWidth;               // Trigger reflow
-    pie.classList.add("animate");       // Start animation
+    piechart.classList.remove("animate");    // Reset animation
+    void piechart.offsetWidth;               // Trigger reflow
+    piechart.classList.add("animate");       // Start animation
 }
 
 
 function addCustomExpense(){
   
+}
+
+// CHAT!!!! 
+// Function for creating a new catogory in the html and the database
+async function createCategory(categoryName) {
+  try {
+    // Find the container for categories
+    const categoriesContainer = document.querySelector('.categories');
+
+    // Create elements for the category
+    const categoryDiv = document.createElement('div');
+    categoryDiv.classList.add('pie-line');  // Set class to "pie-line" to create grey circle
+
+    const paragraph = document.createElement('p');
+    paragraph.textContent = 0;   // Set the goal for the category
+
+    // Create a div element for the pie chart 
+    const pie = document.createElement('div');
+    pie.classList.add('pie', 'animate'); // Add classes for styling 
+    pie.style.setProperty('--w', '100px'); 
+    
+    // Append the paragraph to the pie div
+    pie.appendChild(paragraph)
+    // Append the pie div to the category div
+    categoryDiv.appendChild(pie);
+
+    // Append the category div to the categories container
+    categoriesContainer.appendChild(categoryDiv);
+
+    // Optionally, you can return the category element if you need to manipulate it further
+    return categoryDiv;
+  } catch (error) {
+    console.log("Error: " + error);
+    throw error;
+  }
 }

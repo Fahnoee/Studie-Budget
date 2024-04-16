@@ -40,18 +40,6 @@ p {
   }
 }
 
-.pie {
-  --w:300px;
-  width: var(--w);
-  position: static;
-  display: inline-grid;
-  place-content: center;
-  margin: 5px;
-  font-size: 25px;
-  font-weight: bold;
-  font-family: sans-serif;
-}
-
 .pie:before {
   content: "";
   position: absolute;
@@ -111,6 +99,17 @@ p {
   mask: radial-gradient(farthest-side, #0000 calc(100% - var(--b)), #000 calc(100% - var(--b)));
 
 }
+
+.pie {
+  /* --w:300px; */
+  width: var(--w);
+  position: static;
+  display: inline-grid;
+  place-content: center;
+  margin: 5px;
+  font-size: 25px;
+  font-weight: bold;
+  font-family: sans-serif;
 
 /*////////////////*/
 /* POPUP CSS CODE */
@@ -317,6 +316,7 @@ p {
   transform: scale(0);
   padding: 30px;
 }
+
 
 .popup-container-expense.active .popup-box-expense{
   transform: scale(1);
