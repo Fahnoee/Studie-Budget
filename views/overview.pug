@@ -5,18 +5,46 @@ block content
   link(rel='stylesheet', href='/stylesheets/overview.css')
 
   // div for popup activated by the popup button //
-  div.popup-container
-    div.popup-box
+  div.popup-container-fixed
+    div.popup-box-fixed
       h3 Edit income / expenses 
       p Please enter your income and expenses
       p Use . for decimals
       p Add income: 
-        input.income
+        input.income-fixed
       p Add expense: 
-        input.expense
+        input.expense-fixed
       div.buttons
-        button.close-btn CLOSE
-        button.save-btn SAVE
+        button.close-btn-fixed CLOSE
+        button.save-btn-fixed SAVE
+  
+  div.popup-container-income
+    div.popup-box-income
+      h3 Input a custom income
+      p Use . for decimals
+      p Add category: 
+        input.category-income
+      p Add name: 
+        input.name-income
+      p Add value
+        input.value-income
+      div.buttons
+        button.close-btn-income CLOSE
+        button.save-btn-income SAVE
+
+  div.popup-container-expense
+    div.popup-box-expense
+      h3 Input a custom expense
+      p Use . for decimals
+      p Add category: 
+        input.category-expense
+      p Add name: 
+        input.name-expense
+      p Add value
+        input.value-expense
+      div.buttons
+        button.close-btn-expense CLOSE
+        button.save-btn-expense SAVE
   main
     div.all
       h1= title
@@ -29,11 +57,13 @@ block content
               p.spent Spent: 0
               p.left Available: 0
           div
-          button.show-popup Add income/expenses
+          button.show-popup-fixed Add income/expenses
         div.column
           h2 Categories
         div.column
           h2 Add custom
+          button.show-popup-income Add custom income
+          button.show-popup-expense Add custom expense
       div.tips
         h2 Financial Advice
   script(src="/javascripts/overviewScripts.js")
