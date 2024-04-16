@@ -4,9 +4,14 @@ function goToOverview() {
   window.location.href = '/overview';
 }
 
-function signIn() {
+function goToSignUp() {
   // Navigate to the signUpPage
-  window.location.href = 'signUpPage'; 
+  window.location.href = '/signUp'; 
+}
+
+function goToLogIn() {
+  // Navigate to the signUpPage
+  window.location.href = '/logIn'; 
 }
 
 
