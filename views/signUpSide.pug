@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  html 
+    link(rel='stylesheet', href='/stylesheets/signUp.css')
+    div.centerColum
+      h1 Create a new account:
+      form(action="/signup" method="POST")
+        div.username
+          label(for="username") Enter username:
+          input(type="text" id="username" name="username" required)
+        div.password
+          label(for="password") Enter password:
+          input(type="password" id="password" name="password" required)
+        div.passwordCheck
+          label(for="passwordCheck") Enter password again:
+          input(type="password" id="passwordCheck" name="passwordCheck" required)
+        div.creatAccount
+          input(type="submit" value="Create Account")
+        div.alreadyAccount 
+          button.btn(type="button" onclick="goToLogIn()") Already have an account?
+    script(src='/javascripts/frontpage.js')

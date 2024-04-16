@@ -1,12 +1,10 @@
+
 // const budgetController = require("../../controllers/budgetController");
 const showPopup = document.querySelector('.show-popup');
 const popupContainer = document.querySelector('.popup-container');
+
 const body = document.querySelector('body');
-const closeBtn = document.querySelector('.close-btn');
-const saveBtn = document.querySelector('.save-btn');
 const pie = document.querySelector('.pie');
-const income = document.querySelector(".income");
-const expense = document.querySelector(".expense");
 const totalAmount = document.querySelector(".total");
 const spentAmount = document.querySelector(".spent");
 const leftAmount = document.querySelector(".left");
@@ -14,27 +12,59 @@ const categories = document.querySelector(".categories");
 const paragraphs = categories.querySelectorAll("p")
 const pies = categories.querySelectorAll(".pie");
 
+//#####################
+// Q-SELECTORS POPUPS
+//#####################
+
+// FIXED
+const showPopupFixed = document.querySelector('.show-popup-fixed');
+const popupContainerFixed = document.querySelector('.popup-container-fixed');
+const closeBtnFixed = document.querySelector('.close-btn-fixed');
+const saveBtnFixed = document.querySelector('.save-btn-fixed');
+const incomeFixed = document.querySelector(".income-fixed");
+const expenseFixed = document.querySelector(".expense-fixed");
+
+//EXPENSE
+const showPopupCustomExpense = document.querySelector('.show-popup-expense');
+const popupContainerCustomExpense = document.querySelector('.popup-container-expense');
+const closeBtnCustomExpense = document.querySelector('.close-btn-expense');
+const saveBtnCustomExpense = document.querySelector('.save-btn-expense');
+const categoryCustomExpense = document.querySelector(".category-expense");
+const nameCustomExpense = document.querySelector(".name-expense");
+const valueCustomExpense = document.querySelector(".value-expense");
+
+//INCOME
+const showPopupCustomIncome = document.querySelector('.show-popup-income');
+const popupContainerCustomIncome = document.querySelector('.popup-container-income');
+const closeBtnCustomIncome = document.querySelector('.close-btn-income');
+const saveBtnCustomIncome = document.querySelector('.save-btn-income');
+const categoryCustomIncome = document.querySelector(".category-income");
+const nameCustomIncome = document.querySelector(".name-income");
+const valueCustomIncome = document.querySelector(".value-income");
+
+
 updateUserValuesView(); // Paste current user values from database:
 
 //#####################
 // FUNCTIONS FOR POPUP
 //#####################
 
-// Function for popup
-showPopup.onclick = () => {
-  popupContainer.classList.add("active");     // Activates popup by adding class to div
-};
 
+////////FIXED INCOMES/ EXPENSES
+// Function for popup
+showPopupFixed.onclick = () => {
+  popupContainerFixed.classList.add("active");     // Activates popup by adding class to div
+};
 // Function for the Close Button
-closeBtn.onclick = () => {
-  popupContainer.classList.remove("active");    // Deactivates popup by removing class from div
+closeBtnFixed.onclick = () => {
+  popupContainerFixed.classList.remove("active");    // Deactivates popup by removing class from div
 };
 
 // Function for the Save Button
-saveBtn.onclick = async() => {
+saveBtnFixed.onclick = async() => {
   let username = "John Doe";
-  let incomeVal = income.value;
-  let expenseVal = expense.value;
+  let incomeVal = incomeFixed.value;
+  let expenseVal = expenseFixed.value;
 
   let data = {
     username,
@@ -48,13 +78,14 @@ saveBtn.onclick = async() => {
   await createCategory();                       // Create category
   await updateCategory();                       // Update category
 
-  popupContainer.classList.remove("active");    // Deactivates popup by removing class from div
+  popupContainerFixed.classList.remove("active");    // Deactivates popup by removing class from div
   
   // Save changed income/expense to pie chart
   let getPieStyle = getComputedStyle(pie)
   let getPieValue = getPieStyle.getPropertyValue('--p');
   console.log("The value of --p is: " + getPieValue);
 };
+
 
 // Function for updating values of categories in html and database
 async function updateCategory(pieIndex) {
@@ -86,30 +117,82 @@ function setPieColor(piechart, color) {
   piechart.style.setProperty("--c", color);
 }
 
-/*
-let username = "John Doe";
-let category = "testCategory"
-let items = [{"name": "testName", "amount": 6969}]
 
-let dataExpense = {
-  username,
-  customExpense: items,
-  category: category,
+//////// CUSTOM INCOME /////////////////
+
+showPopupCustomIncome.onclick = () => {
+  popupContainerCustomIncome.classList.add("active");     // Activates popup by adding class to div
+};
+// Function for the Close Button
+closeBtnCustomIncome.onclick = () => {
+  popupContainerCustomIncome.classList.remove("active");    // Deactivates popup by removing class from div
 };
 
-let dataIncome = {
-  username,
-  customIncome: items,
-  category: category,
+saveBtnCustomIncome.onclick = async() => {
+  let username = "John Doe";
+  let category = categoryCustomIncome.value;
+
+  // Extracting value from inputfields
+  let name = nameCustomIncome.value;
+  let value = valueCustomIncome.value;
+  let date = getDate();
+  
+  //Packaging
+  let items = [{"name": name, "amount": value, "date": date}];
+
+  let dataIncome = {
+    username,
+    customIncome: items,
+    category: category,
+  };
+  
+  updateCustomIncome(dataIncome);
+  popupContainerCustomIncome.classList.remove("active");
 };
-updateCustomExpense(dataExpense);
-updateCustomIncome(dataIncome);
-*/
 
+//////// CUSTOM EXPENSE /////////////////
 
-//Function to add expense
-//Function to add income
+showPopupCustomExpense.onclick = () => {
+  popupContainerCustomExpense.classList.add("active");     // Activates popup by adding class to div
+};
+// Function for the Close Button
+closeBtnCustomExpense.onclick = () => {
+  popupContainerCustomExpense.classList.remove("active");    // Deactivates popup by removing class from div
+};
 
+saveBtnCustomExpense.onclick = async() => {
+  let username = "John Doe";
+  let category = categoryCustomExpense.value;
+
+  // Extracting value from inputfields
+  let name = nameCustomExpense.value;
+  let value = valueCustomExpense.value;
+  let date = getDate(); //Function that gets todays date
+  
+  //Packaging
+  let items = [{"name": name, "amount": value, "date": date}];
+
+  let dataExpense = {
+    username,
+    customExpense: items,
+    category: category,
+  };
+  
+  updateCustomExpense(dataExpense);
+  popupContainerCustomExpense.classList.remove("active");
+};
+
+function getDate(){
+  let now = new Date();
+
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1; // January is 0, so we add 1
+  const day = now.getDate();
+  const hour = now.getHours();
+  const formattedDate = `${year}-${month}-${day} ${hour}`;
+  
+  return formattedDate;
+};
 
 //############################ 
 // FUNCTIONS FOR DATAHANDELING
@@ -149,20 +232,20 @@ async function updateBudget(data) {         // A function to update the data by 
 
     const responseData = await response.json();   // Parse the response as a JSON and put it in responseData
     console.log("Success:", responseData);
-    popupContainer.classList.remove("active");    // Close popup when response was sucessful and data has been updated
+    popupContainerFixed.classList.remove("active");    // Close popup when response was sucessful and data has been updated
   } catch (error) {
     console.error("Error:", error);
   }
 }
 
-async function updateCustomExpense(dataIncome) {         // A function to update the custom expense data
+async function updateCustomExpense(dataExpense) {         // A function to update the custom expense data
   try {
     const response = await fetch("/api/addcustom/expense", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataIncome), // convert data to JSON
+      body: JSON.stringify(dataExpense), // convert data to JSON
     });
 
     if (!response.ok) {
@@ -177,14 +260,14 @@ async function updateCustomExpense(dataIncome) {         // A function to update
   }
 }
 
-async function updateCustomIncome(dataExpense) {         // A function to update the custom income data
+async function updateCustomIncome(dataIncome) {         // A function to update the custom income data
   try {
     const response = await fetch("/api/addcustom/income", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataExpense), // convert data to JSON
+      body: JSON.stringify(dataIncome), // convert data to JSON
     });
 
     if (!response.ok) {
