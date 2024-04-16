@@ -5,7 +5,6 @@ const totalAmount = document.querySelector(".total");
 const spentAmount = document.querySelector(".spent");
 const leftAmount = document.querySelector(".left");
 
-
 //#####################
 // Q-SELECTORS POPUPS
 //#####################
@@ -96,9 +95,10 @@ saveBtnCustomIncome.onclick = async() => {
   // Extracting value from inputfields
   let name = nameCustomIncome.value;
   let value = valueCustomIncome.value;
+  let date = getDate();
   
   //Packaging
-  let items = [{"name": name, "amount": value}];
+  let items = [{"name": name, "amount": value, "date": date}];
 
   let dataIncome = {
     username,
@@ -127,9 +127,10 @@ saveBtnCustomExpense.onclick = async() => {
   // Extracting value from inputfields
   let name = nameCustomExpense.value;
   let value = valueCustomExpense.value;
+  let date = getDate(); //Function that gets todays date
   
   //Packaging
-  let items = [{"name": name, "amount": value}];
+  let items = [{"name": name, "amount": value, "date": date}];
 
   let dataExpense = {
     username,
@@ -141,32 +142,17 @@ saveBtnCustomExpense.onclick = async() => {
   popupContainerCustomExpense.classList.remove("active");
 };
 
+function getDate(){
+  let now = new Date();
 
-
-/*
-let username = "John Doe";
-let category = "testCategory"
-let items = [{"name": "testName", "amount": 6969}]
-
-let dataExpense = {
-  username,
-  customExpense: items,
-  category: category,
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1; // January is 0, so we add 1
+  const day = now.getDate();
+  const hour = now.getHours();
+  const formattedDate = `${year}-${month}-${day} ${hour}`;
+  
+  return formattedDate;
 };
-
-let dataIncome = {
-  username,
-  customIncome: items,
-  category: category,
-};
-updateCustomExpense(dataExpense);
-updateCustomIncome(dataIncome);
-*/
-
-
-//Function to add expense
-//Function to add income
-
 
 //############################ 
 // FUNCTIONS FOR DATAHANDELING
