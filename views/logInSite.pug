@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  html 
+  link(rel='stylesheet', href='/stylesheets/logIn.css')
+  div.centerColum
+    h1 Log into your account
+    form(action="/login" method="POST")
+        div.username
+            label(for="username") Enter username:
+            input(type="text" id="username" name="username" required)
+        div.password
+            label(for="password") Enter password:
+            input(type="password" id="password" name="password" required)
+        div.logInButton 
+            input(type="submit" value="Log in" onclick="goToSignUp()")
+        div.dontHaveAccount
+            button.btn(type="button" onclick="goToSignUp()") Don't have an account? 
+    script(src='/javascripts/frontpage.js') 

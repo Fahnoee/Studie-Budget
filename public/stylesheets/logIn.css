@@ -1,0 +1,61 @@
+body {
+    background-color: #f0f2f5; /* Light grey background */
+}
+
+.centerColum {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center vertically */
+    height: 4%; /* Full height of the viewport */
+    margin: 0 auto; /* Center horizontally */
+    width: 30%;
+    padding: 20px;
+    background-color: white; /* White background for the form */
+    border-radius: 10px; /* Rounded corners for the form */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Subtle shadow */
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+.username, .password, .passwordCheck, .logInButton, .dontHaveAccount {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+input[type="text"], input[type="password"], input[type="submit"] {
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px; /* Rounded corners for input fields */
+}
+
+input[type="submit"] {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    cursor: pointer;
+}  
+
+input[type="submit"]:hover {
+    background-color: #0056b3; /* Darker shade for hover effect */
+}
+.btn {
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    padding: 14px 20px; /* Some padding */
+    border: none; /* No borders */
+    border-radius: 5px;
+    cursor: pointer; /* Pointer/hand icon */
+    width: 100%; /* Full width */
+}
+
+.btn:hover {
+    opacity: 1; /* Solid color on hover */
+    background-color: #346e36; /* Green background */
+}
+
+/* Additional styling for better alignment and spacing */
+.dontHaveAccount {
+    text-align: center; /* Center align the text within the div */
+}
