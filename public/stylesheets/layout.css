@@ -1,15 +1,18 @@
+html {
+  height: 100%;
+}
 body{
   margin: 0px;
   font-family: 'Open Sans', sans-serif;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100vh; /* This ensures that your body takes up at least the viewport height */
 }
 main{
   margin-left: 0px;
   margin-right: 0px;
   font-family: 'Open Sans', sans-serif;
-  flex-grow: 1; /* Grow to take up remaining space, pushing the footer to the bottom */
+  flex-grow: 1; /* This will make the main content grow and push the footer to the bottom */
 }
 
 .navbar-default ul{
