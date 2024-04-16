@@ -26,6 +26,10 @@ p {
   text-align: center;
 }
 
+/*****************/
+/* POPUP STYLING */
+/*****************/
+
 .show-popup {
   border-radius: 5px;
   cursor: pointer;
@@ -103,6 +107,9 @@ p {
   float: right;
 }
 
+/*********************/
+/* PIE CHART STYLING */
+/*********************/
 /* Source code for .pie + .pieLine: https://www.freecodecamp.org/news/css-only-pie-chart/ */
 
 :root {
@@ -119,7 +126,6 @@ p {
   }
 }
 
-
 .pie {
   --w:300px;
   width: var(--w);
@@ -131,6 +137,7 @@ p {
   font-weight: bold;
   font-family: sans-serif;
 }
+
 .pie:before {
   content: "";
   position: absolute;
@@ -142,6 +149,7 @@ p {
   -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - var(--b)), #000 calc(100% - var(--b)));
   mask: radial-gradient(farthest-side, #0000 calc(100% - var(--b)), #000 calc(100% - var(--b)));
 }
+
 .pie:after {
   content: "";
   position: absolute;
@@ -150,6 +158,7 @@ p {
   background: rgb(0, 0, 56);
   transform: rotate(calc(var(--p)*3.6deg)) translateY(calc(16.5% - var(--w)/2));
 }
+
 @property --p{
   syntax: '<number>';
   inherits: true;
