@@ -121,7 +121,7 @@ p {
 
 
 .pie {
-  --w:300px;
+  /* --w:300px; */
   width: var(--w);
   position: static;
   display: inline-grid;
@@ -188,3 +188,5 @@ p {
   mask: radial-gradient(farthest-side, #0000 calc(100% - var(--b)), #000 calc(100% - var(--b)));
 
 }
+
+

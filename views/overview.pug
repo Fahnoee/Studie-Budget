@@ -24,14 +24,34 @@ block content
         div.column 
           h2 Primary budget overview
           div.pie-line
-            div.pie.animate
+            div.pie.animate(style="--w: 300px")
               p.total Total Amount: 0
               p.spent Spent: 0
               p.left Available: 0
           div
           button.show-popup Add income/expenses
         div.column
-          h2 Categories
+          div.categories
+            h2 Categories
+            div.pie-line
+              div.pie.animate(style="--w: 100px") 
+                p 0
+            div.pie-line
+              div.pie.animate(style="--w: 100px") 
+                p 5
+            div.pie-line
+              div.pie.animate(style="--w: 100px") 
+                p 7
+            div.pie-line
+              div.pie.animate(style="--w: 100px")
+                p 3
+            div.pie-line
+              div.pie.animate(style="--w: 100px")
+                p 0
+          div.names
+            div.circle
+              
+             
         div.column
           h2 Add custom
       div.tips
