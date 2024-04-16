@@ -110,7 +110,7 @@ p {
   font-size: 25px;
   font-weight: bold;
   font-family: sans-serif;
-
+}
 /*////////////////*/
 /* POPUP CSS CODE */
 /*////////////////*/
@@ -355,4 +355,3 @@ p {
 .popup-box-expense input{
   float: right;
 }
-
