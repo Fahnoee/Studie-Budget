@@ -324,10 +324,22 @@ async function updateUserValuesView() {
     spentAmount.textContent = "Spent: " + data.expenses;
     leftAmount.textContent = "Available: " + (data.income - data.expenses);
     setPiePercentage((data.expenses / data.income * 100), pie);    // Calculates the percentage that need to be painted
+    const categories = data.customExpenses ? Object.keys(data.customExpenses) : [];
+    categories.forEach(category => {
+      createCategory(category, getRandomColor());
+    });
   } catch (error) {
-    // Handle any errors
     console.error("Error: ", error);
   }
+}
+
+function getRandomColor() {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
 }
 
 // Method for opdating the circle on the pie charts

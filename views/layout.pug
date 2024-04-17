@@ -23,7 +23,10 @@ html
               a.el Options 4
           div.right           
             li 
-              a.el Log in
+              if username
+                a.el Welcome, #{username}
+              else
+                a.el Log in
             li
               a.el Help 
             li
