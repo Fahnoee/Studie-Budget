@@ -8,9 +8,8 @@ const pie = document.querySelector('.pie');
 const totalAmount = document.querySelector(".total");
 const spentAmount = document.querySelector(".spent");
 const leftAmount = document.querySelector(".left");
-const categories = document.querySelector(".categories");
-const paragraphs = categories.querySelectorAll("p")
-const pies = categories.querySelectorAll(".pie");
+
+
 
 //#####################
 // Q-SELECTORS POPUPS
@@ -24,7 +23,7 @@ const saveBtnFixed = document.querySelector('.save-btn-fixed');
 const incomeFixed = document.querySelector(".income-fixed");
 const expenseFixed = document.querySelector(".expense-fixed");
 
-//EXPENSE
+// EXPENSE
 const showPopupCustomExpense = document.querySelector('.show-popup-expense');
 const popupContainerCustomExpense = document.querySelector('.popup-container-expense');
 const closeBtnCustomExpense = document.querySelector('.close-btn-expense');
@@ -33,7 +32,7 @@ const categoryCustomExpense = document.querySelector(".category-expense");
 const nameCustomExpense = document.querySelector(".name-expense");
 const valueCustomExpense = document.querySelector(".value-expense");
 
-//INCOME
+// INCOME
 const showPopupCustomIncome = document.querySelector('.show-popup-income');
 const popupContainerCustomIncome = document.querySelector('.popup-container-income');
 const closeBtnCustomIncome = document.querySelector('.close-btn-income');
@@ -42,6 +41,16 @@ const categoryCustomIncome = document.querySelector(".category-income");
 const nameCustomIncome = document.querySelector(".name-income");
 const valueCustomIncome = document.querySelector(".value-income");
 
+// CATEGORIES
+const categories = document.querySelector(".categories");
+const paragraphs = categories.querySelectorAll("p")
+const pies = categories.querySelectorAll(".pie");
+const categoryBtn = document.querySelector(".add-circle");
+const categoryDialog = document.querySelector(".dialog");
+const categoryName = document.querySelector(".category-name");
+const categoryGoal = document.querySelector(".category-goal");
+const closeBtnCategory = document.querySelector('.close-btn-category');
+const saveBtnCategory = document.querySelector('.save-btn-category');
 
 updateUserValuesView(); // Paste current user values from database:
 
@@ -86,6 +95,11 @@ saveBtnFixed.onclick = async() => {
   console.log("The value of --p is: " + getPieValue);
 };
 
+categoryBtn.addEventListener('click', () => {
+  console.log("Activated");
+  categoryDialog.showModal();
+  console.log("Category Name: " + categoryName.value);
+});
 
 // Function for updating values of categories in html and database
 async function updateCategory(pieIndex) {
