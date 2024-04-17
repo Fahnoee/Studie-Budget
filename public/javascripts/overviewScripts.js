@@ -62,7 +62,6 @@ closeBtnFixed.onclick = () => {
 
 // Function for the Save Button
 saveBtnFixed.onclick = async() => {
-  let username = "John Doe";
   let incomeVal = incomeFixed.value;
   let expenseVal = expenseFixed.value;
 
@@ -129,7 +128,6 @@ closeBtnCustomIncome.onclick = () => {
 };
 
 saveBtnCustomIncome.onclick = async() => {
-  let username = "John Doe";
   let category = categoryCustomIncome.value;
 
   // Extracting value from inputfields
@@ -161,7 +159,6 @@ closeBtnCustomExpense.onclick = () => {
 };
 
 saveBtnCustomExpense.onclick = async() => {
-  let username = "John Doe";
   let category = categoryCustomExpense.value;
 
   // Extracting value from inputfields

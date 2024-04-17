@@ -4,13 +4,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const User = require("./models/user");
 
-const overviewRouter = require("./routes/overview");
-const financialTipsRouter = require("./routes/financialTips");
-const frontpageRouter = require("./routes/frontpage");
-const signUpRouter = require("./routes/signUpSide");
-const logInRouter = require("./routes/logInSite");
-
-const controller = require("./controllers/budgetController.js");
+const session = require('express-session');
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -19,6 +13,21 @@ require('dotenv').config();
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true
+}));
+const overviewRouter = require("./routes/overview");
+const financialTipsRouter = require("./routes/financialTips");
+const frontpageRouter = require("./routes/frontpage");
+const signUpRouter = require("./routes/signUpSide");
+const logInRouter = require("./routes/logInSite");
+
+const controller = require("./controllers/budgetController.js");
+
+
 
 //###########################
 // Set up mongoose connection
@@ -176,6 +185,7 @@ app.post('/signup', async (req, res) => {
 
   try {
     await controller.createUserWithBudget(String(username), String(password));
+    req.session.username = username;
     res.redirect('/overview'); // Redirect to the overview page if user creation is successful
     
   } catch (error) {
