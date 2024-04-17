@@ -1,16 +1,11 @@
 
-// const budgetController = require("../../controllers/budgetController");
-const showPopup = document.querySelector('.show-popup');
-const popupContainer = document.querySelector('.popup-container');
-
 const body = document.querySelector('body');
 const pie = document.querySelector('.pie');
 const totalAmount = document.querySelector(".total");
 const spentAmount = document.querySelector(".spent");
 const leftAmount = document.querySelector(".left");
-const categories = document.querySelector(".categories");
-const paragraphs = categories.querySelectorAll("p")
-const pies = categories.querySelectorAll(".pie");
+
+
 
 //#####################
 // Q-SELECTORS POPUPS
@@ -24,7 +19,7 @@ const saveBtnFixed = document.querySelector('.save-btn-fixed');
 const incomeFixed = document.querySelector(".income-fixed");
 const expenseFixed = document.querySelector(".expense-fixed");
 
-//EXPENSE
+// EXPENSE
 const showPopupCustomExpense = document.querySelector('.show-popup-expense');
 const popupContainerCustomExpense = document.querySelector('.popup-container-expense');
 const closeBtnCustomExpense = document.querySelector('.close-btn-expense');
@@ -33,7 +28,7 @@ const categoryCustomExpense = document.querySelector(".category-expense");
 const nameCustomExpense = document.querySelector(".name-expense");
 const valueCustomExpense = document.querySelector(".value-expense");
 
-//INCOME
+// INCOME
 const showPopupCustomIncome = document.querySelector('.show-popup-income');
 const popupContainerCustomIncome = document.querySelector('.popup-container-income');
 const closeBtnCustomIncome = document.querySelector('.close-btn-income');
@@ -42,6 +37,17 @@ const categoryCustomIncome = document.querySelector(".category-income");
 const nameCustomIncome = document.querySelector(".name-income");
 const valueCustomIncome = document.querySelector(".value-income");
 
+// CATEGORIES
+const categories = document.querySelector(".categories");
+const paragraphs = categories.querySelectorAll("p")
+const pies = categories.querySelectorAll(".pie");
+const categoryBtn = document.querySelector(".add-circle");
+const categoryDialog = document.querySelector(".dialog");
+const categoryName = document.querySelector(".category-name");
+const categoryGoal = document.querySelector(".category-goal");
+const categoryColor = document.querySelector(".category-color"); 
+const closeBtnCategory = document.querySelector('.close-btn-category');
+const saveBtnCategory = document.querySelector('.save-btn-category');
 
 updateUserValuesView(); // Paste current user values from database:
 
@@ -74,8 +80,6 @@ saveBtnFixed.onclick = async() => {
 
   await updateBudget(data);                     // Firstly update the budget  in the database with new values
   await updateUserValuesView();                 // Here we update the userValues showed within the piechart with values from database
-  await createCategory();                       // Create category
-  await updateCategory();                       // Update category
 
   popupContainerFixed.classList.remove("active");    // Deactivates popup by removing class from div
   
@@ -85,6 +89,25 @@ saveBtnFixed.onclick = async() => {
   console.log("The value of --p is: " + getPieValue);
 };
 
+categoryBtn.onclick = () => {
+  console.log("Activated");
+  categoryDialog.showModal();
+  console.log("Category Name: " + categoryName.value);
+};
+
+closeBtnCategory.onclick = () => {
+  categoryName.value = "";
+  categoryGoal.value = "";
+  categoryDialog.close();
+}
+
+saveBtnCategory.onclick = () => {
+  inputCategoryToBackend();
+  createCategory(categoryName.value, categoryColor.value);  // Create category
+  categoryName.value = "";
+  categoryGoal.value = "";
+  categoryDialog.close();
+};
 
 // Function for updating values of categories in html and database
 async function updateCategory(pieIndex) {
@@ -95,7 +118,7 @@ async function updateCategory(pieIndex) {
     let exps = data.expenses
     console.log("Income: " + inc, "Expense: " + exps);
 
-    setPieColor(pies[pieIndex], "red");
+
     setPiePercentage((exps / inc * 100), pies[pieIndex]);    // Calculates the percentage that need to be painted
 
     for (let i = 0; i < paragraphs.length; i++) {
@@ -190,6 +213,9 @@ function getDate(){
   
   return formattedDate;
 };
+
+//////////////  OKKKAAAYA ADD GOAL ////////////////
+
 
 //############################ 
 // FUNCTIONS FOR DATAHANDELING
@@ -307,40 +333,83 @@ function setPiePercentage(percent, piechart) {
     piechart.classList.add("animate");       // Start animation
 }
 
-
-function addCustomExpense(){
+function inputCategoryToBackend(){
+  let name = "##GOAL##";
+  let username = "John Doe";
   
+  let goalValue = categoryGoal.value;         // Testing value -- should come from user input
+  let newCategoryName = categoryName.value;   // Testing name -- should come from user input
+
+  let items = [{"name": name, "value": goalValue}];
+  
+  goalData = {
+    username,
+    customExpense: items,
+    category: newCategoryName,
+  }
+  updateCustomExpense(goalData);
 }
+
 
 // CHAT!!!! 
 // Function for creating a new catogory in the html and the database
-async function createCategory(categoryName) {
+async function createCategory(categoryTitle, color) {
   try {
     // Find the container for categories
     const categoriesContainer = document.querySelector('.categories');
 
+    //Removes the "add category"
+    const button = categoriesContainer.querySelector('button');
+    button.remove();
+
     // Create elements for the category
     const categoryDiv = document.createElement('div');
     categoryDiv.classList.add('pie-line');  // Set class to "pie-line" to create grey circle
+    categoryDiv.style.marginBottom = '7%';
 
-    const paragraph = document.createElement('p');
-    paragraph.textContent = 0;   // Set the goal for the category
+    // Create span element
+    const span = document.createElement('span');
+    span.classList.add('category-text'); // Set class to "category-text" to position title above circle
+    span.textContent = categoryTitle; // Set title to user input
 
     // Create a div element for the pie chart 
     const pie = document.createElement('div');
     pie.classList.add('pie', 'animate'); // Add classes for styling 
-    pie.style.setProperty('--w', '100px'); 
+    pie.style.setProperty('--w', '100px');  // Set size of circle
+    pie.style.setProperty('--p', '50');  // Set size of circle
+    setPieColor(pie, color)
+
+    // Create paragraph element
+    const paragraph = document.createElement('p');
+    paragraph.textContent = 0;   // Set the goal for the category
     
     // Append the paragraph to the pie div
     pie.appendChild(paragraph)
-    // Append the pie div to the category div
-    categoryDiv.appendChild(pie);
 
+    // Append the span and pie div to the category div
+    categoryDiv.appendChild(span);
+    categoryDiv.appendChild(pie);
+    
     // Append the category div to the categories container
     categoriesContainer.appendChild(categoryDiv);
 
+    // Lastly, add back the new category button
+    const newButton = document.createElement('button');
+    newButton.classList.add('add-circle');
+    newButton.style.marginBottom = '7%';
+    newButton.textContent = '+';
+    categoriesContainer.appendChild(newButton);
+    
+    newButton.addEventListener('click', () => {
+      console.log("activated")
+      categoryDialog.showModal();
+      console.log("category Name:" + categoryName.value)
+    });
+
+    return newButton;
+
     // Optionally, you can return the category element if you need to manipulate it further
-    return categoryDiv;
+    // return categoryDiv;
   } catch (error) {
     console.log("Error: " + error);
     throw error;

@@ -45,6 +45,19 @@ block content
       div.buttons
         button.close-btn-expense CLOSE
         button.save-btn-expense SAVE
+  
+  dialog().dialog
+    h3 Create category
+    p Enter the name of the category: 
+      input.category-name
+    p Enter a goal: 
+      input.category-goal
+    p Choose a color: 
+      input.category-color(type="color")
+    div.buttons
+      button.close-btn-category CLOSE 
+      button.save-btn-category SAVE
+    
   main
     div.all
       h1= title
@@ -59,26 +72,9 @@ block content
           div
           button.show-popup-fixed Add income/expenses
         div.column
+          h2 Categories
           div.categories
-            h2 Categories
-            div.pie-line
-              div.pie.animate(style="--w: 100px") 
-                p 0
-            div.pie-line
-              div.pie.animate(style="--w: 100px") 
-                p 5
-            div.pie-line
-              div.pie.animate(style="--w: 100px") 
-                p 7
-            div.pie-line
-              div.pie.animate(style="--w: 100px")
-                p 3
-            div.pie-line
-              div.pie.animate(style="--w: 100px")
-                p 0
-          div.names
-            div.circle
-              
+            button.add-circle(style="margin-bottom: 7%;") +           
              
         div.column
           h2 Add custom
@@ -89,3 +85,4 @@ block content
   script.
     let username = "#{username}";
   script(src="/javascripts/overviewScripts.js")
+

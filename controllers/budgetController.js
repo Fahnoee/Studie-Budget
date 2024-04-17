@@ -3,7 +3,7 @@ const Budget = require("../models/budget.js")
 
 
 /**
- * Fetches the budget ID associated with a given username.
+ * Fetches the budget ID associated with a given username.con
  * @param {string} username - The username to search for in the database.
  * @returns {Promise<string>} The budget ID associated with the user.
  * @throws {Error} If no user is found or if there's an error during the query execution.
@@ -86,6 +86,8 @@ async function createUserWithBudget(username, password) {
     }
 }
 
+
+
 async function addCustomExpense(username, { category, items }) {
     try {
         const budgetId = await fetchUserBudgetId(username);
@@ -102,11 +104,19 @@ async function addCustomExpense(username, { category, items }) {
         // Initialize the category if it doesn't exist
         if (!budget.customExpenses[category]) {
             budget.customExpenses[category] = [];
+            
+            //const goalItem =  {"name": items[0].name, "amount":items[0].amount};
+
+            items.forEach(item => budget.customExpenses[category].push(item));
+            // Mark the customExpenses field as modified
+            budget.markModified('customExpenses');
         }
         // Add the new items to the category
-        items.forEach(item => budget.customExpenses[category].push(item));
-        // Mark the customExpenses field as modified
-        budget.markModified('customExpenses');
+        else {
+            items.forEach(item => budget.customExpenses[category].push(item));
+            // Mark the customExpenses field as modified
+            budget.markModified('customExpenses');
+        }
         // Save the updated budget
         const updatedBudget = await budget.save();
         return updatedBudget;
@@ -131,11 +141,19 @@ async function addCustomIncome(username, { category, items }) {
         // Initialize the category if it doesn't exist
         if (!budget.customIncomes[category]) {
             budget.customIncomes[category] = [];
+            
+            //const goalItem =  {"name": items[0].name, "amount":items[0].amount};
+
+            items.forEach(item => budget.customIncomes[category].push(item));
+            // Mark the customIncomes field as modified
+            budget.markModified('customIncomes');
         }
         // Add the new items to the category
-        items.forEach(item => budget.customIncomes[category].push(item));
-        // Mark the customExpenses field as modified
-        budget.markModified('customIncomes');
+        else {
+            items.forEach(item => budget.customIncomes[category].push(item));
+            // Mark the customIncomes field as modified
+            budget.markModified('customIncomes');
+        }
         // Save the updated budget
         const updatedBudget = await budget.save();
         return updatedBudget;
@@ -178,6 +196,7 @@ async function deleteUser(username) {
 //addCustomIncome("sidste", { category: "race", items: [{name: "pizza", amount: 10}] })
 //createUserWithBudget("user", "password");
 //addCustomIncome("sidste", { category: "Race", items: [{name: "Somali pirate", amount: 10}] })
+
 // Placeholder variables for budget data
 let income; 
 let expenses;

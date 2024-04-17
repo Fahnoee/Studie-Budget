@@ -26,6 +26,10 @@ p {
   text-align: center;
 }
 
+/*////////////*/
+/* PIE CHARTS */
+/*////////////*/
+
 :root {
   --b: 15px; /* Adjust as needed */
   --p: 0; /* Adjust as needed */
@@ -38,6 +42,17 @@ p {
     --b: 8%; /* Adjust as needed */
     --p: 40%; /* Adjust as needed */
   }
+}
+
+.pie {
+  width: var(--w);
+  position: static;
+  display: inline-grid;
+  place-content: center;
+  margin: 5px;
+  font-size: 25px;
+  font-weight: bold;
+  font-family: sans-serif;
 }
 
 .pie:before {
@@ -74,8 +89,6 @@ p {
 }
 
 .pie-line{
-  --w:70%;
-    
   width: var(--w);
   min-width: fit-content;
   max-width: fit-content;
@@ -97,25 +110,33 @@ p {
   background: conic-gradient(lightgrey 0deg, lightgrey 360deg);
   -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - var(--b)), #000 calc(100% - var(--b)));
   mask: radial-gradient(farthest-side, #0000 calc(100% - var(--b)), #000 calc(100% - var(--b)));
-
 }
 
-.pie {
-  /* --w:300px; */
-  width: var(--w);
+.add-circle {
+  width: 110px;
   position: static;
   display: inline-grid;
-  place-content: center;
   margin: 5px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: none;
+  background-color: rgb(210, 210, 210);
+  place-content: center;
   font-size: 25px;
-  font-weight: bold;
-  font-family: sans-serif;
+  cursor: pointer;
 }
+
+.add-circle:hover {
+  background-color: rgb(194, 193, 193);
+}
+
 /*////////////////*/
 /* POPUP CSS CODE */
 /*////////////////*/
 
-/*FIXED*/
+/*///////*/
+/* FIXED */
+/*///////*/
 
 .show-popup-fixed {
   border-radius: 5px;
@@ -194,9 +215,9 @@ p {
   float: right;
 }
 
-
-/* CUSTOM INCOME*/
-
+/*///////////////*/
+/* CUSTOM INCOME */
+/*///////////////*/
 
 .show-popup-income {
   border-radius: 5px;
@@ -275,8 +296,9 @@ p {
   float: right;
 }
 
-
+/*///////////////*/
 /* CUSTOM EXPENSE*/
+/*?//////////////*/
 
 .show-popup-expense {
   border-radius: 5px;
@@ -317,7 +339,6 @@ p {
   padding: 30px;
 }
 
-
 .popup-container-expense.active .popup-box-expense{
   transform: scale(1);
   transition: .4s ease;
@@ -354,4 +375,51 @@ p {
 
 .popup-box-expense input{
   float: right;
+}
+
+/*////////////*/
+/* CATEGORIES */
+/*////////////*/
+
+dialog {
+  border: none;
+  border-radius: 6px;
+}
+
+.close-btn-category {
+  width: 45%;
+  height: 40px;
+  background: rgb(193, 200, 203);
+  border-radius: 6px; 
+  border: none;
+  outline: none;
+  margin-right: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  cursor: pointer; 
+}
+
+.save-btn-category {
+  width: 45%;
+  height: 40px;
+  background: lightblue;
+  border-radius: 6px; 
+  border: none;
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  cursor: pointer; 
+}
+
+.category-text {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 15px;
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10%;
+  justify-content: center;
 }
