@@ -190,6 +190,9 @@ function getDate(){
   return formattedDate;
 };
 
+//////////////  OKKKAAAYA ADD GOAL ////////////////
+
+
 //############################ 
 // FUNCTIONS FOR DATAHANDELING
 //############################
@@ -306,10 +309,23 @@ function setPiePercentage(percent, piechart) {
     piechart.classList.add("animate");       // Start animation
 }
 
-
-function addCustomExpense(){
+function inputCategoryToBackend(){
+  let name = "##GOAL##";
+  let username = "John Doe";
   
+  //let goalValue = 700;    Testing value -- should come from user input
+  //let newCategoryName = "snipsnapsnude";  Testing name -- should come from user input
+
+  let items = [{"name": name, "value": goalValue}];
+  
+  goalData = {
+    username,
+    customExpense: items,
+    category: newCategoryName,
+  }
+  updateCustomExpense(goalData);
 }
+
 
 // CHAT!!!! 
 // Function for creating a new catogory in the html and the database

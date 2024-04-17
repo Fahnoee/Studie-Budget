@@ -85,7 +85,9 @@ async function createUserWithBudget(username) {
     }
 }
 
-async function addCustomExpense(username, { category, items }, goalValue) {
+
+
+async function addCustomExpense(username, { category, items }) {
     try {
         const budgetId = await fetchUserBudgetId(username);
         if (!budgetId) {
@@ -102,9 +104,9 @@ async function addCustomExpense(username, { category, items }, goalValue) {
         if (!budget.customExpenses[category]) {
             budget.customExpenses[category] = [];
             
-            const goalItem =  {"name": "####goalSet####", "value": goalValue};
+            //const goalItem =  {"name": items[0].name, "amount":items[0].amount};
 
-            items.forEach(item => budget.customExpenses[category].push(goalItem));
+            items.forEach(item => budget.customExpenses[category].push(item));
             // Mark the customExpenses field as modified
             budget.markModified('customExpenses');
         }
@@ -122,7 +124,7 @@ async function addCustomExpense(username, { category, items }, goalValue) {
     }
 }
 
-async function addCustomIncome(username, { category, items }, goalValue) {
+async function addCustomIncome(username, { category, items }) {
     try {
         const budgetId = await fetchUserBudgetId(username);
         if (!budgetId) {
@@ -139,9 +141,9 @@ async function addCustomIncome(username, { category, items }, goalValue) {
         if (!budget.customIncomes[category]) {
             budget.customIncomes[category] = [];
             
-            const goalItem =  {"name": "####goalSet####", "value": goalValue};
+            //const goalItem =  {"name": items[0].name, "amount":items[0].amount};
 
-            items.forEach(item => budget.customIncomes[category].push(goalItem));
+            items.forEach(item => budget.customIncomes[category].push(item));
             // Mark the customIncomes field as modified
             budget.markModified('customIncomes');
         }
@@ -177,9 +179,9 @@ async function deleteUser(username) {
 }
 
 //add customexpenses food catagory pizza for 10
-//addCustomExpense("John Doe", { category: "babayaga", items: [{name: "pizza", amount: 10}] }, 6700)
+//addCustomExpense("John Doe", { category: "babapapa", items: [{name: "####GOAL####", amount: 666}] });
 //createUserWithBudget("sidste");
-addCustomIncome("John Doe", { category: "lurtmand", items: [{name: "Somali pirate", amount: 10}]}, 6969696);
+//addCustomIncome("John Doe", { category: "babapapapik", items: [{name: "####GOAL####", amount: 1}]});
 // Placeholder variables for budget data
 let income; 
 let expenses;
