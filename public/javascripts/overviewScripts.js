@@ -1,8 +1,4 @@
 
-// const budgetController = require("../../controllers/budgetController");
-const showPopup = document.querySelector('.show-popup');
-const popupContainer = document.querySelector('.popup-container');
-
 const body = document.querySelector('body');
 const pie = document.querySelector('.pie');
 const totalAmount = document.querySelector(".total");

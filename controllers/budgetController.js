@@ -85,7 +85,7 @@ async function createUserWithBudget(username) {
     }
 }
 
-async function addCustomExpense(username, { category, items }) {
+async function addCustomExpense(username, { category, items }, goalValue) {
     try {
         const budgetId = await fetchUserBudgetId(username);
         if (!budgetId) {
@@ -101,11 +101,19 @@ async function addCustomExpense(username, { category, items }) {
         // Initialize the category if it doesn't exist
         if (!budget.customExpenses[category]) {
             budget.customExpenses[category] = [];
+            
+            const goalItem =  {"name": "####goalSet####", "value": goalValue};
+
+            items.forEach(item => budget.customExpenses[category].push(goalItem));
+            // Mark the customExpenses field as modified
+            budget.markModified('customExpenses');
         }
         // Add the new items to the category
-        items.forEach(item => budget.customExpenses[category].push(item));
-        // Mark the customExpenses field as modified
-        budget.markModified('customExpenses');
+        else {
+            items.forEach(item => budget.customExpenses[category].push(item));
+            // Mark the customExpenses field as modified
+            budget.markModified('customExpenses');
+        }
         // Save the updated budget
         const updatedBudget = await budget.save();
         return updatedBudget;
@@ -114,7 +122,7 @@ async function addCustomExpense(username, { category, items }) {
     }
 }
 
-async function addCustomIncome(username, { category, items }) {
+async function addCustomIncome(username, { category, items }, goalValue) {
     try {
         const budgetId = await fetchUserBudgetId(username);
         if (!budgetId) {
@@ -130,11 +138,19 @@ async function addCustomIncome(username, { category, items }) {
         // Initialize the category if it doesn't exist
         if (!budget.customIncomes[category]) {
             budget.customIncomes[category] = [];
+            
+            const goalItem =  {"name": "####goalSet####", "value": goalValue};
+
+            items.forEach(item => budget.customIncomes[category].push(goalItem));
+            // Mark the customIncomes field as modified
+            budget.markModified('customIncomes');
         }
         // Add the new items to the category
-        items.forEach(item => budget.customIncomes[category].push(item));
-        // Mark the customExpenses field as modified
-        budget.markModified('customIncomes');
+        else {
+            items.forEach(item => budget.customIncomes[category].push(item));
+            // Mark the customIncomes field as modified
+            budget.markModified('customIncomes');
+        }
         // Save the updated budget
         const updatedBudget = await budget.save();
         return updatedBudget;
@@ -161,9 +177,9 @@ async function deleteUser(username) {
 }
 
 //add customexpenses food catagory pizza for 10
-//addCustomIncome("sidste", { category: "race", items: [{name: "pizza", amount: 10}] })
+//addCustomExpense("John Doe", { category: "babayaga", items: [{name: "pizza", amount: 10}] }, 6700)
 //createUserWithBudget("sidste");
-//addCustomIncome("sidste", { category: "Race", items: [{name: "Somali pirate", amount: 10}] })
+addCustomIncome("John Doe", { category: "lurtmand", items: [{name: "Somali pirate", amount: 10}]}, 6969696);
 // Placeholder variables for budget data
 let income; 
 let expenses;
