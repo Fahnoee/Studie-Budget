@@ -135,7 +135,7 @@ app.post("/api/addcustom/income", (req, res) => {
 app.get('/api/budget/:budgetID', async (req, res) => {
   try {
       // Query MongoDB to retrieve data for the specific user
-      let username = "John Doe"                                    //RET TIL BRUG AF RIGTIGT USERNAME
+      let username = req.session.username;                                    //RET TIL BRUG AF RIGTIGT USERNAME
       const id = await controller.fetchUserBudgetId(username);                // Using function from budgetcontroller.js to find user's id
       const data = await controller.Budget.findOne({ _id: id });              // Using user id to find their budget 
       if (!data) {
