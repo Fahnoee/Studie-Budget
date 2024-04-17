@@ -147,18 +147,30 @@ app.post('/login', (req, res) => {
 
 
 // Route to handle POST request from the signup form
-app.post('/signup', (req, res) => {
-  const { username, password,  passwordCheck} = req.body;
-  // Process signup here (e.g., create user, hash password)
-  console.log(username);
+app.post('/signup', async (req, res) => {
+  let data = req.body;
+  let username = data.username;
+  let password = data.password;
 
-  if (password != passwordCheck)
-  console.log(password);
-  console.log(passwordCheck);
-
+  try {
+    await controller.createUserWithBudget(String(username), String(password));
+    res.redirect('/overview'); // Redirect to the overview page if user creation is successful
+    
+  } catch (error) {
+    if (error.message === 'User already exists') {
+      // Render a view with a retry option and an error alert
+      res.render('signUpSide', { 
+        error: 'User already exists. Please choose a different username.', 
+        retryUrl: '/signup',
+        alert: 'Error: User already exists. Try a different username.'
+      });
+    } else {
+      // Handle other errors
+      console.error(error);
+      res.status(500).send('An error occurred during the signup process.');
+    }
+  }
 });
-//Console log password for test
-
 
 
 // View engine setup

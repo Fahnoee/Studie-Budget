@@ -62,23 +62,27 @@ async function updateBudget(username, newData) {
     }
 };
 
-async function createUserWithBudget(username) {
-    // Set default values for the budget, including initializing customExpenses and customIncome
+async function createUserWithBudget(username, password) {
+    // Check if user already exists
+    username = username.toLowerCase();
+    
+    const existingUser = await User.findOne({ name: username }).exec();
+    if (existingUser) {
+        throw new Error('User already exists');
+    }
+
+    // Set default values for the budget
     const defaultBudget = {
         income: 0,
         expenses: 0,
         goal: 0,
-        customExpenses: {}, // Ensure customExpenses is initialized as an empty object
-        customIncome: {}    // Ensure customIncome is initialized as an empty object
+        customExpenses: {},
+        customIncome: {}
     };
 
     try {
-        // Create a new budget with either provided or default initial values
         const newBudget = await Budget.create(defaultBudget);
-        
-        // Create a new user with the created budget's ID
-        const newUser = await User.create({ name: username, budget: newBudget._id });
-        
+        const newUser = await User.create({ name: username, password: password, budget: newBudget._id });
         return newUser;
     } catch (error) {
         throw new Error(`Error creating user with budget: ${error.message}`);
@@ -162,7 +166,7 @@ async function deleteUser(username) {
 
 //add customexpenses food catagory pizza for 10
 //addCustomIncome("sidste", { category: "race", items: [{name: "pizza", amount: 10}] })
-//createUserWithBudget("sidste");
+//createUserWithBudget("user", "password");
 //addCustomIncome("sidste", { category: "Race", items: [{name: "Somali pirate", amount: 10}] })
 // Placeholder variables for budget data
 let income; 

@@ -20,4 +20,9 @@ block content
         div.alreadyAccount 
           button.btn(type="button" onclick="goToLogIn()") Already have an account?
     //- script(src='/javasctipts/frontpage.js')
+    script.
+        let alertMessage = !{JSON.stringify(alert)};
+        if (alertMessage) {
+          alert(alertMessage);
+        }
     script(src='/javascripts/logIn.js') // Ensure this is the correct path to your updated JS file
