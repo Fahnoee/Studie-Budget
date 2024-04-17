@@ -5,9 +5,6 @@ const totalAmount = document.querySelector(".total");
 const spentAmount = document.querySelector(".spent");
 const leftAmount = document.querySelector(".left");
 
-const dropdownExpense = document.querySelector(".dropdown-expense");
-const dropdownIncome = document.querySelector(".dropdown-income");
-
 //#####################
 // Q-SELECTORS POPUPS
 //#####################
@@ -25,7 +22,7 @@ const showPopupCustomExpense = document.querySelector('.show-popup-expense');
 const popupContainerCustomExpense = document.querySelector('.popup-container-expense');
 const closeBtnCustomExpense = document.querySelector('.close-btn-expense');
 const saveBtnCustomExpense = document.querySelector('.save-btn-expense');
-const categoryCustomExpense = document.querySelector(".category-expense");
+const dropdownExpense = document.querySelector(".dropdown-expense");
 const nameCustomExpense = document.querySelector(".name-expense");
 const valueCustomExpense = document.querySelector(".value-expense");
 
@@ -34,7 +31,7 @@ const showPopupCustomIncome = document.querySelector('.show-popup-income');
 const popupContainerCustomIncome = document.querySelector('.popup-container-income');
 const closeBtnCustomIncome = document.querySelector('.close-btn-income');
 const saveBtnCustomIncome = document.querySelector('.save-btn-income');
-const categoryCustomIncome = document.querySelector(".category-income");
+const dropdownIncome = document.querySelector(".dropdown-income");
 const nameCustomIncome = document.querySelector(".name-income");
 const valueCustomIncome = document.querySelector(".value-income");
 
@@ -142,15 +139,16 @@ closeBtnCustomIncome.onclick = () => {
 
 saveBtnCustomIncome.onclick = async() => {
   let username = "John Doe";
-  let category = categoryCustomIncome.value;
+  //let category = dropdownIncome.value;
+  let category = "income"
 
   // Extracting value from inputfields
-  let name = nameCustomIncome.value;
+  //let name = nameCustomIncome.value;
   let value = valueCustomIncome.value;
   let date = getDate();
   
   //Packaging
-  let items = [{"name": name, "amount": value, "date": date}];
+  let items = [{"amount": value, "date": date}];
 
   let dataIncome = {
     username,
@@ -176,7 +174,7 @@ closeBtnCustomExpense.onclick = () => {
 
 saveBtnCustomExpense.onclick = async() => {
   let username = "John Doe";
-  let category = categoryCustomExpense.value;
+  let category = dropdownExpense.value;
 
   // Extracting value from inputfields
   let name = nameCustomExpense.value;
@@ -254,29 +252,6 @@ async function updateBudget(data) {         // A function to update the data by 
   }
 }
 
-async function dropDownFetchCategoriesExpense(){
-  let data = await fetchDatabase();
-   //console.log("Test Her:", Object.keys(pik.customExpenses));
-  let categories = Object.keys(data.customExpenses);
-  for(let i = 0; i < categories.length; i++){
-    let option = document.createElement("option");
-    option.textContent = categories[i];
-    dropdownExpense.appendChild(option);
-    console.log(categories[i]);
-  }
-}
-
-async function dropDownFetchCategoriesIncome(){
-  let data = await fetchDatabase();
-   //console.log("Test Her:", Object.keys(pik.customExpenses));
-  let categories = Object.keys(data.customIncomes);
-  for(let i = 0; i < categories.length; i++){
-    let option = document.createElement("option");
-    option.textContent = categories[i];
-    dropdownIncome.appendChild(option);
-    console.log(categories[i]);
-  }
-}
 
 async function updateCustomExpense(dataExpense) {         // A function to update the custom expense data
   try {
@@ -355,11 +330,8 @@ function setPiePercentage(percent, piechart) {
 
 function inputCategoryToBackend(){
   let name = "##GOAL##";
-  let username = "John Doe";
+  let username = "John Doe";  // Test name, needs to take username/user id as parameter
   
-  //let goalValue = 700;    Testing value -- should come from user input
-  //let newCategoryName = "snipsnapsnude";  Testing name -- should come from user input
-
   let items = [{"name": name, "value": goalValue}];
   
   goalData = {
@@ -367,7 +339,7 @@ function inputCategoryToBackend(){
     customExpense: items,
     category: newCategoryName,
   }
-  updateCustomExpense(goalData);
+  updateCustomExpense(goalData); //Sends the goal data to backend
 }
 
 
@@ -405,3 +377,34 @@ async function createCategory(categoryName) {
     throw error;
   }
 }
+
+//// These functions fetch categories from the database, and places them into a dropdown menu
+
+async function dropDownFetchCategoriesExpense(){
+  try{  
+    let data = await fetchDatabase();                  //Fetches data from database
+    let categories = Object.keys(data.customExpenses); //Accesses all category names in that budget
+    categories.forEach(category => {                   //Puts them into an array and displays them in the dropdown menu on the "add custom" popup
+      let option = document.createElement("option");
+      option.textContent = category;
+      dropdownExpense.appendChild(option);
+  });
+  } catch (error) {
+    console.error('An error occurred fetching categories from database:', error);
+  }
+}
+
+async function dropDownFetchCategoriesIncome(){
+  try{
+    let data = await fetchDatabase(); 
+    let categories = Object.keys(data.customIncomes);
+    categories.forEach(category => {
+      let option = document.createElement("option");
+      option.textContent = category;
+      dropdownIncome.appendChild(option);
+  });
+  } catch (error) {
+    console.error('An error occurred fetching categories from database:', error);
+  }
+}
+
