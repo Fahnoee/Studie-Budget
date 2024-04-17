@@ -19,7 +19,7 @@ main{
   display: flex;
   align-items: center;
   list-style-type: none;
-  background-color: grey;
+  background-color: #333; /* Darker shade for a sleek look */
   overflow: hidden;
   height: 50px;
   margin: 0%;
@@ -27,15 +27,15 @@ main{
 }
 
 .navbar-default a{
-  color: yellow;
+  color: #f2f2f2; /* Light color for contrast */
   text-decoration: none;
   padding: 10px;
   text-align: center;
 }
 
 .navbar-default .el:hover{
-  color: lightgoldenrodyellow;
-  background-color: black;
+  color: #fff; /* Bright white for text */
+  background-color: #555; /* Slightly lighter shade for background */
   cursor: pointer;
 }
 
@@ -68,12 +68,10 @@ main{
 } 
 
 .navbar-default #logo {
-  position: static;
+  position: relative;
   width: 30px;
   height: auto;
   overflow: hidden;
-  align-items: left;
-  justify-content: flex-start;
   float: left;
 }
 
