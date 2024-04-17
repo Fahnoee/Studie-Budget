@@ -5,7 +5,8 @@ const totalAmount = document.querySelector(".total");
 const spentAmount = document.querySelector(".spent");
 const leftAmount = document.querySelector(".left");
 
-
+const dropdownExpense = document.querySelector(".dropdown-expense");
+const dropdownIncome = document.querySelector(".dropdown-income");
 
 //#####################
 // Q-SELECTORS POPUPS
@@ -97,19 +98,6 @@ categoryBtn.addEventListener('click', () => {
   console.log("Category Name: " + categoryName.value);
 });
 
-closeBtnCategory.onclick = () => {
-  categoryName.value = "";
-  categoryGoal.value = "";
-  categoryDialog.close();
-}
-
-saveBtnCategory.onclick = () => {
-  inputCategoryToBackend();
-  categoryName.value = "";
-  categoryGoal.value = "";
-  categoryDialog.close();
-};
-
 // Function for updating values of categories in html and database
 async function updateCategory(pieIndex) {
   try { 
@@ -145,6 +133,7 @@ function setPieColor(piechart, color) {
 
 showPopupCustomIncome.onclick = () => {
   popupContainerCustomIncome.classList.add("active");     // Activates popup by adding class to div
+  dropDownFetchCategoriesIncome();
 };
 // Function for the Close Button
 closeBtnCustomIncome.onclick = () => {
@@ -177,6 +166,8 @@ saveBtnCustomIncome.onclick = async() => {
 
 showPopupCustomExpense.onclick = () => {
   popupContainerCustomExpense.classList.add("active");     // Activates popup by adding class to div
+  dropDownFetchCategoriesExpense();
+  
 };
 // Function for the Close Button
 closeBtnCustomExpense.onclick = () => {
@@ -219,7 +210,6 @@ function getDate(){
 
 //////////////  OKKKAAAYA ADD GOAL ////////////////
 
-
 //############################ 
 // FUNCTIONS FOR DATAHANDELING
 //############################
@@ -261,6 +251,30 @@ async function updateBudget(data) {         // A function to update the data by 
     popupContainerFixed.classList.remove("active");    // Close popup when response was sucessful and data has been updated
   } catch (error) {
     console.error("Error:", error);
+  }
+}
+
+async function dropDownFetchCategoriesExpense(){
+  let data = await fetchDatabase();
+   //console.log("Test Her:", Object.keys(pik.customExpenses));
+  let categories = Object.keys(data.customExpenses);
+  for(let i = 0; i < categories.length; i++){
+    let option = document.createElement("option");
+    option.textContent = categories[i];
+    dropdownExpense.appendChild(option);
+    console.log(categories[i]);
+  }
+}
+
+async function dropDownFetchCategoriesIncome(){
+  let data = await fetchDatabase();
+   //console.log("Test Her:", Object.keys(pik.customExpenses));
+  let categories = Object.keys(data.customIncomes);
+  for(let i = 0; i < categories.length; i++){
+    let option = document.createElement("option");
+    option.textContent = categories[i];
+    dropdownIncome.appendChild(option);
+    console.log(categories[i]);
   }
 }
 
@@ -308,6 +322,9 @@ async function updateCustomIncome(dataIncome) {         // A function to update 
   }
 }
 
+
+
+
 // Use values from database to display visually in the pie chart --- Uses GET function
 async function updateUserValuesView() {
   try {
@@ -340,8 +357,8 @@ function inputCategoryToBackend(){
   let name = "##GOAL##";
   let username = "John Doe";
   
-  let goalValue = categoryGoal.value;         // Testing value -- should come from user input
-  let newCategoryName = categoryName.value;   // Testing name -- should come from user input
+  //let goalValue = 700;    Testing value -- should come from user input
+  //let newCategoryName = "snipsnapsnude";  Testing name -- should come from user input
 
   let items = [{"name": name, "value": goalValue}];
   
