@@ -2,7 +2,23 @@ const createError = require("http-errors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const User = require("./models/user");
 
+const session = require('express-session');
+
+const express = require("express");
+const bodyParser = require("body-parser");
+require('dotenv').config();
+
+const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true
+}));
 const overviewRouter = require("./routes/overview");
 const financialTipsRouter = require("./routes/financialTips");
 const frontpageRouter = require("./routes/frontpage");
@@ -11,12 +27,7 @@ const logInRouter = require("./routes/logInSite");
 
 const controller = require("./controllers/budgetController.js");
 
-const express = require("express");
-const bodyParser = require("body-parser");
-require('dotenv').config();
 
-const app = express();
-app.use(bodyParser.json());
 
 //###########################
 // Set up mongoose connection
@@ -124,7 +135,7 @@ app.post("/api/addcustom/income", (req, res) => {
 app.get('/api/budget/:budgetID', async (req, res) => {
   try {
       // Query MongoDB to retrieve data for the specific user
-      let username = "John Doe"                                    //RET TIL BRUG AF RIGTIGT USERNAME
+      let username = req.session.username;                                    //RET TIL BRUG AF RIGTIGT USERNAME
       const id = await controller.fetchUserBudgetId(username);                // Using function from budgetcontroller.js to find user's id
       const data = await controller.Budget.findOne({ _id: id });              // Using user id to find their budget 
       if (!data) {
@@ -134,6 +145,62 @@ app.get('/api/budget/:budgetID', async (req, res) => {
   } catch (err) {
       console.error(err);
       res.status(500).send('Internal Server Error');
+  }
+});
+
+
+app.post('/login', async (req, res) => {
+  let data = req.body;
+  let username = data.username;
+  let password = data.password;
+  try {
+    await controller.findUserByUsernameAndPassword(String(username), String(password));
+    req.session.username = username;
+    res.redirect('/overview'); // Redirect to the overview page if user login is successful
+
+  } catch (error) {
+    if (error.message === 'User not found or password incorrect') {
+      // Render a view with a retry option and an error alert
+      res.render('logInSite', { 
+        error: 'User dont exists. Please choose a different username.', 
+        retryUrl: '/logIn',
+        alert: 'Error: Password or Username is incorrect'
+      });
+    } else {
+      // Handle other errors
+      console.error(error);
+      res.status(500).send('An error occurred during the log in process.');
+    }
+  }
+});
+
+
+
+
+// Route to handle POST request from the signup form
+app.post('/signup', async (req, res) => {
+  let data = req.body;
+  let username = data.username;
+  let password = data.password;
+
+  try {
+    await controller.createUserWithBudget(String(username), String(password));
+    req.session.username = username;
+    res.redirect('/overview'); // Redirect to the overview page if user creation is successful
+    
+  } catch (error) {
+    if (error.message === 'User already exists') {
+      // Render a view with a retry option and an error alert
+      res.render('signUpSide', { 
+        error: 'User already exists. Please choose a different username.', 
+        retryUrl: '/signup',
+        alert: 'Error: User already exists. Try a different username.'
+      });
+    } else {
+      // Handle other errors
+      console.error(error);
+      res.status(500).send('An error occurred during the signup process.');
+    }
   }
 });
 
