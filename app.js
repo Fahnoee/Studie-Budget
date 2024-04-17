@@ -154,7 +154,7 @@ app.post('/login', async (req, res) => {
   let username = data.username;
   let password = data.password;
   try {
-    await controller.findUserByUsernameAndPassword(String(username), String(password));
+    await controller.findUserByUsernameAndPassword(username.toLowerCase(), password);
     req.session.username = username.toLowerCase();
     res.redirect('/overview'); // Redirect to the overview page if user login is successful
 

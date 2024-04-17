@@ -92,3 +92,8 @@ footer {
   color: rgb(113, 113, 113);
   text-decoration: none;
 }
+@media screen and (max-width: 768px) {
+  .navbar-default ul {
+    flex-direction: column;
+  }
+}
