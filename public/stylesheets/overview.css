@@ -383,7 +383,7 @@ p {
 
 dialog {
   border: none;
-  border-radius: 25%;
+  border-radius: 6px;
 }
 
 .close-btn-category {
@@ -408,3 +408,11 @@ dialog {
   box-shadow: 0 0 10px rgba(0, 0, 0, .1);
   cursor: pointer; 
 }
+
+.category-text {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+

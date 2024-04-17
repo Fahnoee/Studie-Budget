@@ -6,7 +6,7 @@ const Budget = require("../models/budget.js")
 // username = "John Doe";
 
 /**
- * Fetches the budget ID associated with a given username.
+ * Fetches the budget ID associated with a given username.con
  * @param {string} username - The username to search for in the database.
  * @returns {Promise<string>} The budget ID associated with the user.
  * @throws {Error} If no user is found or if there's an error during the query execution.
