@@ -73,22 +73,25 @@ block content
         div.column
           div.categories
             h2 Categories
-            div.pie-line
-              div.pie.animate(style="--w: 100px") 
-                p 0
-            div.pie-line
-              div.pie.animate(style="--w: 100px") 
-                p 5
-            div.pie-line
-              div.pie.animate(style="--w: 100px") 
-                p 7
-            div.pie-line
-              div.pie.animate(style="--w: 100px")
-                p 3
-            div.pie-line
-              div.pie.animate(style="--w: 100px")
-                p 0
-            button.add-circle +
+            div(style="display: flex; flex-wrap: wrap;")
+              div.pie-line
+                div.pie.animate(style="--w: 100px") 
+                span.category-text Food
+              div(style="position: relative; display: flex")
+                div.pie-line
+                span.category-text Transport
+                  div.pie.animate(style="--w: 100px") 
+              div(style="position: relative; display: flex") 
+                div.pie-line
+                  div.pie.animate(style="--w: 100px") 
+              div(style="position: relative; display: flex") food  
+                div.pie-line
+                  div.pie.animate(style="--w: 100px")
+              div(style="position: relative; display: flex") 
+                div.pie-line
+                  div.pie.animate(style="--w: 100px")
+                
+              button.add-circle +
           div.names
             div.circle
               

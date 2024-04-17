@@ -97,6 +97,19 @@ categoryBtn.addEventListener('click', () => {
   console.log("Category Name: " + categoryName.value);
 });
 
+closeBtnCategory.onclick = () => {
+  categoryName.value = "";
+  categoryGoal.value = "";
+  categoryDialog.close();
+}
+
+saveBtnCategory.onclick = () => {
+  inputCategoryToBackend();
+  categoryName.value = "";
+  categoryGoal.value = "";
+  categoryDialog.close();
+};
+
 // Function for updating values of categories in html and database
 async function updateCategory(pieIndex) {
   try { 
@@ -327,8 +340,8 @@ function inputCategoryToBackend(){
   let name = "##GOAL##";
   let username = "John Doe";
   
-  //let goalValue = 700;    Testing value -- should come from user input
-  //let newCategoryName = "snipsnapsnude";  Testing name -- should come from user input
+  let goalValue = categoryGoal.value;         // Testing value -- should come from user input
+  let newCategoryName = categoryName.value;   // Testing name -- should come from user input
 
   let items = [{"name": name, "value": goalValue}];
   
