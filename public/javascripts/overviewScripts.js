@@ -343,14 +343,12 @@ function setPiePercentage(percent, piechart) {
 
 function inputCategoryToBackend(){
   let name = "##GOAL##";
-  let username = "John Doe";  // Test name, needs to take username/user id as parameter
-  
-  let items = [{"name": name, "value": goalValue}];
+  let items = [{"name": name, "value": categoryGoal.value}];
   
   goalData = {
     username,
     customExpense: items,
-    category: newCategoryName,
+    category: categoryName.value,
   }
   updateCustomExpense(goalData); //Sends the goal data to backend
 }
