@@ -90,20 +90,6 @@ async function createUserWithBudget(username, password) {
 
 async function addCustomExpense(username, { category, items }) {
     try {
-        if (!category) {
-            throw new Error('Category is required');
-        }
-        if (!items) {
-            throw new Error('Items are required');
-        }
-        if (!Array.isArray(items)) {
-            throw new Error('Items must be an array');
-        }
-        items.forEach(item => {
-            if (!item.name || !item.cost) {
-                throw new Error('Each item must have a name and cost');
-            }
-        });
         const budgetId = await fetchUserBudgetId(username);
         if (!budgetId) {
             throw new Error(`No budget found for user ${username}`);

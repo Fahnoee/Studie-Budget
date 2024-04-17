@@ -1,4 +1,3 @@
-
 const body = document.querySelector('body');
 const pie = document.querySelector('.pie');
 const totalAmount = document.querySelector(".total");
@@ -311,7 +310,16 @@ async function updateCustomIncome(dataIncome) {         // A function to update 
 }
 
 
+async function createCategories(){
+  const data = await fetchDatabase();
+  const categories = data.customExpenses ? Object.keys(data.customExpenses) : [];
+  categories.forEach(category => {
+    createCategory(category, getRandomColor());
+  });
+  
+}
 
+createCategories();
 
 // Use values from database to display visually in the pie chart --- Uses GET function
 async function updateUserValuesView() {
@@ -324,10 +332,6 @@ async function updateUserValuesView() {
     spentAmount.textContent = "Spent: " + data.expenses;
     leftAmount.textContent = "Available: " + (data.income - data.expenses);
     setPiePercentage((data.expenses / data.income * 100), pie);    // Calculates the percentage that need to be painted
-    const categories = data.customExpenses ? Object.keys(data.customExpenses) : [];
-    categories.forEach(category => {
-      createCategory(category, getRandomColor());
-    });
   } catch (error) {
     console.error("Error: ", error);
   }
@@ -435,6 +439,7 @@ async function createCategory(categoryTitle, color) {
 
 async function dropDownFetchCategoriesExpense(){
   try{  
+    dropdownExpense.innerHTML = ''; // Clear existing options
     let data = await fetchDatabase();                  //Fetches data from database
     let categories = Object.keys(data.customExpenses); //Accesses all category names in that budget
     categories.forEach(category => {                   //Puts them into an array and displays them in the dropdown menu on the "add custom" popup
@@ -449,6 +454,7 @@ async function dropDownFetchCategoriesExpense(){
 
 async function dropDownFetchCategoriesIncome(){
   try{
+    dropdownIncome.innerHTML = ''; // Clear existing options
     let data = await fetchDatabase(); 
     let categories = Object.keys(data.customIncomes);
     categories.forEach(category => {
