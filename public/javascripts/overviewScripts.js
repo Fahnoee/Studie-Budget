@@ -265,9 +265,6 @@ async function updateBudget(data) {         // A function to update the data by 
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  updateUserValuesView();
-});
 
 async function updateCustomExpense(dataExpense) {         // A function to update the custom expense data
   try {
