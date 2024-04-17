@@ -45,6 +45,18 @@ block content
       div.buttons
         button.close-btn-expense CLOSE
         button.save-btn-expense SAVE
+  
+  dialog().dialog
+    h3 Create category
+    p Enter the name of the category: 
+      input.category-name
+    p Enter a goal: 
+      input.category-goal
+      
+    div.buttons
+      button.close-btn-category CLOSE 
+      button.save-btn-category SAVE
+    
   main
     div.all
       h1= title
@@ -76,6 +88,7 @@ block content
             div.pie-line
               div.pie.animate(style="--w: 100px")
                 p 0
+            button.add-circle +
           div.names
             div.circle
               
@@ -87,3 +100,4 @@ block content
       div.tips
         h2 Financial Advice
   script(src="/javascripts/overviewScripts.js")
+
