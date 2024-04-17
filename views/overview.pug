@@ -52,7 +52,8 @@ block content
       input.category-name
     p Enter a goal: 
       input.category-goal
-      
+    p Choose a color: 
+      input.category-color(type="color")
     div.buttons
       button.close-btn-category CLOSE 
       button.save-btn-category SAVE
@@ -71,30 +72,9 @@ block content
           div
           button.show-popup-fixed Add income/expenses
         div.column
+          h2 Categories
           div.categories
-            h2 Categories
-            div(style="display: flex; flex-wrap: wrap;")
-              div.pie-line
-                div.pie.animate(style="--w: 100px") 
-                span.category-text Food
-              div(style="position: relative; display: flex")
-                div.pie-line
-                span.category-text Transport
-                  div.pie.animate(style="--w: 100px") 
-              div(style="position: relative; display: flex") 
-                div.pie-line
-                  div.pie.animate(style="--w: 100px") 
-              div(style="position: relative; display: flex") food  
-                div.pie-line
-                  div.pie.animate(style="--w: 100px")
-              div(style="position: relative; display: flex") 
-                div.pie-line
-                  div.pie.animate(style="--w: 100px")
-                
-              button.add-circle +
-          div.names
-            div.circle
-              
+            button.add-circle(style="margin-bottom: 7%;") +           
              
         div.column
           h2 Add custom

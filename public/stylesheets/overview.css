@@ -414,5 +414,12 @@ dialog {
   top: -20px;
   left: 50%;
   transform: translate(-50%, -50%);
+  font-size: 15px;
 }
 
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10%;
+  justify-content: center;
+}
