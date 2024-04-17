@@ -1,9 +1,6 @@
 const User = require("../models/user.js")
 const Budget = require("../models/budget.js")
 
-// Createss a variable for testing
-// let username;
-// username = "John Doe";
 
 /**
  * Fetches the budget ID associated with a given username.con
@@ -62,23 +59,27 @@ async function updateBudget(username, newData) {
     }
 };
 
-async function createUserWithBudget(username) {
-    // Set default values for the budget, including initializing customExpenses and customIncome
+async function createUserWithBudget(username, password) {
+    // Check if user already exists
+    username = username.toLowerCase();
+
+    const existingUser = await User.findOne({ name: username }).exec();
+    if (existingUser) {
+        throw new Error('User already exists');
+    }
+
+    // Set default values for the budget
     const defaultBudget = {
         income: 0,
         expenses: 0,
         goal: 0,
-        customExpenses: {}, // Ensure customExpenses is initialized as an empty object
-        customIncome: {}    // Ensure customIncome is initialized as an empty object
+        customExpenses: {},
+        customIncome: {}
     };
 
     try {
-        // Create a new budget with either provided or default initial values
         const newBudget = await Budget.create(defaultBudget);
-        
-        // Create a new user with the created budget's ID
-        const newUser = await User.create({ name: username, budget: newBudget._id });
-        
+        const newUser = await User.create({ name: username, password: password, budget: newBudget._id });
         return newUser;
     } catch (error) {
         throw new Error(`Error creating user with budget: ${error.message}`);
@@ -150,6 +151,19 @@ async function addCustomIncome(username, { category, items }) {
     }
 }
 
+async function findUserByUsernameAndPassword(username, password) {
+    try {
+        const user = await User.findOne({ name: username, password: password });
+        if (!user) {
+            throw new Error('User not found or password incorrect');
+        }
+        return user;
+    } catch (error) {
+        throw new Error(`Error finding user: ${error.message}`);
+    }
+}
+
+
 async function deleteUser(username) {
     try {
         // Find the user by username
@@ -168,9 +182,10 @@ async function deleteUser(username) {
 }
 
 //add customexpenses food catagory pizza for 10
-//addCustomExpense("John Doe", { category: "babapapa", items: [{name: "####GOAL####", amount: 666}] });
-//createUserWithBudget("sidste");
-//addCustomIncome("John Doe", { category: "babapapapik", items: [{name: "####GOAL####", amount: 1}]});
+//addCustomIncome("sidste", { category: "race", items: [{name: "pizza", amount: 10}] })
+//createUserWithBudget("user", "password");
+//addCustomIncome("sidste", { category: "Race", items: [{name: "Somali pirate", amount: 10}] })
+
 // Placeholder variables for budget data
 let income; 
 let expenses;
@@ -193,4 +208,5 @@ module.exports = {
     addCustomExpense: addCustomExpense,
     addCustomIncome: addCustomIncome,
     deleteUser: deleteUser,
+    findUserByUsernameAndPassword: findUserByUsernameAndPassword
 };
