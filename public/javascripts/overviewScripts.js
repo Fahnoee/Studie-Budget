@@ -45,6 +45,7 @@ const categoryBtn = document.querySelector(".add-circle");
 const categoryDialog = document.querySelector(".dialog");
 const categoryName = document.querySelector(".category-name");
 const categoryGoal = document.querySelector(".category-goal");
+const categoryColor = document.querySelector(".category-color"); 
 const closeBtnCategory = document.querySelector('.close-btn-category');
 const saveBtnCategory = document.querySelector('.save-btn-category');
 
@@ -80,8 +81,6 @@ saveBtnFixed.onclick = async() => {
 
   await updateBudget(data);                     // Firstly update the budget  in the database with new values
   await updateUserValuesView();                 // Here we update the userValues showed within the piechart with values from database
-  await createCategory();                       // Create category
-  await updateCategory();                       // Update category
 
   popupContainerFixed.classList.remove("active");    // Deactivates popup by removing class from div
   
@@ -91,11 +90,11 @@ saveBtnFixed.onclick = async() => {
   console.log("The value of --p is: " + getPieValue);
 };
 
-categoryBtn.addEventListener('click', () => {
+categoryBtn.onclick = () => {
   console.log("Activated");
   categoryDialog.showModal();
   console.log("Category Name: " + categoryName.value);
-});
+};
 
 closeBtnCategory.onclick = () => {
   categoryName.value = "";
@@ -105,6 +104,7 @@ closeBtnCategory.onclick = () => {
 
 saveBtnCategory.onclick = () => {
   inputCategoryToBackend();
+  createCategory(categoryName.value, categoryColor.value);  // Create category
   categoryName.value = "";
   categoryGoal.value = "";
   categoryDialog.close();
@@ -119,7 +119,7 @@ async function updateCategory(pieIndex) {
     let exps = data.expenses
     console.log("Income: " + inc, "Expense: " + exps);
 
-    setPieColor(pies[pieIndex], "red");
+
     setPiePercentage((exps / inc * 100), pies[pieIndex]);    // Calculates the percentage that need to be painted
 
     for (let i = 0; i < paragraphs.length; i++) {
@@ -356,33 +356,63 @@ function inputCategoryToBackend(){
 
 // CHAT!!!! 
 // Function for creating a new catogory in the html and the database
-async function createCategory(categoryName) {
+async function createCategory(categoryTitle, color) {
   try {
     // Find the container for categories
     const categoriesContainer = document.querySelector('.categories');
 
+    //Removes the "add category"
+    const button = categoriesContainer.querySelector('button');
+    button.remove();
+
     // Create elements for the category
     const categoryDiv = document.createElement('div');
     categoryDiv.classList.add('pie-line');  // Set class to "pie-line" to create grey circle
+    categoryDiv.style.marginBottom = '7%';
 
-    const paragraph = document.createElement('p');
-    paragraph.textContent = 0;   // Set the goal for the category
+    // Create span element
+    const span = document.createElement('span');
+    span.classList.add('category-text'); // Set class to "category-text" to position title above circle
+    span.textContent = categoryTitle; // Set title to user input
 
     // Create a div element for the pie chart 
     const pie = document.createElement('div');
     pie.classList.add('pie', 'animate'); // Add classes for styling 
-    pie.style.setProperty('--w', '100px'); 
+    pie.style.setProperty('--w', '100px');  // Set size of circle
+    pie.style.setProperty('--p', '50');  // Set size of circle
+    setPieColor(pie, color)
+
+    // Create paragraph element
+    const paragraph = document.createElement('p');
+    paragraph.textContent = 0;   // Set the goal for the category
     
     // Append the paragraph to the pie div
     pie.appendChild(paragraph)
-    // Append the pie div to the category div
-    categoryDiv.appendChild(pie);
 
+    // Append the span and pie div to the category div
+    categoryDiv.appendChild(span);
+    categoryDiv.appendChild(pie);
+    
     // Append the category div to the categories container
     categoriesContainer.appendChild(categoryDiv);
 
+    // Lastly, add back the new category button
+    const newButton = document.createElement('button');
+    newButton.classList.add('add-circle');
+    newButton.style.marginBottom = '7%';
+    newButton.textContent = '+';
+    categoriesContainer.appendChild(newButton);
+    
+    newButton.addEventListener('click', () => {
+      console.log("activated")
+      categoryDialog.showModal();
+      console.log("category Name:" + categoryName.value)
+    });
+
+    return newButton;
+
     // Optionally, you can return the category element if you need to manipulate it further
-    return categoryDiv;
+    // return categoryDiv;
   } catch (error) {
     console.log("Error: " + error);
     throw error;
