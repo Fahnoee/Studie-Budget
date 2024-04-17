@@ -2,6 +2,7 @@ const createError = require("http-errors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const User = require("./models/user");
 
 const overviewRouter = require("./routes/overview");
 const financialTipsRouter = require("./routes/financialTips");
@@ -139,10 +140,31 @@ app.get('/api/budget/:budgetID', async (req, res) => {
 });
 
 
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  // Process login here (e.g., check credentials, start session)
+app.post('/login', async (req, res) => {
+  let data = req.body;
+  let username = data.username;
+  let password = data.password;
+  try {
+    await controller.findUserByUsernameAndPassword(String(username), String(password));
+    req.session.username = username;
+    res.redirect('/overview'); // Redirect to the overview page if user login is successful
+
+  } catch (error) {
+    if (error.message === 'User not found or password incorrect') {
+      // Render a view with a retry option and an error alert
+      res.render('logInSite', { 
+        error: 'User dont exists. Please choose a different username.', 
+        retryUrl: '/logIn',
+        alert: 'Error: Password or Username is incorrect'
+      });
+    } else {
+      // Handle other errors
+      console.error(error);
+      res.status(500).send('An error occurred during the log in process.');
+    }
+  }
 });
+
 
 
 

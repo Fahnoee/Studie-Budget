@@ -1,9 +1,6 @@
 const User = require("../models/user.js")
 const Budget = require("../models/budget.js")
 
-// Createss a variable for testing
-// let username;
-// username = "John Doe";
 
 /**
  * Fetches the budget ID associated with a given username.
@@ -65,7 +62,7 @@ async function updateBudget(username, newData) {
 async function createUserWithBudget(username, password) {
     // Check if user already exists
     username = username.toLowerCase();
-    
+
     const existingUser = await User.findOne({ name: username }).exec();
     if (existingUser) {
         throw new Error('User already exists');
@@ -147,6 +144,19 @@ async function addCustomIncome(username, { category, items }) {
     }
 }
 
+async function findUserByUsernameAndPassword(username, password) {
+    try {
+        const user = await User.findOne({ name: username, password: password });
+        if (!user) {
+            throw new Error('User not found or password incorrect');
+        }
+        return user;
+    } catch (error) {
+        throw new Error(`Error finding user: ${error.message}`);
+    }
+}
+
+
 async function deleteUser(username) {
     try {
         // Find the user by username
@@ -190,4 +200,5 @@ module.exports = {
     addCustomExpense: addCustomExpense,
     addCustomIncome: addCustomIncome,
     deleteUser: deleteUser,
+    findUserByUsernameAndPassword: findUserByUsernameAndPassword
 };
