@@ -17,6 +17,7 @@ require('dotenv').config();
 
 const app = express();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //###########################
 // Set up mongoose connection
@@ -136,6 +137,28 @@ app.get('/api/budget/:budgetID', async (req, res) => {
       res.status(500).send('Internal Server Error');
   }
 });
+
+
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  // Process login here (e.g., check credentials, start session)
+});
+
+
+
+// Route to handle POST request from the signup form
+app.post('/signup', (req, res) => {
+  const { username, password,  passwordCheck} = req.body;
+  // Process signup here (e.g., create user, hash password)
+  console.log(username);
+
+  if (password != passwordCheck)
+  console.log(password);
+  console.log(passwordCheck);
+
+});
+//Console log password for test
+
 
 
 // View engine setup
