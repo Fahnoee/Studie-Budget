@@ -1,19 +1,19 @@
 const User = require("../models/user.js")
 const Budget = require("../models/budget.js")
 
-
 /**
- * Fetches the budget ID associated with a given username.con
+ * Fetches the budget ID associated with a given username.
+ * @async
  * @param {string} username - The username to search for in the database.
- * @returns {Promise<string>} The budget ID associated with the user.
+ * @returns {Promise<string>} A promise that resolves with the budget ID associated with the user.
  * @throws {Error} If no user is found or if there's an error during the query execution.
  */
 async function fetchUserBudgetId(username) {
     try {
         // Attempt to find a user by their username
         const user = await User.findOne({ name: username }).exec();
-        // If no user is found, throw an error
         if (!user) {
+            // If no user is found, throw an error
             throw new Error(`No user found with name ${username}`);
         }
         // Return the user's budget ID
@@ -26,29 +26,27 @@ async function fetchUserBudgetId(username) {
 
 /**
  * Updates the budget for a given user.
+ * @async
  * @param {string} username - The username of the user whose budget is to be updated.
  * @param {Object} newData - The new data to update the budget with.
- * @returns {Promise<Object>} The updated budget document.
+ * @returns {Promise<Object>} A promise that resolves with the updated budget document.
  * @throws {TypeError} If newData is not an object or is null.
  * @throws {Error} If no budget is found for the user or if the update operation fails.
  */
 async function updateBudget(username, newData) {
-    // Validate newData is a non-null object
     if (!newData || typeof newData !== 'object') {
+        // Validate newData is a non-null object
         throw new TypeError('newData must be a non-null object');
     }
     try {
-        // Fetch the budget ID for the given username
         const budgetId = await fetchUserBudgetId(username);
-        // If no budget ID is found, throw an error
         if (!budgetId) {
+            // If no budget ID is found, throw an error
             throw new Error(`No budget found for user ${username}`);
         }
-        // Attempt to update the budget with the new data
         const updatedBudget = await Budget.findByIdAndUpdate(budgetId, newData, { new: true }).exec();
-        
-        // If the update operation does not return a document, throw an error
         if (!updatedBudget) {
+            // If the update operation does not return a document, throw an error
             throw new Error('Budget update failed');
         }
         // Return the updated budget document
@@ -59,12 +57,20 @@ async function updateBudget(username, newData) {
     }
 };
 
+/**
+ * Creates a new user with a default budget.
+ * @async
+ * @param {string} username - The username for the new user.
+ * @param {string} password - The password for the new user.
+ * @returns {Promise<Object>} A promise that resolves with the newly created user document.
+ * @throws {Error} If the user already exists or if there's an error during user creation.
+ */
 async function createUserWithBudget(username, password) {
-    // Check if user already exists
-    username = username.toLowerCase();
+    username = username.toLowerCase(); // Normalize username to lowercase
 
     const existingUser = await User.findOne({ name: username }).exec();
     if (existingUser) {
+        // Check if user already exists
         throw new Error('User already exists');
     }
 
@@ -86,8 +92,14 @@ async function createUserWithBudget(username, password) {
     }
 }
 
-
-
+/**
+ * Adds custom expense items under a specific category for a user's budget.
+ * @async
+ * @param {string} username - The username of the user.
+ * @param {{category: string, items: Array}} param1 - The category and items to add.
+ * @returns {Promise<Object>} A promise that resolves with the updated budget document.
+ * @throws {Error} If no budget is found for the user or if the update operation fails.
+ */
 async function addCustomExpense(username, { category, items }) {
     try {
         const budgetId = await fetchUserBudgetId(username);
@@ -122,6 +134,14 @@ async function addCustomExpense(username, { category, items }) {
     }
 }
 
+/**
+ * Adds custom income items under a specific category for a user's budget.
+ * @async
+ * @param {string} username - The username of the user.
+ * @param {{category: string, items: Array}} param1 - The category and items to add.
+ * @returns {Promise<Object>} A promise that resolves with the updated budget document.
+ * @throws {Error} If no budget is found for the user or if the update operation fails.
+ */
 async function addCustomIncome(username, { category, items }) {
     try {
         const budgetId = await fetchUserBudgetId(username);
@@ -151,6 +171,14 @@ async function addCustomIncome(username, { category, items }) {
     }
 }
 
+/**
+ * Finds a user by their username and password.
+ * @async
+ * @param {string} username - The username of the user to find.
+ * @param {string} password - The password of the user to authenticate.
+ * @returns {Promise<Object>} A promise that resolves with the user document if found and authenticated.
+ * @throws {Error} If the user is not found or the password is incorrect.
+ */
 async function findUserByUsernameAndPassword(username, password) {
     try {
         const user = await User.findOne({ name: username, password: password });
@@ -163,7 +191,12 @@ async function findUserByUsernameAndPassword(username, password) {
     }
 }
 
-
+/**
+ * Deletes a user and their associated budget from the database.
+ * @async
+ * @param {string} username - The username of the user to delete.
+ * @throws {Error} If the user is not found or if there's an error during the deletion process.
+ */
 async function deleteUser(username) {
     try {
         // Find the user by username
@@ -180,11 +213,6 @@ async function deleteUser(username) {
         throw new Error(`Error deleting user ${username}: ${error.message}`);
     }
 }
-
-//add customexpenses food catagory pizza for 10
-//addCustomIncome("sidste", { category: "race", items: [{name: "pizza", amount: 10}] })
-//createUserWithBudget("user", "password");
-//addCustomIncome("sidste", { category: "Race", items: [{name: "Somali pirate", amount: 10}] })
 
 // Placeholder variables for budget data
 let income; 
