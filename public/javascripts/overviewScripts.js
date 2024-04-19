@@ -35,9 +35,6 @@ const nameCustomIncome = document.querySelector(".name-income");
 const valueCustomIncome = document.querySelector(".value-income");
 
 // CATEGORIES
-const categories = document.querySelector(".categories");
-const paragraphs = categories.querySelectorAll("p")
-const pies = categories.querySelectorAll(".pie");
 const categoryBtn = document.querySelector(".add-circle");
 const categoryDialog = document.querySelector(".dialog");
 const categoryName = document.querySelector(".category-name");
@@ -110,24 +107,28 @@ saveBtnCategory.onclick = () => {
 };
 
 // Function for updating values of categories in html and database
-async function updateCategory(pieIndex) {
-  try { 
-    pieIndex = 0;   // Temporary index for testing
+async function updateCategory() {
+  try {
+    const categories = document.querySelector(".categories");
+    const paragraphs = categories.querySelectorAll("p")
+    const pies = categories.querySelectorAll(".pie");
+
     const data = await fetchDatabase(); //Data from fixed income/expenses 
-    let inc = data.income
-    let exps = data.expenses
-    console.log("Income: " + inc, "Expense: " + exps);
+    const categoryData = fetchAndProcessCategoryData();
 
+    categoryData.forEach(category => {
+      const goal = data.customExpenses[category].goal
+      const expense = data.customExpenses[category].totalExpense
 
-    for (let i = 0; i < pies.length; i++) {
-      setPiePercentage((exps / inc * 100), pies[pieIndex]);    // Calculates the percentage that need to be painted
-      paragraphs[i].textContent = 3;   
-    }
-
-    paragraphs.forEach(paragraph => {
-      console.log("Here: " + paragraph.textContent);
-      paragraph.textContent = 2;
+      console.log("Goal: " + goal);
+      console.log("Expense: " + expense);
     });
+    
+    // for (let i = 0; i < pies.length; i++) {
+    //   setPiePercentage(( / inc * 100), pies[i]);    // Calculates the percentage that need to be painted
+    //   paragraphs[i].textContent = 3;   
+    // }
+
   } catch (error) {
     console.log("Error: " + error);
     throw error;
@@ -348,14 +349,14 @@ async function fetchCategories(){
   categories.forEach(category => {
     spawnCategory(category, data.customExpenses[category][0].color); // getCategoryColor(category)
   });
+  updateCategory();
 }
 
 // Use values from database to display visually in the pie chart --- Uses GET function
 async function updateUserValuesView() {
   try {
     const data = await fetchDatabase();       // Call fetchDatabase and get userbudget-data returned.
-    // Use the data returned by the function
-    console.log("Returned Data: ", data);
+    
     // Update UI with fetched data
     totalAmount.textContent = "Total: " + data.income;      // Place data into variables
     spentAmount.textContent = "Spent: " + data.expenses;

@@ -377,6 +377,10 @@ p {
   float: right;
 }
 
+.popup-box-expense .dropdown-expense{
+  float: right;
+}
+
 /*////////////*/
 /* CATEGORIES */
 /*////////////*/
@@ -384,6 +388,18 @@ p {
 dialog {
   border: none;
   border-radius: 6px;
+}
+
+dialog .category-name{
+ float: right;
+}
+
+dialog .category-goal{
+  float: right;
+}
+
+dialog .category-color{
+  float: right;
 }
 
 .close-btn-category {
