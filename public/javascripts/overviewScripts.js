@@ -105,6 +105,7 @@ saveBtnCategory.onclick = async () => {
   await inputCategoryToBackend();
   await spawnCategory(categoryName.value, categoryColor.value);  // Create category
   await updateCategory();
+  await updateUserValuesView();
   categoryName.value = "";
   categoryGoal.value = "";
   categoryDialog.close();
@@ -458,6 +459,7 @@ function setupEventListeners() {
     };
 
     await updateCustomIncome(dataIncome);
+    await updateUserValuesView();
     document.querySelector('.popup-container-income').classList.remove("active");
     valueCustomIncome.value = "";
   };
@@ -489,6 +491,7 @@ function setupEventListeners() {
 
     await updateCustomExpense(dataExpense);
     await updateCategory();
+    await updateUserValuesView();
     document.querySelector('.popup-container-expense').classList.remove("active");
     nameCustomExpense.value = "";
     valueCustomExpense.value = "";
