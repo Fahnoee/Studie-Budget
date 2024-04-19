@@ -100,7 +100,8 @@ closeBtnCategory.onclick = () => {
 
 saveBtnCategory.onclick = () => {
   inputCategoryToBackend();
-  spawnCategory(categoryName.value, categoryColor.value);  // Create category
+  // spawnCategory(categoryName.value, categoryColor.value);  // Create category
+  updateCategory();
   categoryName.value = "";
   categoryGoal.value = "";
   categoryDialog.close();
@@ -273,7 +274,6 @@ async function fetchAndProcessCategoryData() {
     console.error('Error processing category data:', error);
   }
 }
-fetchAndProcessCategoryData();
 
 // POST to database --- Update Budget in database
 async function updateBudget(data) {         // A function to update the data by sending a request to the server API endpoint
@@ -343,7 +343,6 @@ async function updateCustomIncome(dataIncome) {         // A function to update 
   }
 }
 
-
 async function fetchCategories(){
   const data = await fetchDatabase();
   const categories = data.customExpenses ? Object.keys(data.customExpenses) : [];
@@ -392,7 +391,6 @@ function inputCategoryToBackend(){
   updateCustomExpense(goalData); //Sends the goal data to backend
 }
 
-
 // CHAT!!!! 
 // Function for creating a new catogory in the html and the database
 async function spawnCategory(categoryTitle, color) {
@@ -418,7 +416,6 @@ async function spawnCategory(categoryTitle, color) {
     const pie = document.createElement('div');
     pie.classList.add('pie', 'animate'); // Add classes for styling 
     pie.style.setProperty('--w', '100px');  // Set size of circle
-    pie.style.setProperty('--p', '50');  // Set size of circle
     setPieColor(pie, color)
 
     // Create paragraph element

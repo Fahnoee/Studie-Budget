@@ -122,7 +122,7 @@ async function addCustomExpense(username, { category, items }) {
             budget.markModified('customExpenses');
         }
         else if (budget.customExpenses[category][0].name === "##GOAL##" && items[0].name === "##GOAL##") {
-            budget.customExpenses[category][0].value = items[0].value;
+            budget.customExpenses[category][0] = items[0];
             budget.markModified('customExpenses');
         }
         // Add the new items to the category
