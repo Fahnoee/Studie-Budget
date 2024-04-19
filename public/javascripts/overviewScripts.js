@@ -35,9 +35,6 @@ const nameCustomIncome = document.querySelector(".name-income");
 const valueCustomIncome = document.querySelector(".value-income");
 
 // CATEGORIES
-const categories = document.querySelector(".categories");
-const paragraphs = categories.querySelectorAll("p")
-const pies = categories.querySelectorAll(".pie");
 const categoryBtn = document.querySelector(".add-circle");
 const categoryDialog = document.querySelector(".dialog");
 const categoryName = document.querySelector(".category-name");
@@ -46,7 +43,9 @@ const categoryColor = document.querySelector(".category-color");
 const closeBtnCategory = document.querySelector('.close-btn-category');
 const saveBtnCategory = document.querySelector('.save-btn-category');
 
-updateUserValuesView(); // Paste current user values from database:
+// Startup functions
+updateUserValuesView();
+fetchCategories();
 
 //#####################
 // FUNCTIONS FOR POPUP
@@ -54,7 +53,7 @@ updateUserValuesView(); // Paste current user values from database:
 
 
 ////////FIXED INCOMES/ EXPENSES
-// Function for popup
+// Function for popup buttons
 showPopupFixed.onclick = () => {
   popupContainerFixed.classList.add("active");     // Activates popup by adding class to div
 };
@@ -86,12 +85,12 @@ saveBtnFixed.onclick = async() => {
   console.log("The value of --p is: " + getPieValue);
 };
 
+
 categoryBtn.onclick = () => {
   console.log("Activated");
   categoryDialog.showModal();
   console.log("Category Name: " + categoryName.value);
 };
-
 
 closeBtnCategory.onclick = () => {
   categoryName.value = "";
@@ -101,31 +100,37 @@ closeBtnCategory.onclick = () => {
 
 saveBtnCategory.onclick = () => {
   inputCategoryToBackend();
-  createCategory(categoryName.value, categoryColor.value);  // Create category
+  spawnCategory(categoryName.value, categoryColor.value);  // Create category
   categoryName.value = "";
   categoryGoal.value = "";
   categoryDialog.close();
 };
 
 // Function for updating values of categories in html and database
-async function updateCategory(pieIndex) {
-  try { 
-    pieIndex = 0;   // Temporary index for testing
+async function updateCategory() {
+  try {
+    const categories = document.querySelector(".categories");
+    const paragraphs = categories.querySelectorAll("p")
+    const pies = categories.querySelectorAll(".pie");
+
     const data = await fetchDatabase(); //Data from fixed income/expenses 
-    let inc = data.income
-    let exps = data.expenses
-    console.log("Income: " + inc, "Expense: " + exps);
+    const categoryData = await fetchAndProcessCategoryData();
 
+    let goal;
+    let expense;
+    let i = 0;
 
-    setPiePercentage((exps / inc * 100), pies[pieIndex]);    // Calculates the percentage that need to be painted
+    Object.entries(categoryData).forEach(([category, items]) => {
+      
+      goal = items.goal;
+      expense = items.totalExpense;
 
-    for (let i = 0; i < paragraphs.length; i++) {
-      paragraphs[i].textContent = 3;
-    }
+      console.log("Goal: " + goal);
+      console.log("Expense: " + expense);
 
-    paragraphs.forEach(paragraph => {
-      console.log("Here: " + paragraph.textContent);
-      paragraph.textContent = 2;
+      setPiePercentage((expense / goal * 100), pies[i]);  // Calculates the percentage that need to be painted
+      paragraphs[i].textContent = expense + "/" + goal;   // Set text inside small pie chart to sum of all expenses compared to the goal
+      i++;
     });
   } catch (error) {
     console.log("Error: " + error);
@@ -136,6 +141,7 @@ async function updateCategory(pieIndex) {
 function setPieColor(piechart, color) {
   piechart.style.setProperty("--c", color);
 }
+
 
 
 //////// CUSTOM INCOME /////////////////
@@ -234,13 +240,41 @@ async function fetchDatabase() {                  // A function for getting the 
           },
       });
       const data = await response.json(); // Parse the respons as a JSON and put in "const data"
-      console.log("Success: ", data);
       return data; // Return the data obtained from the fetch call
   } catch (error) {
       console.error("Error: ", error);
       throw error; // Re-throw the error to handle it elsewhere if needed
   }
 }
+
+async function fetchAndProcessCategoryData() {
+  try {
+    const data = await fetchDatabase(); // Assuming this function fetches the full budget data
+    const categoriesData = {};
+
+    if (data && data.customExpenses) {
+      for (const category in data.customExpenses) {
+        let totalExpense = 0;
+        let goal = null;
+        data.customExpenses[category].forEach(item => {
+          if (item.name === "##GOAL##") {
+            goal = parseFloat(item.value);
+          } else {
+            totalExpense += parseFloat(item.amount);
+          }
+        });
+        categoriesData[category] = { totalExpense, goal };
+      }
+    }
+
+    console.log(categoriesData);
+    return categoriesData;
+  } catch (error) {
+    console.error('Error processing category data:', error);
+  }
+}
+fetchAndProcessCategoryData();
+
 // POST to database --- Update Budget in database
 async function updateBudget(data) {         // A function to update the data by sending a request to the server API endpoint
   try {
@@ -310,23 +344,21 @@ async function updateCustomIncome(dataIncome) {         // A function to update 
 }
 
 
-async function createCategories(){
+async function fetchCategories(){
   const data = await fetchDatabase();
   const categories = data.customExpenses ? Object.keys(data.customExpenses) : [];
-  categories.forEach(category => {
-    createCategory(category, getRandomColor());
-  });
-  
-}
 
-createCategories();
+  categories.forEach(category => {
+    spawnCategory(category, data.customExpenses[category][0].color); // getCategoryColor(category)
+  });
+  updateCategory();
+}
 
 // Use values from database to display visually in the pie chart --- Uses GET function
 async function updateUserValuesView() {
   try {
     const data = await fetchDatabase();       // Call fetchDatabase and get userbudget-data returned.
-    // Use the data returned by the function
-    console.log("Returned Data: ", data);
+    
     // Update UI with fetched data
     totalAmount.textContent = "Total: " + data.income;      // Place data into variables
     spentAmount.textContent = "Spent: " + data.expenses;
@@ -337,20 +369,10 @@ async function updateUserValuesView() {
   }
 }
 
-function getRandomColor() {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-}
-
 // Method for opdating the circle on the pie charts
 function setPiePercentage(percent, piechart) {
     // Set the value of variable --p to another value (in this case 20)
     piechart.style.setProperty('--p', percent);
-    console.log("The value of --p is: " + piechart.style.getPropertyValue('--p'));
 
     piechart.classList.remove("animate");    // Reset animation
     void piechart.offsetWidth;               // Trigger reflow
@@ -359,7 +381,8 @@ function setPiePercentage(percent, piechart) {
 
 function inputCategoryToBackend(){
   let name = "##GOAL##";
-  let items = [{"name": name, "value": categoryGoal.value}];
+  let items = [{"name": name, "value": categoryGoal.value, "color": categoryColor.value}];
+  console.log(categoryColor.value);
   
   goalData = {
     username,
@@ -372,7 +395,7 @@ function inputCategoryToBackend(){
 
 // CHAT!!!! 
 // Function for creating a new catogory in the html and the database
-async function createCategory(categoryTitle, color) {
+async function spawnCategory(categoryTitle, color) {
   try {
     // Find the container for categories
     const categoriesContainer = document.querySelector('.categories');

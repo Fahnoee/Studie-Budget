@@ -236,5 +236,6 @@ module.exports = {
     addCustomExpense: addCustomExpense,
     addCustomIncome: addCustomIncome,
     deleteUser: deleteUser,
-    findUserByUsernameAndPassword: findUserByUsernameAndPassword
+    findUserByUsernameAndPassword: findUserByUsernameAndPassword,
 };
+// At the end of the file, add a call to fetchCategoryExpensesAndGoals for testing purposes
