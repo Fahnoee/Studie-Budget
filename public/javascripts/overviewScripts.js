@@ -67,8 +67,7 @@ showPopupFixed.onclick = () => {
   // Function for the Save Button
   saveBtnFixed.onclick = async() => {
     let incomeVal = incomeFixed.value;
-    let expenseVal = expenseFixed.value;
-  
+    let expenseVal = expenseFixed.value;  
     let data = {
       username,
       income: incomeVal,
@@ -89,7 +88,7 @@ showPopupFixed.onclick = () => {
     expenseFixed.value = ""
   };
   
-  
+ 
   categoryBtn.onclick = () => {
     console.log("Activated");
     categoryDialog.showModal();
@@ -120,6 +119,7 @@ showPopupFixed.onclick = () => {
     const paragraphs = categories.querySelectorAll("p");
     const pies = categories.querySelectorAll(".pie");
     const categoryData = await fetchAndProcessCategoryData();
+
   
     let i = 0;
     Object.entries(categoryData).forEach(([category, items]) => {
@@ -149,6 +149,7 @@ showPopupFixed.onclick = () => {
     }
     return categoriesData;
   }
+
   
   async function inputCategoryToBackend(){
     let name = "##GOAL##";
@@ -240,6 +241,7 @@ showPopupFixed.onclick = () => {
         let option = document.createElement("option");
         option.textContent = category;
         dropdownExpense.appendChild(option);
+        
     });
     } catch (error) {
       console.error('An error occurred fetching categories from database:', error);
@@ -261,6 +263,28 @@ showPopupFixed.onclick = () => {
     }
   }
   
+//Function to get all costume income and add them together
+async function fetchAndProcessIncomeData() {
+  try {
+    const data = await fetchDatabase(); // Assuming this function fetches the full budget data
+    const categoriesData = {};
+
+    if (data && data.customIncomes) {
+      for (const category in data.customIncomes) {
+        let totalIncome = 0;
+        data.customIncomes[category].forEach(item => {
+            totalIncome += parseFloat(item.amount);
+        });
+        categoriesData[category] = { totalIncome };
+      }
+    }
+
+    console.log(categoriesData);
+    return categoriesData;
+  } catch (error) {
+    console.error('Error processing category data:', error);
+  }
+}
   //#####################
   // Utility Functions
   //##################### 
@@ -327,6 +351,7 @@ async function updateBudget(data) {
     },
     body: JSON.stringify(data),
   });
+
 }
 
 async function updateCustomExpense(dataExpense) {
@@ -351,17 +376,33 @@ async function updateCustomIncome(dataIncome) {
 
 // UI Updates
 async function updateUserValuesView() {
-  const data = await fetchDatabase();
-  const totalAmount = document.querySelector(".total");
-  const spentAmount = document.querySelector(".spent");
-  const leftAmount = document.querySelector(".left");
-  const pie = document.querySelector('.pie');
+  try {
+    const data = await fetchDatabase();       // Call fetchDatabase and get userbudget-data returned.
+    const customExpenseData = await fetchAndProcessCategoryData();
+    const customIncomeData = await fetchAndProcessIncomeData();
+    // Update UI with fetched data
+    let totalCustomExpense = 0;
+    let totalCustomIncome = 0;
 
-  totalAmount.textContent = "Total: " + data.income;
-  spentAmount.textContent = "Spent: " + data.expenses;
-  leftAmount.textContent = "Available: " + (data.income - data.expenses);
-  setPiePercentage((data.expenses / data.income * 100), pie);
-}
+    Object.entries(customExpenseData).forEach(([category, items]) => { //Add all custom expenses together
+      totalCustomExpense += items.totalExpense;
+      console.log("Expense cirkeltest: " + totalCustomExpense);
+    });
+    
+    Object.entries(customIncomeData).forEach(([category, items]) => { //Add all custom expenses together
+      totalCustomIncome += items.totalIncome;
+      console.log("Expense cirkeltest: " + totalCustomIncome);
+    });
+
+    let netExpenses = (data.expenses + totalCustomExpense - totalCustomIncome);
+
+    totalAmount.textContent = "Fixed Income: " + data.income;      // Place data into variables
+    spentAmount.textContent = "Net expenses: " + netExpenses;
+    leftAmount.textContent = "Available: " + (data.income - netExpenses);
+    setPiePercentage(((netExpenses) / (data.income) * 100), pie);    // Calculates the percentage that need to be painted
+  } catch (error) {
+    console.error("Error: ", error);
+  }
 //#####################
 // EVENT HANDLERS
 //##################### 
