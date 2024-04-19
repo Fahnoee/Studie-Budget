@@ -114,21 +114,24 @@ async function updateCategory() {
     const pies = categories.querySelectorAll(".pie");
 
     const data = await fetchDatabase(); //Data from fixed income/expenses 
-    const categoryData = fetchAndProcessCategoryData();
+    const categoryData = await fetchAndProcessCategoryData();
 
-    categoryData.forEach(category => {
-      const goal = data.customExpenses[category].goal
-      const expense = data.customExpenses[category].totalExpense
+    let goal;
+    let expense;
+    let i = 0;
+
+    Object.entries(categoryData).forEach(([category, items]) => {
+      
+      goal = items.goal;
+      expense = items.totalExpense;
 
       console.log("Goal: " + goal);
       console.log("Expense: " + expense);
-    });
-    
-    // for (let i = 0; i < pies.length; i++) {
-    //   setPiePercentage(( / inc * 100), pies[i]);    // Calculates the percentage that need to be painted
-    //   paragraphs[i].textContent = 3;   
-    // }
 
+      setPiePercentage((expense / goal * 100), pies[i]);  // Calculates the percentage that need to be painted
+      paragraphs[i].textContent = expense + "/" + goal;   // Set text inside small pie chart to sum of all expenses compared to the goal
+      i++;
+    });
   } catch (error) {
     console.log("Error: " + error);
     throw error;
@@ -237,7 +240,6 @@ async function fetchDatabase() {                  // A function for getting the 
           },
       });
       const data = await response.json(); // Parse the respons as a JSON and put in "const data"
-      console.log("Success: ", data);
       return data; // Return the data obtained from the fetch call
   } catch (error) {
       console.error("Error: ", error);
@@ -371,7 +373,6 @@ async function updateUserValuesView() {
 function setPiePercentage(percent, piechart) {
     // Set the value of variable --p to another value (in this case 20)
     piechart.style.setProperty('--p', percent);
-    console.log("The value of --p is: " + piechart.style.getPropertyValue('--p'));
 
     piechart.classList.remove("animate");    // Reset animation
     void piechart.offsetWidth;               // Trigger reflow
