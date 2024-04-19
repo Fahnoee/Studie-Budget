@@ -46,7 +46,9 @@ const categoryColor = document.querySelector(".category-color");
 const closeBtnCategory = document.querySelector('.close-btn-category');
 const saveBtnCategory = document.querySelector('.save-btn-category');
 
-updateUserValuesView(); // Paste current user values from database:
+// Startup functions
+updateUserValuesView();
+fetchCategories();
 
 //#####################
 // FUNCTIONS FOR POPUP
@@ -54,7 +56,7 @@ updateUserValuesView(); // Paste current user values from database:
 
 
 ////////FIXED INCOMES/ EXPENSES
-// Function for popup
+// Function for popup buttons
 showPopupFixed.onclick = () => {
   popupContainerFixed.classList.add("active");     // Activates popup by adding class to div
 };
@@ -86,12 +88,12 @@ saveBtnFixed.onclick = async() => {
   console.log("The value of --p is: " + getPieValue);
 };
 
+
 categoryBtn.onclick = () => {
   console.log("Activated");
   categoryDialog.showModal();
   console.log("Category Name: " + categoryName.value);
 };
-
 
 closeBtnCategory.onclick = () => {
   categoryName.value = "";
@@ -101,7 +103,7 @@ closeBtnCategory.onclick = () => {
 
 saveBtnCategory.onclick = () => {
   inputCategoryToBackend();
-  createCategory(categoryName.value, categoryColor.value);  // Create category
+  spawnCategory(categoryName.value, categoryColor.value);  // Create category
   categoryName.value = "";
   categoryGoal.value = "";
   categoryDialog.close();
@@ -136,6 +138,7 @@ async function updateCategory(pieIndex) {
 function setPieColor(piechart, color) {
   piechart.style.setProperty("--c", color);
 }
+
 
 
 //////// CUSTOM INCOME /////////////////
@@ -310,16 +313,14 @@ async function updateCustomIncome(dataIncome) {         // A function to update 
 }
 
 
-async function createCategories(){
+async function fetchCategories(){
   const data = await fetchDatabase();
   const categories = data.customExpenses ? Object.keys(data.customExpenses) : [];
-  categories.forEach(category => {
-    createCategory(category, getRandomColor());
-  });
-  
-}
 
-createCategories();
+  categories.forEach(category => {
+    spawnCategory(category, data.customExpenses[category][0].color); // getCategoryColor(category)
+  });
+}
 
 // Use values from database to display visually in the pie chart --- Uses GET function
 async function updateUserValuesView() {
@@ -337,15 +338,6 @@ async function updateUserValuesView() {
   }
 }
 
-function getRandomColor() {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-}
-
 // Method for opdating the circle on the pie charts
 function setPiePercentage(percent, piechart) {
     // Set the value of variable --p to another value (in this case 20)
@@ -359,7 +351,8 @@ function setPiePercentage(percent, piechart) {
 
 function inputCategoryToBackend(){
   let name = "##GOAL##";
-  let items = [{"name": name, "value": categoryGoal.value}];
+  let items = [{"name": name, "value": categoryGoal.value, "color": categoryColor.value}];
+  console.log(categoryColor.value);
   
   goalData = {
     username,
@@ -372,7 +365,7 @@ function inputCategoryToBackend(){
 
 // CHAT!!!! 
 // Function for creating a new catogory in the html and the database
-async function createCategory(categoryTitle, color) {
+async function spawnCategory(categoryTitle, color) {
   try {
     // Find the container for categories
     const categoriesContainer = document.querySelector('.categories');
