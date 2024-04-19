@@ -1,13 +1,21 @@
+//#####################
+// Constants and Configuration
+//#####################
 const body = document.querySelector('body');
 const pie = document.querySelector('.pie');
 const totalAmount = document.querySelector(".total");
 const spentAmount = document.querySelector(".spent");
 const leftAmount = document.querySelector(".left");
-
+const API_ENDPOINTS = {
+    fetchBudget: "/api/budget/:budgetID",
+    updateBudget: "/api/update_budget",
+    addCustomExpense: "/api/addcustom/expense",
+    addCustomIncome: "/api/addcustom/income",
+  };
+  
 //#####################
 // Q-SELECTORS POPUPS
 //#####################
-
 // FIXED
 const showPopupFixed = document.querySelector('.show-popup-fixed');
 const popupContainerFixed = document.querySelector('.popup-container-fixed');
@@ -43,227 +51,88 @@ const categoryColor = document.querySelector(".category-color");
 const closeBtnCategory = document.querySelector('.close-btn-category');
 const saveBtnCategory = document.querySelector('.save-btn-category');
 
-// Startup functions
-updateUserValuesView();
-fetchCategories();
-
 //#####################
 // FUNCTIONS FOR POPUP
 //#####################
-
-
 ////////FIXED INCOMES/ EXPENSES
 // Function for popup buttons
 showPopupFixed.onclick = () => {
-  popupContainerFixed.classList.add("active");     // Activates popup by adding class to div
-};
-// Function for the Close Button
-closeBtnFixed.onclick = () => {
-  popupContainerFixed.classList.remove("active");    // Deactivates popup by removing class from div
-};
-
-// Function for the Save Button
-saveBtnFixed.onclick = async() => {
-  let incomeVal = incomeFixed.value;
-  let expenseVal = expenseFixed.value;
-
-  let data = {
-    username,
-    income: incomeVal,
-    expenses: expenseVal,
-    goal: 320,
+    popupContainerFixed.classList.add("active");     // Activates popup by adding class to div
   };
-
-  await updateBudget(data);                     // Firstly update the budget  in the database with new values
-  updateUserValuesView();                 // Here we update the userValues showed within the piechart with values from database
-
-  popupContainerFixed.classList.remove("active");    // Deactivates popup by removing class from div
+  // Function for the Close Button
+  closeBtnFixed.onclick = () => {
+    popupContainerFixed.classList.remove("active");    // Deactivates popup by removing class from div
+  };
   
-  // Save changed income/expense to pie chart
-  let getPieStyle = getComputedStyle(pie)
-  let getPieValue = getPieStyle.getPropertyValue('--p');
-  console.log("The value of --p is: " + getPieValue);
-  incomeFixed.value = ""
-  expenseFixed.value = ""
-};
-
-
-categoryBtn.onclick = () => {
-  console.log("Activated");
-  categoryDialog.showModal();
-  console.log("Category Name: " + categoryName.value);
-};
-
-closeBtnCategory.onclick = () => {
-  categoryName.value = "";
-  categoryGoal.value = "";
-  categoryDialog.close();
-}
-
-saveBtnCategory.onclick = () => {
-  inputCategoryToBackend();
-  // spawnCategory(categoryName.value, categoryColor.value);  // Create category
-  updateCategory();
-  categoryName.value = "";
-  categoryGoal.value = "";
-  updateUserValuesView(); 
-  categoryDialog.close();
-};
-
-// Function for updating values of categories in html and database
-async function updateCategory() {
-  try {
+  // Function for the Save Button
+  saveBtnFixed.onclick = async() => {
+    let incomeVal = incomeFixed.value;
+    let expenseVal = expenseFixed.value;  
+    let data = {
+      username,
+      income: incomeVal,
+      expenses: expenseVal,
+      goal: 320,
+    };
+  
+    await updateBudget(data);                     // Firstly update the budget  in the database with new values
+    await updateUserValuesView();                 // Here we update the userValues showed within the piechart with values from database
+  
+    popupContainerFixed.classList.remove("active");    // Deactivates popup by removing class from div
+    
+    // Save changed income/expense to pie chart
+    let getPieStyle = getComputedStyle(pie)
+    let getPieValue = getPieStyle.getPropertyValue('--p');
+    console.log("The value of --p is: " + getPieValue);
+    incomeFixed.value = ""
+    expenseFixed.value = ""
+  };
+  
+ 
+  categoryBtn.onclick = () => {
+    console.log("Activated");
+    categoryDialog.showModal();
+    console.log("Category Name: " + categoryName.value);
+  };
+  
+  closeBtnCategory.onclick = () => {
+    categoryName.value = "";
+    categoryGoal.value = "";
+    categoryDialog.close();
+  }
+  
+  saveBtnCategory.onclick = async () => {
+    await inputCategoryToBackend();
+    await spawnCategory(categoryName.value, categoryColor.value);  // Create category
+    await updateCategory();
+    categoryName.value = "";
+    categoryGoal.value = "";
+    categoryDialog.close();
+  };
+  
+  //#####################
+  // FUNCTIONS FOR CATEGORIES
+  //##################### 
+  // Function for updating values of categories in html and database
+  async function updateCategory() {
     const categories = document.querySelector(".categories");
-    const paragraphs = categories.querySelectorAll("p")
+    const paragraphs = categories.querySelectorAll("p");
     const pies = categories.querySelectorAll(".pie");
-
-    const data = await fetchDatabase(); //Data from fixed income/expenses 
     const categoryData = await fetchAndProcessCategoryData();
 
-    let goal;
-    let expense;
+  
     let i = 0;
-
-    console.log(categoryData);
-
     Object.entries(categoryData).forEach(([category, items]) => {
-      
-      goal = items.goal;
-      expense = items.totalExpense;
-
-      console.log("Goal: " + goal);
-      console.log("Expense: " + expense);
-
-      setPiePercentage((expense / goal * 100), pies[i]);  // Calculates the percentage that need to be painted
-      paragraphs[i].textContent = expense + "/" + goal;   // Set text inside small pie chart to sum of all expenses compared to the goal
+      setPiePercentage((items.totalExpense / items.goal * 100), pies[i]);
+      paragraphs[i].textContent = items.totalExpense + "/" + items.goal;
       i++;
     });
-  } catch (error) {
-    console.log("Error: " + error);
-    throw error;
   }
-}
-
-function setPieColor(piechart, color) {
-  piechart.style.setProperty("--c", color);
-}
-
-
-
-//////// CUSTOM INCOME /////////////////
-
-showPopupCustomIncome.onclick = () => {
-  popupContainerCustomIncome.classList.add("active");     // Activates popup by adding class to div
-  dropDownFetchCategoriesIncome();
-};
-// Function for the Close Button
-closeBtnCustomIncome.onclick = () => {
-  popupContainerCustomIncome.classList.remove("active");    // Deactivates popup by removing class from div
-};
-
-saveBtnCustomIncome.onclick = async() => {
-
-  //let category = dropdownIncome.value;
-  let category = "income"
-
-  // Extracting value from inputfields
-  //let name = nameCustomIncome.value;
-  let value = valueCustomIncome.value;
-  let date = getDate();
   
-  //Packaging
-  let items = [{"amount": value, "date": date}];
-
-  let dataIncome = {
-    username,
-    customIncome: items,
-    category: category,
-  };
-  
-  updateCustomIncome(dataIncome);
-  updateUserValuesView(); 
-  popupContainerCustomIncome.classList.remove("active");
-  valueCustomIncome.value = "";
-};
-
-//////// CUSTOM EXPENSE /////////////////
-
-showPopupCustomExpense.onclick = () => {
-  popupContainerCustomExpense.classList.add("active");     // Activates popup by adding class to div
-  dropDownFetchCategoriesExpense();
-  
-};
-// Function for the Close Button
-closeBtnCustomExpense.onclick = () => {
-  popupContainerCustomExpense.classList.remove("active");    // Deactivates popup by removing class from div
-};
-
-saveBtnCustomExpense.onclick = async() => {
-  let category = dropdownExpense.value;
-
-
-  // Extracting value from inputfields
-  let name = nameCustomExpense.value;
-  let value = valueCustomExpense.value;
-  let date = getDate(); //Function that gets todays date
-  
-  //Packaging
-  let items = [{"name": name, "amount": value, "date": date}];
-
-  let dataExpense = {
-    username,
-    customExpense: items,
-    category: category,
-  };
-  
-  updateCustomExpense(dataExpense);
-  updateCategory();
-  updateUserValuesView(); 
-  popupContainerCustomExpense.classList.remove("active");
-  nameCustomExpense.value = "";
-  valueCustomExpense.value = ""; 
-};
-
-function getDate(){
-  let now = new Date();
-
-  const year = now.getFullYear();
-  const month = now.getMonth() + 1; // January is 0, so we add 1
-  const day = now.getDate();
-  const hour = now.getHours();
-  const formattedDate = `${year}-${month}-${day} ${hour}`;
-  
-  return formattedDate;
-};
-
-//////////////  OKKKAAAYA ADD GOAL ////////////////
-
-//############################ 
-// FUNCTIONS FOR DATAHANDELING
-//############################
-
-//GET from database --- read data from database
-async function fetchDatabase() {                  // A function for getting the values from budget from a user in the database and returns the budget.
-  try {
-      const response = await fetch("/api/budget/:budgetID", { // Put the data from fetch call into "response" const
-          method: "GET",
-          headers: {
-              "Content-Type": "application/json",
-          },
-      });
-      const data = await response.json(); // Parse the respons as a JSON and put in "const data"
-      return data; // Return the data obtained from the fetch call
-  } catch (error) {
-      console.error("Error: ", error);
-      throw error; // Re-throw the error to handle it elsewhere if needed
-  }
-}
-
-async function fetchAndProcessCategoryData() {
-  try {
-    const data = await fetchDatabase(); // Assuming this function fetches the full budget data
+  async function fetchAndProcessCategoryData() {
+    const data = await fetchDatabase();
     const categoriesData = {};
-
+  
     if (data && data.customExpenses) {
       for (const category in data.customExpenses) {
         let totalExpense = 0;
@@ -278,14 +147,122 @@ async function fetchAndProcessCategoryData() {
         categoriesData[category] = { totalExpense, goal };
       }
     }
-
-    console.log(categoriesData);
     return categoriesData;
-  } catch (error) {
-    console.error('Error processing category data:', error);
   }
-}
 
+  
+  async function inputCategoryToBackend(){
+    let name = "##GOAL##";
+    let items = [{"name": name, "value": categoryGoal.value, "color": categoryColor.value}];
+    console.log(categoryColor.value);
+    
+    goalData = {
+      username,
+      customExpense: items,
+      category: categoryName.value,
+    }
+    await updateCustomExpense(goalData); //Sends the goal data to backend
+  }
+  
+  // Function for creating a new catogory in the html and the database
+  async function spawnCategory(categoryTitle, color) {
+    try {
+      // Find the container for categories
+      const categoriesContainer = document.querySelector('.categories');
+  
+      //Removes the "add category"
+      const button = categoriesContainer.querySelector('button');
+      button.remove();
+  
+      // Create elements for the category
+      const categoryDiv = document.createElement('div');
+      categoryDiv.classList.add('pie-line');  // Set class to "pie-line" to create grey circle
+      categoryDiv.style.marginBottom = '7%';
+  
+      // Create span element
+      const span = document.createElement('span');
+      span.classList.add('category-text'); // Set class to "category-text" to position title above circle
+      span.textContent = categoryTitle; // Set title to user input
+  
+      // Create a div element for the pie chart 
+      const pie = document.createElement('div');
+      pie.classList.add('pie', 'animate'); // Add classes for styling 
+      pie.style.setProperty('--w', '100px');  // Set size of circle
+      setPieColor(pie, color)
+  
+      // Create paragraph element
+      const paragraph = document.createElement('p');
+      paragraph.textContent = 0;   // Set the goal for the category
+      
+      // Append the paragraph to the pie div
+      pie.appendChild(paragraph)
+  
+      // Append the span and pie div to the category div
+      categoryDiv.appendChild(span);
+      categoryDiv.appendChild(pie);
+      
+      // Append the category div to the categories container
+      categoriesContainer.appendChild(categoryDiv);
+  
+      // Lastly, add back the new category button
+      const newButton = document.createElement('button');
+      newButton.classList.add('add-circle');
+      newButton.style.marginBottom = '7%';
+      newButton.textContent = '+';
+      categoriesContainer.appendChild(newButton);
+      
+      newButton.addEventListener('click', () => {
+        console.log("activated")
+        categoryDialog.showModal();
+        console.log("category Name:" + categoryName.value)
+      });
+  
+      return newButton;
+  
+      // Optionally, you can return the category element if you need to manipulate it further
+      // return categoryDiv;
+    } catch (error) {
+      console.log("Error: " + error);
+      throw error;
+    }
+  }
+  
+  //#####################
+  // FUNCTIONS FOR DROPDOWN MENUS
+  //##################### 
+  //// These functions fetch categories from the database, and places them into a dropdown menu
+
+  async function dropDownFetchCategoriesExpense(){
+    try{  
+      dropdownExpense.innerHTML = ''; // Clear existing options
+      let data = await fetchDatabase();                  //Fetches data from database
+      let categories = Object.keys(data.customExpenses); //Accesses all category names in that budget
+      categories.forEach(category => {                   //Puts them into an array and displays them in the dropdown menu on the "add custom" popup
+        let option = document.createElement("option");
+        option.textContent = category;
+        dropdownExpense.appendChild(option);
+        
+    });
+    } catch (error) {
+      console.error('An error occurred fetching categories from database:', error);
+    }
+  }
+  
+  async function dropDownFetchCategoriesIncome(){
+    try{
+      dropdownIncome.innerHTML = ''; // Clear existing options
+      let data = await fetchDatabase(); 
+      let categories = Object.keys(data.customIncomes);
+      categories.forEach(category => {
+        let option = document.createElement("option");
+        option.textContent = category;
+        dropdownIncome.appendChild(option);
+    });
+    } catch (error) {
+      console.error('An error occurred fetching categories from database:', error);
+    }
+  }
+  
 //Function to get all costume income and add them together
 async function fetchAndProcessIncomeData() {
   try {
@@ -308,74 +285,52 @@ async function fetchAndProcessIncomeData() {
     console.error('Error processing category data:', error);
   }
 }
-
-
-// POST to database --- Update Budget in database
-async function updateBudget(data) {         // A function to update the data by sending a request to the server API endpoint
-  try {
-    const response = await fetch("/api/update_budget", {
-      method: "POST",
+  //#####################
+  // Utility Functions
+  //##################### 
+  async function fetchData(url, options = {}) {
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Fetch error:", error);
+      throw error;
+    }
+  }
+  
+  function setPiePercentage(percent, piechart) {
+    piechart.style.setProperty('--p', percent);
+    piechart.classList.remove("animate");
+    void piechart.offsetWidth;
+    piechart.classList.add("animate");
+  }
+  
+  function setPieColor(piechart, color) {
+    piechart.style.setProperty("--c", color);
+  }
+  
+  function getDate() {
+    let now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    const hour = now.getHours();
+    const formattedDate = `${year}-${month}-${day} ${hour}`;
+    return formattedDate;
+  }
+ //#####################
+  // Data Handling
+//##################### 
+  async function fetchDatabase() {
+    return fetchData(API_ENDPOINTS.fetchBudget, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data), // convert data to JSON
     });
-
-    if (!response.ok) {
-      throw new Error("Failed to update budget");
-    }
-
-    const responseData = await response.json();   // Parse the response as a JSON and put it in responseData
-    console.log("Success:", responseData);
-    popupContainerFixed.classList.remove("active");    // Close popup when response was sucessful and data has been updated
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
-
-
-async function updateCustomExpense(dataExpense) {         // A function to update the custom expense data
-  try {
-    const response = await fetch("/api/addcustom/expense", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataExpense), // convert data to JSON
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to update budget");
-    }
-
-    const responseData = await response.json();   // Parse the response as a JSON and put it in responseData
-    console.log("Success:", responseData);
-    //popupContainer.classList.remove("active"); NY POPUP FOR CUSTOM
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
-
-async function updateCustomIncome(dataIncome) {         // A function to update the custom income data
-  try {
-    const response = await fetch("/api/addcustom/income", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataIncome), // convert data to JSON
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to update budget");
-    }
-
-    const responseData = await response.json();   // Parse the response as a JSON and put it in responseData
-    console.log("Success:", responseData);
-    //popupContainer.classList.remove("active"); NY POPUP FOR CUSTOM
-  } catch (error) {
-    console.error("Error:", error);
-  }
 }
 
 async function fetchCategories(){
@@ -387,8 +342,39 @@ async function fetchCategories(){
   });
   updateCategory();
 }
+  
+async function updateBudget(data) {
+  return fetchData(API_ENDPOINTS.updateBudget, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
 
-// Use values from database to display visually in the pie chart --- Uses GET function
+}
+
+async function updateCustomExpense(dataExpense) {
+  return fetchData(API_ENDPOINTS.addCustomExpense, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(dataExpense),
+  });
+}
+
+async function updateCustomIncome(dataIncome) {
+  return fetchData(API_ENDPOINTS.addCustomIncome, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(dataIncome),
+  });
+}
+
+// UI Updates
 async function updateUserValuesView() {
   try {
     const data = await fetchDatabase();       // Call fetchDatabase and get userbudget-data returned.
@@ -417,124 +403,103 @@ async function updateUserValuesView() {
   } catch (error) {
     console.error("Error: ", error);
   }
-}
+//#####################
+// EVENT HANDLERS
+//##################### 
+function setupEventListeners() {
+  document.querySelector('.show-popup-fixed').onclick = () => {
+    document.querySelector('.popup-container-fixed').classList.add("active");
+  };
+  document.querySelector('.close-btn-fixed').onclick = () => {
+    document.querySelector('.popup-container-fixed').classList.remove("active");
+  };
+  document.querySelector('.save-btn-fixed').onclick = async () => {
+    const incomeFixed = document.querySelector(".income-fixed");
+    const expenseFixed = document.querySelector(".expense-fixed");
+    let incomeVal = incomeFixed.value;
+    let expenseVal = expenseFixed.value;
 
-// Method for opdating the circle on the pie charts
-function setPiePercentage(percent, piechart) {
-    // Set the value of variable --p to another value (in this case 20)
-    piechart.style.setProperty('--p', percent);
+    let data = {
+      username,
+      income: incomeVal,
+      expenses: expenseVal,
+      goal: 320,
+    };
 
-    piechart.classList.remove("animate");    // Reset animation
-    void piechart.offsetWidth;               // Trigger reflow
-    piechart.classList.add("animate");       // Start animation
-}
+    await updateBudget(data);
+    await updateUserValuesView();
 
-function inputCategoryToBackend(){
-  let name = "##GOAL##";
-  let items = [{"name": name, "value": categoryGoal.value, "color": categoryColor.value}];
-  console.log(categoryColor.value);
-  
-  goalData = {
+    document.querySelector('.popup-container-fixed').classList.remove("active");
+    incomeFixed.value = "";
+    expenseFixed.value = "";
+  };
+
+  document.querySelector('.show-popup-income').onclick = () => {
+    document.querySelector('.popup-container-income').classList.add("active");
+    dropDownFetchCategoriesIncome();
+  };
+  document.querySelector('.close-btn-income').onclick = () => {
+    document.querySelector('.popup-container-income').classList.remove("active");
+  };
+  document.querySelector('.save-btn-income').onclick = async () => {
+    const valueCustomIncome = document.querySelector(".value-income");
+    let value = valueCustomIncome.value;
+    let date = getDate();
+
+    let items = [{"amount": value, "date": date}];
+
+    let dataIncome = {
+      username,
+      customIncome: items,
+      category: "income",
+    };
+
+    await updateCustomIncome(dataIncome);
+    document.querySelector('.popup-container-income').classList.remove("active");
+    valueCustomIncome.value = "";
+  };
+
+  document.querySelector('.show-popup-expense').onclick = () => {
+    document.querySelector('.popup-container-expense').classList.add("active");
+    dropDownFetchCategoriesExpense();
+  };
+  document.querySelector('.close-btn-expense').onclick = () => {
+    document.querySelector('.popup-container-expense').classList.remove("active");
+};
+document.querySelector('.save-btn-expense').onclick = async () => {
+  const nameCustomExpense = document.querySelector(".name-expense");
+  const valueCustomExpense = document.querySelector(".value-expense");
+  const dropdownExpense = document.querySelector(".dropdown-expense");
+  let category = dropdownExpense.value;
+
+  let name = nameCustomExpense.value;
+  let value = valueCustomExpense.value;
+  let date = getDate();
+
+  let items = [{"name": name, "amount": value, "date": date}];
+
+  let dataExpense = {
     username,
     customExpense: items,
-    category: categoryName.value,
-  }
-  updateCustomExpense(goalData); //Sends the goal data to backend
+    category: category,
+  };
+
+  await updateCustomExpense(dataExpense);
+  await updateCategory();
+  document.querySelector('.popup-container-expense').classList.remove("active");
+  nameCustomExpense.value = "";
+  valueCustomExpense.value = "";
+};
+
+// Add more event listeners here
 }
 
-// CHAT!!!! 
-// Function for creating a new catogory in the html and the database
-async function spawnCategory(categoryTitle, color) {
-  try {
-    // Find the container for categories
-    const categoriesContainer = document.querySelector('.categories');
-
-    //Removes the "add category"
-    const button = categoriesContainer.querySelector('button');
-    button.remove();
-
-    // Create elements for the category
-    const categoryDiv = document.createElement('div');
-    categoryDiv.classList.add('pie-line');  // Set class to "pie-line" to create grey circle
-    categoryDiv.style.marginBottom = '7%';
-
-    // Create span element
-    const span = document.createElement('span');
-    span.classList.add('category-text'); // Set class to "category-text" to position title above circle
-    span.textContent = categoryTitle; // Set title to user input
-
-    // Create a div element for the pie chart 
-    const pie = document.createElement('div');
-    pie.classList.add('pie', 'animate'); // Add classes for styling 
-    pie.style.setProperty('--w', '100px');  // Set size of circle
-    setPieColor(pie, color)
-
-    // Create paragraph element
-    const paragraph = document.createElement('p');
-    paragraph.textContent = 0;   // Set the goal for the category
-    
-    // Append the paragraph to the pie div
-    pie.appendChild(paragraph)
-
-    // Append the span and pie div to the category div
-    categoryDiv.appendChild(span);
-    categoryDiv.appendChild(pie);
-    
-    // Append the category div to the categories container
-    categoriesContainer.appendChild(categoryDiv);
-
-    // Lastly, add back the new category button
-    const newButton = document.createElement('button');
-    newButton.classList.add('add-circle');
-    newButton.style.marginBottom = '7%';
-    newButton.textContent = '+';
-    categoriesContainer.appendChild(newButton);
-    
-    newButton.addEventListener('click', () => {
-      console.log("activated")
-      categoryDialog.showModal();
-      console.log("category Name:" + categoryName.value)
-    });
-
-    return newButton;
-
-    // Optionally, you can return the category element if you need to manipulate it further
-    // return categoryDiv;
-  } catch (error) {
-    console.log("Error: " + error);
-    throw error;
-  }
+// Initialization
+function initialize() {
+setupEventListeners();
+updateUserValuesView();
+fetchCategories();
 }
 
-//// These functions fetch categories from the database, and places them into a dropdown menu
-
-async function dropDownFetchCategoriesExpense(){
-  try{  
-    dropdownExpense.innerHTML = ''; // Clear existing options
-    let data = await fetchDatabase();                  //Fetches data from database
-    let categories = Object.keys(data.customExpenses); //Accesses all category names in that budget
-    categories.forEach(category => {                   //Puts them into an array and displays them in the dropdown menu on the "add custom" popup
-      let option = document.createElement("option");
-      option.textContent = category;
-      dropdownExpense.appendChild(option);
-  });
-  } catch (error) {
-    console.error('An error occurred fetching categories from database:', error);
-  }
-}
-
-async function dropDownFetchCategoriesIncome(){
-  try{
-    dropdownIncome.innerHTML = ''; // Clear existing options
-    let data = await fetchDatabase(); 
-    let categories = Object.keys(data.customIncomes);
-    categories.forEach(category => {
-      let option = document.createElement("option");
-      option.textContent = category;
-      dropdownIncome.appendChild(option);
-  });
-  } catch (error) {
-    console.error('An error occurred fetching categories from database:', error);
-  }
-}
-
+// Call initialize to start the app
+initialize();
