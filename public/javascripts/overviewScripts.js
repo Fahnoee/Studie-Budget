@@ -408,10 +408,12 @@ async function updateUserValuesView() {
       console.log("Expense cirkeltest: " + totalCustomIncome);
     });
 
-    totalAmount.textContent = "Total: " + data.income;      // Place data into variables
-    spentAmount.textContent = "Spent: " + (data.expenses + totalCustomExpense - totalCustomIncome);
-    leftAmount.textContent = "Available: " + (data.income - data.expenses - totalCustomExpense + totalCustomIncome);
-    setPiePercentage((data.expenses / data.income * 100), pie);    // Calculates the percentage that need to be painted
+    let netExpenses = (data.expenses + totalCustomExpense - totalCustomIncome);
+
+    totalAmount.textContent = "Fixed Income: " + data.income;      // Place data into variables
+    spentAmount.textContent = "Net expenses: " + netExpenses;
+    leftAmount.textContent = "Available: " + (data.income - netExpenses);
+    setPiePercentage(((netExpenses) / (data.income) * 100), pie);    // Calculates the percentage that need to be painted
   } catch (error) {
     console.error("Error: ", error);
   }
