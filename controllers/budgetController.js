@@ -225,36 +225,6 @@ let goal;
 //     expenses: expenses,
 //     goal: goal
 // });
-async function fetchCategoryExpensesAndGoals(username) {
-    try {
-        const budgetId = await fetchUserBudgetId(username);
-        if (!budgetId) {
-            throw new Error(`No budget found for user ${username}`);
-        }
-        const budget = await Budget.findById(budgetId);
-        if (!budget || !budget.customExpenses) {
-            throw new Error('Budget or custom expenses not found');
-        }
-
-        let categoriesData = {};
-        for (const category in budget.customExpenses) {
-            let totalExpense = 0;
-            let goal = null;
-            budget.customExpenses[category].forEach(item => {
-                if (item.name === "##GOAL##") {
-                    goal = parseFloat(item.value);
-                } else {
-                    totalExpense += parseFloat(item.amount);
-                }
-            });
-            categoriesData[category] = { totalExpense, goal };
-        }
-
-        return categoriesData;
-    } catch (error) {
-        throw new Error(`Error fetching category expenses and goals for ${username}: ${error.message}`);
-    }
-}
 
 // Exporting functions and models for external use
 module.exports = {
@@ -267,19 +237,5 @@ module.exports = {
     addCustomIncome: addCustomIncome,
     deleteUser: deleteUser,
     findUserByUsernameAndPassword: findUserByUsernameAndPassword,
-    fetchCategoryExpensesAndGoals: fetchCategoryExpensesAndGoals
 };
 // At the end of the file, add a call to fetchCategoryExpensesAndGoals for testing purposes
-
-async function testFetchCategoryExpensesAndGoals() {
-    try {
-        const username = 'mikkel'; // Specify the username to test
-        const data = await fetchCategoryExpensesAndGoals(username);
-        console.log(`Data for user ${username}:`, data);
-    } catch (error) {
-        console.error(`Test failed: ${error.message}`);
-    }
-}
-
-// Call the test function
-testFetchCategoryExpensesAndGoals();

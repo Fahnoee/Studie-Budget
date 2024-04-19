@@ -241,6 +241,35 @@ async function fetchDatabase() {                  // A function for getting the 
       throw error; // Re-throw the error to handle it elsewhere if needed
   }
 }
+
+async function fetchAndProcessCategoryData() {
+  try {
+    const data = await fetchDatabase(); // Assuming this function fetches the full budget data
+    const categoriesData = {};
+
+    if (data && data.customExpenses) {
+      for (const category in data.customExpenses) {
+        let totalExpense = 0;
+        let goal = null;
+        data.customExpenses[category].forEach(item => {
+          if (item.name === "##GOAL##") {
+            goal = parseFloat(item.value);
+          } else {
+            totalExpense += parseFloat(item.amount);
+          }
+        });
+        categoriesData[category] = { totalExpense, goal };
+      }
+    }
+
+    console.log(categoriesData);
+    return categoriesData;
+  } catch (error) {
+    console.error('Error processing category data:', error);
+  }
+}
+fetchAndProcessCategoryData();
+
 // POST to database --- Update Budget in database
 async function updateBudget(data) {         // A function to update the data by sending a request to the server API endpoint
   try {
