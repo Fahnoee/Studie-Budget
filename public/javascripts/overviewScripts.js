@@ -119,10 +119,9 @@ async function updateCategory(pieIndex) {
     console.log("Income: " + inc, "Expense: " + exps);
 
 
-    setPiePercentage((exps / inc * 100), pies[pieIndex]);    // Calculates the percentage that need to be painted
-
-    for (let i = 0; i < paragraphs.length; i++) {
-      paragraphs[i].textContent = 3;
+    for (let i = 0; i < pies.length; i++) {
+      setPiePercentage((exps / inc * 100), pies[pieIndex]);    // Calculates the percentage that need to be painted
+      paragraphs[i].textContent = 3;   
     }
 
     paragraphs.forEach(paragraph => {
