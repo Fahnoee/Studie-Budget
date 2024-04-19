@@ -102,10 +102,10 @@ showPopupFixed.onclick = () => {
     categoryDialog.close();
   }
   
-  saveBtnCategory.onclick = () => {
-    inputCategoryToBackend();
-    spawnCategory(categoryName.value, categoryColor.value);  // Create category
-    updateCategory();
+  saveBtnCategory.onclick = async () => {
+    await inputCategoryToBackend();
+    await spawnCategory(categoryName.value, categoryColor.value);  // Create category
+    await updateCategory();
     categoryName.value = "";
     categoryGoal.value = "";
     categoryDialog.close();
@@ -150,7 +150,7 @@ showPopupFixed.onclick = () => {
     return categoriesData;
   }
   
-  function inputCategoryToBackend(){
+  async function inputCategoryToBackend(){
     let name = "##GOAL##";
     let items = [{"name": name, "value": categoryGoal.value, "color": categoryColor.value}];
     console.log(categoryColor.value);
@@ -160,7 +160,7 @@ showPopupFixed.onclick = () => {
       customExpense: items,
       category: categoryName.value,
     }
-    updateCustomExpense(goalData); //Sends the goal data to backend
+    await updateCustomExpense(goalData); //Sends the goal data to backend
   }
   
   // Function for creating a new catogory in the html and the database
