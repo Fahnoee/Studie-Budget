@@ -115,16 +115,23 @@ async function addCustomExpense(username, { category, items }) {
         }
         // Initialize the category if it doesn't exist
         if (!budget.customExpenses[category]) {
+            console.log("TEST ##1");
             budget.customExpenses[category] = [];
             items.forEach(item => budget.customExpenses[category].push(item));
             // Mark the customExpenses field as modified
             budget.markModified('customExpenses');
         }
+        else if (budget.customExpenses[category][0].name === "##GOAL##" && items[0].name === "##GOAL##") {
+            budget.customExpenses[category][0].value = items[0].value;
+            budget.markModified('customExpenses');
+        }
         // Add the new items to the category
         else {
+            console.log("TEST ##3");
             items.forEach(item => budget.customExpenses[category].push(item));
             // Mark the customExpenses field as modified
             budget.markModified('customExpenses');
+
         }
         // Save the updated budget
         const updatedBudget = await budget.save();
@@ -215,7 +222,7 @@ async function deleteUser(username) {
 }
 
 // Placeholder variables for budget data
-let income; 
+let income;
 let expenses;
 let goal;
 
