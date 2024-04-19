@@ -403,6 +403,7 @@ async function updateUserValuesView() {
   } catch (error) {
     console.error("Error: ", error);
   }
+}
 //#####################
 // EVENT HANDLERS
 //##################### 
