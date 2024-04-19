@@ -210,6 +210,7 @@ saveBtnCustomExpense.onclick = async() => {
   };
   
   updateCustomExpense(dataExpense);
+  updateCategory();
   popupContainerCustomExpense.classList.remove("active");
 };
 
