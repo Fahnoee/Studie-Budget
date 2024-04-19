@@ -75,7 +75,7 @@ saveBtnFixed.onclick = async() => {
   };
 
   await updateBudget(data);                     // Firstly update the budget  in the database with new values
-  await updateUserValuesView();                 // Here we update the userValues showed within the piechart with values from database
+  updateUserValuesView();                 // Here we update the userValues showed within the piechart with values from database
 
   popupContainerFixed.classList.remove("active");    // Deactivates popup by removing class from div
   
@@ -106,6 +106,7 @@ saveBtnCategory.onclick = () => {
   updateCategory();
   categoryName.value = "";
   categoryGoal.value = "";
+  updateUserValuesView(); 
   categoryDialog.close();
 };
 
@@ -122,6 +123,8 @@ async function updateCategory() {
     let goal;
     let expense;
     let i = 0;
+
+    console.log(categoryData);
 
     Object.entries(categoryData).forEach(([category, items]) => {
       
@@ -178,6 +181,7 @@ saveBtnCustomIncome.onclick = async() => {
   };
   
   updateCustomIncome(dataIncome);
+  updateUserValuesView(); 
   popupContainerCustomIncome.classList.remove("active");
   valueCustomIncome.value = "";
 };
@@ -214,6 +218,7 @@ saveBtnCustomExpense.onclick = async() => {
   
   updateCustomExpense(dataExpense);
   updateCategory();
+  updateUserValuesView(); 
   popupContainerCustomExpense.classList.remove("active");
   nameCustomExpense.value = "";
   valueCustomExpense.value = ""; 
@@ -280,6 +285,30 @@ async function fetchAndProcessCategoryData() {
     console.error('Error processing category data:', error);
   }
 }
+
+//Function to get all costume income and add them together
+async function fetchAndProcessIncomeData() {
+  try {
+    const data = await fetchDatabase(); // Assuming this function fetches the full budget data
+    const categoriesData = {};
+
+    if (data && data.customIncomes) {
+      for (const category in data.customIncomes) {
+        let totalIncome = 0;
+        data.customIncomes[category].forEach(item => {
+            totalIncome += parseFloat(item.amount);
+        });
+        categoriesData[category] = { totalIncome };
+      }
+    }
+
+    console.log(categoriesData);
+    return categoriesData;
+  } catch (error) {
+    console.error('Error processing category data:', error);
+  }
+}
+
 
 // POST to database --- Update Budget in database
 async function updateBudget(data) {         // A function to update the data by sending a request to the server API endpoint
@@ -363,11 +392,25 @@ async function fetchCategories(){
 async function updateUserValuesView() {
   try {
     const data = await fetchDatabase();       // Call fetchDatabase and get userbudget-data returned.
-    
+    const customExpenseData = await fetchAndProcessCategoryData();
+    const customIncomeData = await fetchAndProcessIncomeData();
     // Update UI with fetched data
+    let totalCustomExpense = 0;
+    let totalCustomIncome = 0;
+
+    Object.entries(customExpenseData).forEach(([category, items]) => { //Add all custom expenses together
+      totalCustomExpense += items.totalExpense;
+      console.log("Expense cirkeltest: " + totalCustomExpense);
+    });
+    
+    Object.entries(customIncomeData).forEach(([category, items]) => { //Add all custom expenses together
+      totalCustomIncome += items.totalIncome;
+      console.log("Expense cirkeltest: " + totalCustomIncome);
+    });
+
     totalAmount.textContent = "Total: " + data.income;      // Place data into variables
-    spentAmount.textContent = "Spent: " + data.expenses;
-    leftAmount.textContent = "Available: " + (data.income - data.expenses);
+    spentAmount.textContent = "Spent: " + (data.expenses + totalCustomExpense - totalCustomIncome);
+    leftAmount.textContent = "Available: " + (data.income - data.expenses - totalCustomExpense + totalCustomIncome);
     setPiePercentage((data.expenses / data.income * 100), pie);    // Calculates the percentage that need to be painted
   } catch (error) {
     console.error("Error: ", error);

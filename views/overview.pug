@@ -8,11 +8,10 @@ block content
   div.popup-container-fixed
     div.popup-box-fixed
       h3 Edit income / expenses 
-      p Please enter your income and expenses
       p Use . for decimals
-      p Add a income: 
+      p Edit fixed monthly income: 
         input.income-fixed
-      p Add a expense: 
+      p Edit fixed monthly expense: 
         input.expense-fixed
       div.buttons
         button.close-btn-fixed CLOSE
@@ -20,13 +19,13 @@ block content
   
   div.popup-container-income
     div.popup-box-income
-      h3 Input a custom income
+      h3 Enter an income
       p Use . for decimals
       //p Add category: 
         select.dropdown-income
-      //p Add name: 
+      p Add name: 
         input.name-income
-      p Add a value
+      p Add value:
         input.value-income
       div.buttons
         button.close-btn-income CLOSE
@@ -34,13 +33,13 @@ block content
 
   div.popup-container-expense
     div.popup-box-expense
-      h3 Input a custom expense
+      h3 Enter an expense
       p Use . for decimals
-      p Add a category: 
+      p Choose category: 
         select.dropdown-expense
-      p Add a name: 
+      p Add name: 
         input.name-expense
-      p Add a value
+      p Add value
         input.value-expense
       div.buttons
         button.close-btn-expense CLOSE
@@ -48,11 +47,11 @@ block content
   
   dialog().dialog
     h3 Create category
-    p Choose a category: 
+    p Enter category: 
       input.category-name
-    p Enter a goal: 
+    p Enter goal: 
       input.category-goal
-    p Choose a color: 
+    p Choose color: 
       input.category-color(type="color")
     div.buttons
       button.close-btn-category CLOSE 
@@ -70,7 +69,7 @@ block content
               p.spent Spent: 0
               p.left Available: 0
           div
-          button.show-popup-fixed Add income/expenses
+          button.show-popup-fixed Edit fixed income and expenses
         div.column
           h2 Categories
           div.categories
