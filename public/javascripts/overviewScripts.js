@@ -83,6 +83,8 @@ saveBtnFixed.onclick = async() => {
   let getPieStyle = getComputedStyle(pie)
   let getPieValue = getPieStyle.getPropertyValue('--p');
   console.log("The value of --p is: " + getPieValue);
+  incomeFixed.value = ""
+  expenseFixed.value = ""
 };
 
 
@@ -176,6 +178,7 @@ saveBtnCustomIncome.onclick = async() => {
   
   updateCustomIncome(dataIncome);
   popupContainerCustomIncome.classList.remove("active");
+  valueCustomIncome.value = "";
 };
 
 //////// CUSTOM EXPENSE /////////////////
@@ -210,6 +213,8 @@ saveBtnCustomExpense.onclick = async() => {
   
   updateCustomExpense(dataExpense);
   popupContainerCustomExpense.classList.remove("active");
+  nameCustomExpense.value = "";
+  valueCustomExpense.value = ""; 
 };
 
 function getDate(){
