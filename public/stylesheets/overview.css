@@ -33,7 +33,7 @@ p {
 :root {
   --b: 15px; /* Adjust as needed */
   --p: 0; /* Adjust as needed */
-  --c: blue; /* Adjust as needed */
+  --c: #0000ff; /* Adjust as needed */
 }
 
 /* Adjust sizes and positions for smaller screens */
@@ -142,8 +142,15 @@ p {
   border-radius: 5px;
   cursor: pointer;
   margin: 5%;
+  background-color: #0000ff;
+  color: white;
   width: auto;
   height: 50px;
+  transition: background-color 0.3s ease;
+}
+
+.show-popup-fixed:hover {
+  background-color: #0c20b5;
 }
 
 .popup-container-fixed {
@@ -223,8 +230,15 @@ p {
   border-radius: 5px;
   cursor: pointer;
   margin: 5%;
+  background-color: rgb(57, 149, 85);
+  color: white;
   width: auto;
   height: 50px;
+  transition: background-color 0.3s ease;
+}
+
+.show-popup-income:hover {
+  background-color: rgb(26, 126, 56); 
 }
 
 .popup-container-income {
@@ -304,9 +318,17 @@ p {
   border-radius: 5px;
   cursor: pointer;
   margin: 5%;
+  background-color: rgb(229, 50, 14);
+  color: white;
   width: auto;
   height: 50px;
+  transition: background-color 0.3s ease;
 }
+
+.show-popup-expense:hover {
+  background-color: rgb(203, 34, 34); 
+}
+
 
 .popup-container-expense {
   position: fixed; /* Changed from absolute to fixed */

@@ -3,14 +3,18 @@
 //#####################
 const body = document.querySelector('body');
 const pie = document.querySelector('.pie');
-const totalAmount = document.querySelector('.total');
-const spentAmount = document.querySelector('.spent');
-const leftAmount = document.querySelector('.left');
+
+const totalAmount = document.querySelector(".total");
+const spentAmount = document.querySelector(".spent");
+const leftAmount = document.querySelector(".left");
+const savingsAmount = document.querySelector(".savings");
+
 const API_ENDPOINTS = {
   fetchBudget: "/api/budget/:budgetID",
   updateBudget: "/api/update_budget",
   addCustomExpense: "/api/addcustom/expense",
   addCustomIncome: "/api/addcustom/income",
+  fetchCustomExpensesByMonthAndYear: "/api/customexpenses/:month/:year",
 };
 
 //#############
@@ -22,8 +26,11 @@ const showPopupFixed = document.querySelector('.show-popup-fixed');
 const popupContainerFixed = document.querySelector('.popup-container-fixed');
 const closeBtnFixed = document.querySelector('.close-btn-fixed');
 const saveBtnFixed = document.querySelector('.save-btn-fixed');
-const incomeFixed = document.querySelector('.income-fixed');
-const expenseFixed = document.querySelector('.expense-fixed');
+
+const incomeFixed = document.querySelector(".income-fixed");
+const expenseFixed = document.querySelector(".expense-fixed");
+const savingsFixed = document.querySelector(".savings-fixed");
+
 
 // EXPENSE
 const showPopupCustomExpense = document.querySelector('.show-popup-expense');
@@ -62,6 +69,9 @@ const table = document.querySelector('.styled-table');
 // Function for popup buttons
 showPopupFixed.onclick = () => {
   popupContainerFixed.classList.add("active");     // Activates popup by adding class to div
+  incomeFixed.value = localStorage.getItem('incomeFixed') || '';
+  expenseFixed.value = localStorage.getItem('expenseFixed') || '';
+  savingsFixed.value = localStorage.getItem('savingsFixed') || '';
 };
 // Function for the Close Button
 closeBtnFixed.onclick = () => {
@@ -72,11 +82,12 @@ closeBtnFixed.onclick = () => {
 saveBtnFixed.onclick = async () => {
   let incomeVal = incomeFixed.value;
   let expenseVal = expenseFixed.value;
+  let savingsVal = savingsFixed.value;
   let data = {
     username,
     income: incomeVal,
     expenses: expenseVal,
-    goal: 320,
+    savings: savingsVal,
   };
 
   await upBudget(data);                     // Firstly update the budget  in the database with new values
@@ -88,8 +99,9 @@ saveBtnFixed.onclick = async () => {
   let getPieStyle = getComputedStyle(pie)
   let getPieValue = getPieStyle.getPropertyValue('--p');
   console.log("The value of --p is: " + getPieValue);
-  incomeFixed.value = ""
-  expenseFixed.value = ""
+  incomeFixed.value = localStorage.getItem('incomeFixed') || '';
+  expenseFixed.value = localStorage.getItem('expenseFixed') || '';
+  savingsFixed.value = localStorage.getItem('savingsFixed') || '';
 };
 
 
@@ -135,23 +147,26 @@ async function updateCategory() {
 }
 
 async function fetchAndProcessCategoryData() {
-  const data = await fetchDatabase();
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = now.getFullYear().toString();
+
+  const expenses = await fetchCustomExpensesByMonthAndYear(username, month, year);
   const categoriesData = {};
 
-  if (data && data.customExpenses) {
-    for (const category in data.customExpenses) {
-      let totalExpense = 0;
-      let goal = null;
-      data.customExpenses[category].forEach(item => {
-        if (item.name === "##GOAL##") {
-          goal = parseFloat(item.value);
-        } else {
-          totalExpense += parseFloat(item.amount);
-        }
-      });
-      categoriesData[category] = { totalExpense, goal };
-    }
+  for (const category in expenses) {
+    let totalExpense = 0;
+    let goal = 0; // Default goal to 0 if not found
+    expenses[category].forEach(item => {
+      if (item.name === "##GOAL##") {
+        goal = parseFloat(item.value);
+      } else {
+        totalExpense += parseFloat(item.amount);
+      }
+    });
+    categoriesData[category] = { totalExpense, goal };
   }
+
   return categoriesData;
 }
 
@@ -439,12 +454,45 @@ async function fetchHistory() {
   } 
 }
 
+async function fetchCustomExpensesByMonthAndYear(username, month, year) {
+  const url = API_ENDPOINTS.fetchCustomExpensesByMonthAndYear
+    .replace(':username', username)
+    .replace(':month', month)
+    .replace(':year', year);
+
+  return fetchData(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+// Example usage
+async function logCustomExpensesForCurrentMonth() {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = now.getFullYear();
+
+  console.log('Passing month:', month, 'and year:', year, 'to fetchCustomExpensesByMonthAndYear');
+
+  try {
+    const expenses = await fetchCustomExpensesByMonthAndYear(username, month, year);
+    console.log('Custom expenses for the current month:', expenses);
+  } catch (error) {
+    console.error('Error fetching custom expenses:', error);
+  }
+}
+// Call the function to log the expenses
+logCustomExpensesForCurrentMonth();        //test function der skal slettes senere
+
+
 //#####################
 // UI Updates
 //##################### 
 async function updateUserValuesView() {
   try {
-    const data = await fetchDatabase();       // Call fetchDatabase and get userbudget-data returned.
+    const data = await fetchDatabase();
     const customExpenseData = await fetchAndProcessCategoryData();
     const customIncomeData = await fetchAndProcessIncomeData();
     // Update UI with fetched data
@@ -465,8 +513,9 @@ async function updateUserValuesView() {
 
     totalAmount.textContent = "Fixed Income: " + data.income;      // Place data into variables
     spentAmount.textContent = "Net expenses: " + netExpenses;
-    leftAmount.textContent = "Available: " + (data.income - netExpenses);
-    setPiePercentage(((netExpenses) / (data.income) * 100), pie);    // Calculates the percentage that need to be painted
+    leftAmount.textContent = "Available: " + (data.income - netExpenses - data.savings) ;
+    savingsAmount.textContent = "Savings: " + data.savings;
+    setPiePercentage(((netExpenses + data.savings) / (data.income) * 100), pie);    // Calculates the percentage that need to be painted
   } catch (error) {
     console.error("Error: ", error);
   }
@@ -530,22 +579,25 @@ async function setupEventListeners() {
   document.querySelector('.save-btn-fixed').onclick = async () => {
     const incomeFixed = document.querySelector(".income-fixed");
     const expenseFixed = document.querySelector(".expense-fixed");
+    const savingsFixed = document.querySelector(".savings-fixed");
     let incomeVal = incomeFixed.value;
     let expenseVal = expenseFixed.value;
+    let savingsVal = savingsFixed.value;
 
     let data = {
       username,
       income: incomeVal,
       expenses: expenseVal,
-      goal: 320,
+      savings: savingsVal,
     };
 
     await updateBudget(data);
     await updateUserValuesView();
 
     document.querySelector('.popup-container-fixed').classList.remove("active");
-    incomeFixed.value = "";
-    expenseFixed.value = "";
+    incomeFixed.value = localStorage.getItem('incomeFixed') || '';
+    expenseFixed.value = localStorage.getItem('expenseFixed') || '';
+    savingsFixed.value = localStorage.getItem('savingsFixed') || '';
   };
 
   document.querySelector('.show-popup-income').onclick = () => {
@@ -609,14 +661,34 @@ async function setupEventListeners() {
 
   // Add more event listeners here
 }
+
+// Save to localStorage on input change
+incomeFixed.addEventListener('input', function() {
+  localStorage.setItem('incomeFixed', this.value);
+});
+
+expenseFixed.addEventListener('input', function() {
+  localStorage.setItem('expenseFixed', this.value);
+});
+
+savingsFixed.addEventListener('input', function() {
+  localStorage.setItem('savingsFixed', this.value);
+});
+
 //#####################
 // INITIALIZATION
 //##################### 
+
 async function initialize() {
   await setupEventListeners();
   await updateUserValuesView();
   await fetchCategories();
   await fetchHistory();
+
+  // Set input values from localStorage on page load
+  incomeFixed.value = localStorage.getItem('incomeFixed') || '';
+  expenseFixed.value = localStorage.getItem('expenseFixed') || '';
+  savingsFixed.value = localStorage.getItem('savingsFixed') || '';
 }
 
 // Call initialize to start the app

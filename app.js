@@ -54,14 +54,14 @@ app.post("/api/update_budget", (req, res) => {
   let username = data.username;
   let incomeVal = data.income;
   let expenseVal = data.expenses;
-  let goal = data.goal;
+  let savings = data.savings;
 
   // Call your controller's method
   controller
     .updateBudget(username, {
       income: incomeVal,
       expenses: expenseVal,
-      goal: goal,
+      savings: savings,
     })
     .then((result) => {
       // Budget update successful
@@ -204,6 +204,16 @@ app.post('/signup', async (req, res) => {
   }
 });
 
+app.get('/api/customexpenses/:month/:year', async (req, res) => {
+  try {
+    const username = req.session.username;
+    const { month, year } = req.params;
+    const expenses = await controller.fetchCustomExpensesByMonthAndYear(username, month, year);
+    res.json(expenses);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // View engine setup
 app.set("views", path.join(__dirname, "views"));
