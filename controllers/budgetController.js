@@ -78,7 +78,7 @@ async function createUserWithBudget(username, password) {
     const defaultBudget = {
         income: 0,
         expenses: 0,
-        goal: 0,
+        savings: 0,
         customExpenses: {},
         customIncome: {}
     };
@@ -222,6 +222,7 @@ async function deleteUser(username) {
     }
 }
 
+
 // Example usage of the updateBudget function
 // updateBudget(username, {
 //     income: income,
@@ -229,6 +230,33 @@ async function deleteUser(username) {
 //     goal: goal
 // });
 
+async function fetchCustomExpensesByMonthAndYear(username, month, year) {
+    try {
+        const budgetId = await fetchUserBudgetId(username);
+        const budget = await Budget.findById(budgetId);
+
+        const filteredExpenses = {};
+        for (const category in budget.customExpenses) {
+            filteredExpenses[category] = budget.customExpenses[category].filter(item => {
+                if (item.name === "##GOAL##") {
+                    return true; // Always include the goal item
+                } else if (item.date) {
+                    const [itemDate, itemTime] = item.date.split(' ');
+                    const [itemYear, itemMonth] = itemDate.split('-').map(val => parseInt(val, 10));
+                    const parsedYear = parseInt(year, 10);
+                    const parsedMonth = parseInt(month, 10);
+                    return itemYear === parsedYear && itemMonth === parsedMonth;
+                }
+                return false;
+            });
+        }
+
+
+        return filteredExpenses;
+    } catch (error) {
+        throw new Error(`Problem fetching custom expenses for ${username}: ${error.message}`);
+    }
+}
 // Exporting functions and models for external use
 
 // At the end of the file, add a call to fetchCategoryExpensesAndGoals for testing purposes
@@ -280,5 +308,9 @@ module.exports = {
     addCustomIncome: addCustomIncome,
     deleteUser: deleteUser,
     findUserByUsernameAndPassword: findUserByUsernameAndPassword,
+    fetchCustomExpensesByMonthAndYear: fetchCustomExpensesByMonthAndYear,
     deleteCustom: deleteCustom,
 };
+
+// At the end of the file, add a call to fetchCategoryExpensesAndGoals for testing purposes
+

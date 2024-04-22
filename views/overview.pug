@@ -13,6 +13,8 @@ block content
         input.income-fixed
       p Edit fixed monthly expense: 
         input.expense-fixed
+      p Edit monthly saving goal
+        input.savings-fixed
       div.buttons
         button.close-btn-fixed CLOSE
         button.save-btn-fixed SAVE
@@ -68,6 +70,7 @@ block content
               p.total 
               p.spent 
               p.left 
+              p.savings
           div
           button.show-popup-fixed Edit fixed income and expenses
         div.column
@@ -76,7 +79,9 @@ block content
             button.add-circle(style="margin-bottom: 7%;") +           
              
         div.column
-          h2 Add custom
+          h2 Custom expense history
+          div.history
+            table.styled-table
           button.show-popup-income Add custom income
           button.show-popup-expense Add custom expense
       div.tips
