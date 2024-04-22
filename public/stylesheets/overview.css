@@ -461,3 +461,91 @@ dialog .category-color{
   margin-top: 10%;
   justify-content: center;
 }
+
+/*///////////////*/
+/* History Table */
+/*///////////////*/
+
+.history {
+  width: fit-content;
+  height: 320px;
+  position: relative;
+  /* background-color: gray; */
+  display: block;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  margin: auto;
+}
+
+
+/*::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* Make scrollbar invisible */
+/*}*/
+
+
+.styled-table {
+  width: fit-content;
+  max-width: 90%;
+  border-collapse: collapse;
+  display: block;
+  justify-content: center;
+  border-spacing: 0;
+  margin-top: 0;  /* Adjust potential margins that could affect the placement */
+  padding-top: 0; /* Adjust potential padding that could affect the placement */
+  text-align: left;
+}
+
+.styled-table th, .styled-table td {
+  padding-right: 8px;
+  padding-left: 8px;
+  padding-bottom: 1px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.styled-table th {
+  background-color: #f2f2f2;
+}
+
+.styled-table tr {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #ddd;
+  width: 375px;
+}
+.styled-table td:nth-child(even) {
+  text-align: right;
+}
+.styled-table td:nth-child(odd) {
+  text-align: left;
+}
+
+.styled-table tr:nth-child(4n) {
+  background-color: #f2f2f2; /* or any other shade of gray you prefer */
+  border-top: none;
+}
+.styled-table tr:nth-child(4n-1) {
+  background-color: #f2f2f2; /* or any other shade of gray you prefer */
+  font-weight: bold; /* Gør teksten fed */
+  border-bottom: none;
+}
+.styled-table tr:nth-child(4n-2) {
+  border-top: none;
+}
+.styled-table tr:nth-child(4n-3) {
+  font-weight: bold; /* Gør teksten fed */
+  border-bottom: none;
+}
+
+.styled-table tr:nth-child(4n-1) + tr:nth-child(4n-2) {
+  /* Tilføj mindre afstand mellem de to rækker */
+  border-spacing: 0px -5px; /* Juster denne værdi efter behov */
+}
+
+
+.editHistoryBtn{
+  display: flex;
+  justify-content: flex-end;
+}
