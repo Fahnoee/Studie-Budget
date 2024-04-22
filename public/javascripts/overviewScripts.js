@@ -6,6 +6,7 @@ const pie = document.querySelector('.pie');
 const totalAmount = document.querySelector(".total");
 const spentAmount = document.querySelector(".spent");
 const leftAmount = document.querySelector(".left");
+const savingsAmount = document.querySelector(".savings");
 const API_ENDPOINTS = {
   fetchBudget: "/api/budget/:budgetID",
   updateBudget: "/api/update_budget",
@@ -23,6 +24,7 @@ const closeBtnFixed = document.querySelector('.close-btn-fixed');
 const saveBtnFixed = document.querySelector('.save-btn-fixed');
 const incomeFixed = document.querySelector(".income-fixed");
 const expenseFixed = document.querySelector(".expense-fixed");
+const savingsFixed = document.querySelector(".savings-fixed");
 
 // EXPENSE
 const showPopupCustomExpense = document.querySelector('.show-popup-expense');
@@ -68,11 +70,12 @@ closeBtnFixed.onclick = () => {
 saveBtnFixed.onclick = async () => {
   let incomeVal = incomeFixed.value;
   let expenseVal = expenseFixed.value;
+  let savingsVal = savingsFixed.value;
   let data = {
     username,
     income: incomeVal,
     expenses: expenseVal,
-    goal: 320,
+    savings: savingsVal,
   };
 
   await updateBudget(data);                     // Firstly update the budget  in the database with new values
@@ -401,8 +404,9 @@ async function updateUserValuesView() {
 
     totalAmount.textContent = "Fixed Income: " + data.income;      // Place data into variables
     spentAmount.textContent = "Net expenses: " + netExpenses;
-    leftAmount.textContent = "Available: " + (data.income - netExpenses);
-    setPiePercentage(((netExpenses) / (data.income) * 100), pie);    // Calculates the percentage that need to be painted
+    leftAmount.textContent = "Available: " + (data.income - netExpenses - data.savings) ;
+    savingsAmount.textContent = "Savings: " + data.savings;
+    setPiePercentage(((netExpenses + data.savings) / (data.income) * 100), pie);    // Calculates the percentage that need to be painted
   } catch (error) {
     console.error("Error: ", error);
   }
@@ -420,14 +424,16 @@ function setupEventListeners() {
   document.querySelector('.save-btn-fixed').onclick = async () => {
     const incomeFixed = document.querySelector(".income-fixed");
     const expenseFixed = document.querySelector(".expense-fixed");
+    const savingsFixed = document.querySelector(".savings-fixed");
     let incomeVal = incomeFixed.value;
     let expenseVal = expenseFixed.value;
+    let savingsVal = savingsFixed.value;
 
     let data = {
       username,
       income: incomeVal,
       expenses: expenseVal,
-      goal: 320,
+      savings: savingsVal,
     };
 
     await updateBudget(data);

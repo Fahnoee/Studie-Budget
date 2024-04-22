@@ -78,7 +78,7 @@ async function createUserWithBudget(username, password) {
     const defaultBudget = {
         income: 0,
         expenses: 0,
-        goal: 0,
+        savings: 0,
         customExpenses: {},
         customIncome: {}
     };
@@ -222,10 +222,6 @@ async function deleteUser(username) {
 }
 
 // Placeholder variables for budget data
-let income;
-let expenses;
-let goal;
-
 // Example usage of the updateBudget function
 // updateBudget(username, {
 //     income: income,

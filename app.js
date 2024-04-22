@@ -54,14 +54,14 @@ app.post("/api/update_budget", (req, res) => {
   let username = data.username;
   let incomeVal = data.income;
   let expenseVal = data.expenses;
-  let goal = data.goal;
+  let savings = data.savings;
 
   // Call your controller's method
   controller
     .updateBudget(username, {
       income: incomeVal,
       expenses: expenseVal,
-      goal: goal,
+      savings: savings,
     })
     .then((result) => {
       // Budget update successful
