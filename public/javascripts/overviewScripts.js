@@ -426,16 +426,17 @@ async function fetchHistory() {
     });
 
     arrayOfHistories.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));  // Sort array after timestamp
+    
     console.log(arrayOfHistories);
     
     arrayOfHistories.forEach(history => {   // Create table for each income and expense entry in database
-      creatTable(history.name, history.price, history.category, history.timestamp); // TODO: Add parameter for editBtn
+      let simpleDate = new Date(history.timestamp).toDateString();
+      creatTable(history.name, history.price, history.category, simpleDate); // TODO: Add parameter for editBtn
     });
     
   } catch (error) {
     console.log('Error trying to fetch history: ', error);
-  }
-  
+  } 
 }
 
 //#####################
