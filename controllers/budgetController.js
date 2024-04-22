@@ -221,11 +221,6 @@ async function deleteUser(username) {
     }
 }
 
-// Placeholder variables for budget data
-let income;
-let expenses;
-let goal;
-
 // Example usage of the updateBudget function
 // updateBudget(username, {
 //     income: income,
@@ -246,3 +241,43 @@ module.exports = {
     findUserByUsernameAndPassword: findUserByUsernameAndPassword,
 };
 // At the end of the file, add a call to fetchCategoryExpensesAndGoals for testing purposes
+
+async function deleteCustom(username, { category, items }, incomeOrExpense){
+
+    try {
+        const budgetId = await fetchUserBudgetId(username);
+        if (!budgetId) {
+            throw new Error(`No budget found for user ${username}`);
+        }
+        const budget = await Budget.findById(budgetId);
+        if (!budget) {
+            throw new Error('Budget not found');
+        }
+        console.log("Test her =====>", budget.customExpenses[category][1]);
+
+            
+        for(let i = 1; i < budget.customExpenses[category].length; i++){
+            console.log("budget.customExpenses[category][i]._id:", budget.customExpenses[category][i]._id);
+            console.log("items._id:", items[0]._id);
+            if(budget.customExpenses[category][i]._id === items[0]._id) {
+                console.log( "hej if pik hader mit fucking liv");
+                await budget.customExpenses[category].splice(i, 1);
+                budget.markModified('customExpenses');
+            }
+        }
+        await budget.save();
+        
+    } catch (error) {
+        throw new Error(`Error deleting custom income/expense ${username}: ${error.message}`);
+    }
+}
+
+let category = "munke";
+let items = [{
+    name: "idtest",
+    amount: 700,
+    date: "2024-4-22 10",
+    _id: "1713777037724"
+}]
+
+deleteCustom("mot", {category, items}, 7);

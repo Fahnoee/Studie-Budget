@@ -291,7 +291,7 @@ function setPieColor(piechart, color) {
   piechart.style.setProperty("--c", color);
 }
 
-function getDate() {
+function getFormattedDate() {
   let now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
@@ -448,9 +448,10 @@ function setupEventListeners() {
   document.querySelector('.save-btn-income').onclick = async () => {
     const valueCustomIncome = document.querySelector(".value-income");
     let value = valueCustomIncome.value;
-    let date = getDate();
+    let date = getFormattedDate();
+    let id = Date.now().toString();
 
-    let items = [{ "amount": value, "date": date }];
+    let items = [{ "amount": value, "date": date, "_id": id }];
 
     let dataIncome = {
       username,
@@ -479,9 +480,10 @@ function setupEventListeners() {
 
     let name = nameCustomExpense.value;
     let value = valueCustomExpense.value;
-    let date = getDate();
+    let date = getFormattedDate();
+    let id = Date.now().toString();
 
-    let items = [{ "name": name, "amount": value, "date": date }];
+    let items = [{ "name": name, "amount": value, "date": date, "_id": id }];
 
     let dataExpense = {
       username,
