@@ -60,6 +60,9 @@ const saveBtnCategory = document.querySelector('.save-btn-category');
 // Function for popup buttons
 showPopupFixed.onclick = () => {
   popupContainerFixed.classList.add("active");     // Activates popup by adding class to div
+  incomeFixed.value = localStorage.getItem('incomeFixed') || '';
+  expenseFixed.value = localStorage.getItem('expenseFixed') || '';
+  savingsFixed.value = localStorage.getItem('savingsFixed') || '';
 };
 // Function for the Close Button
 closeBtnFixed.onclick = () => {
@@ -87,8 +90,9 @@ saveBtnFixed.onclick = async () => {
   let getPieStyle = getComputedStyle(pie)
   let getPieValue = getPieStyle.getPropertyValue('--p');
   console.log("The value of --p is: " + getPieValue);
-  incomeFixed.value = ""
-  expenseFixed.value = ""
+  incomeFixed.value = localStorage.getItem('incomeFixed') || '';
+  expenseFixed.value = localStorage.getItem('expenseFixed') || '';
+  savingsFixed.value = localStorage.getItem('savingsFixed') || '';
 };
 
 
@@ -440,8 +444,9 @@ function setupEventListeners() {
     await updateUserValuesView();
 
     document.querySelector('.popup-container-fixed').classList.remove("active");
-    incomeFixed.value = "";
-    expenseFixed.value = "";
+    incomeFixed.value = localStorage.getItem('incomeFixed') || '';
+    expenseFixed.value = localStorage.getItem('expenseFixed') || '';
+    savingsFixed.value = localStorage.getItem('savingsFixed') || '';
   };
 
   document.querySelector('.show-popup-income').onclick = () => {
@@ -505,6 +510,20 @@ function setupEventListeners() {
 
   // Add more event listeners here
 }
+
+// Save to localStorage on input change
+incomeFixed.addEventListener('input', function() {
+  localStorage.setItem('incomeFixed', this.value);
+});
+
+expenseFixed.addEventListener('input', function() {
+  localStorage.setItem('expenseFixed', this.value);
+});
+
+savingsFixed.addEventListener('input', function() {
+  localStorage.setItem('savingsFixed', this.value);
+});
+
 //#####################
 // INITIALIZATION
 //##################### 
@@ -512,6 +531,11 @@ function initialize() {
   setupEventListeners();
   updateUserValuesView();
   fetchCategories();
+
+  // Set input values from localStorage on page load
+  incomeFixed.value = localStorage.getItem('incomeFixed') || '';
+  expenseFixed.value = localStorage.getItem('expenseFixed') || '';
+  savingsFixed.value = localStorage.getItem('savingsFixed') || '';
 }
 
 // Call initialize to start the app
