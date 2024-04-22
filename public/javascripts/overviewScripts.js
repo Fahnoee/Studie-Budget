@@ -12,6 +12,7 @@ const API_ENDPOINTS = {
   updateBudget: "/api/update_budget",
   addCustomExpense: "/api/addcustom/expense",
   addCustomIncome: "/api/addcustom/income",
+  fetchCustomExpensesByMonthAndYear: "/api/customexpenses/:month/:year",
 };
 
 //#####################
@@ -138,23 +139,26 @@ async function updateCategory() {
 }
 
 async function fetchAndProcessCategoryData() {
-  const data = await fetchDatabase();
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = now.getFullYear().toString();
+
+  const expenses = await fetchCustomExpensesByMonthAndYear(username, month, year);
   const categoriesData = {};
 
-  if (data && data.customExpenses) {
-    for (const category in data.customExpenses) {
-      let totalExpense = 0;
-      let goal = null;
-      data.customExpenses[category].forEach(item => {
-        if (item.name === "##GOAL##") {
-          goal = parseFloat(item.value);
-        } else {
-          totalExpense += parseFloat(item.amount);
-        }
-      });
-      categoriesData[category] = { totalExpense, goal };
-    }
+  for (const category in expenses) {
+    let totalExpense = 0;
+    let goal = 0; // Default goal to 0 if not found
+    expenses[category].forEach(item => {
+      if (item.name === "##GOAL##") {
+        goal = parseFloat(item.value);
+      } else {
+        totalExpense += parseFloat(item.amount);
+      }
+    });
+    categoriesData[category] = { totalExpense, goal };
   }
+
   return categoriesData;
 }
 
@@ -382,12 +386,45 @@ async function fetchAndProcessIncomeData() {
     console.error('Error processing category data:', error);
   }
 }
+
+async function fetchCustomExpensesByMonthAndYear(username, month, year) {
+  const url = API_ENDPOINTS.fetchCustomExpensesByMonthAndYear
+    .replace(':username', username)
+    .replace(':month', month)
+    .replace(':year', year);
+
+  return fetchData(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+// Example usage
+async function logCustomExpensesForCurrentMonth() {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = now.getFullYear();
+
+  console.log('Passing month:', month, 'and year:', year, 'to fetchCustomExpensesByMonthAndYear');
+
+  try {
+    const expenses = await fetchCustomExpensesByMonthAndYear(username, month, year);
+    console.log('Custom expenses for the current month:', expenses);
+  } catch (error) {
+    console.error('Error fetching custom expenses:', error);
+  }
+}
+// Call the function to log the expenses
+logCustomExpensesForCurrentMonth();
+
 //#####################
 // UI Updates
 //##################### 
 async function updateUserValuesView() {
   try {
-    const data = await fetchDatabase();       // Call fetchDatabase and get userbudget-data returned.
+    const data = await fetchDatabase();
     const customExpenseData = await fetchAndProcessCategoryData();
     const customIncomeData = await fetchAndProcessIncomeData();
     // Update UI with fetched data
