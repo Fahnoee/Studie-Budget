@@ -354,6 +354,16 @@ async function updateCustomIncome(dataIncome) {
   });
 }
 
+async function deleteCustomData(data) {
+  return fetchData(API_ENDPOINTS.deleteData, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+}
+
 //Function to get all costume income and add them together
 async function fetchAndProcessIncomeData() {
   try {
@@ -448,11 +458,13 @@ function setupEventListeners() {
   };
   document.querySelector('.save-btn-income').onclick = async () => {
     const valueCustomIncome = document.querySelector(".value-income");
+
+    let name = nameCustomIncome.value;
     let value = valueCustomIncome.value;
     let date = getFormattedDate();
     let id = Date.now().toString();
 
-    let items = [{ "amount": value, "date": date, "_id": id }];
+    let items = [{ "name": name, "amount": value, "date": date, "_id": id }];
 
     let dataIncome = {
       username,
@@ -503,40 +515,19 @@ function setupEventListeners() {
   // Add more event listeners here
 }
 
-async function deleteCustomData(data) {         // A function to update the custom expense data
-  try {
-    const response = await fetch("/api/deletecustom", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data), // convert data to JSON
-    });
-    console.log(response);
-
-    if (!response.ok) {
-      throw new Error("Failed to delete custom");
-    }
-
-    const responseData = await response.json();   // Parse the response as a JSON and put it in responseData
-    console.log("Success:", responseData);
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
-
+// TEST TIL DELETE CUSTOM (BEHOLD)
 
 let items1 = [{
   name: "idtest",
   amount: 700,
   date: "2024-4-22 10",
-  _id: "1713785321014"
+  _id: "1713808910591"
 }]
 let items2 = [{
   name: "idtest",
   amount: 700,
   date: "2024-4-22 10",
-  _id: "1713785329061"
+  _id: "1713808010246"
 }]
 
 let dataForDeletionIncome = {
@@ -552,8 +543,8 @@ let dataForDeletionExpense = {
   incomeOrExpense: "expense",
 }
 
-deleteCustomData(dataForDeletionIncome);
-deleteCustomData(dataForDeletionExpense);
+//deleteCustomData(dataForDeletionIncome);
+//deleteCustomData(dataForDeletionExpense);
 
 
 

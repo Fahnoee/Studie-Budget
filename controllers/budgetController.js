@@ -244,13 +244,8 @@ async function deleteCustom(username, { category, items }, incomeOrExpense){
         if (!budget) {
             throw new Error('Budget not found');
         }
-        console.log("Test her =====>", budget.customExpenses[category][1]);
-
-        if(incomeOrExpense === "expense"){  
-            for(let i = 1; i < budget.customExpenses[category].length; i++){
-                console.log("budget.customExpenses[category][i]._id:", budget.customExpenses[category][i]._id);
-                console.log("items._id:", items[0]._id);
-                console.log("Test her =====> if#1", budget.customExpenses[category][1]);
+        if(incomeOrExpense === "expense"){
+            for(let i = 1; i <= budget.customExpenses[category].length; i++){
                 if(budget.customExpenses[category][i]._id === items[0]._id) {
                     await budget.customExpenses[category].splice(i, 1);
                     budget.markModified('customExpenses');
@@ -259,11 +254,7 @@ async function deleteCustom(username, { category, items }, incomeOrExpense){
             }
         }
         if (incomeOrExpense === "income"){
-            for(let i = 0; i < budget.customIncomes["income"].length; i++){
-                console.log("budget.customIncomes[0][i]._id:", budget.customIncomes["income"][i]._id);
-                console.log("items._id:", items[0]._id);
-                console.log("Test her =====> if#2", budget.customExpenses[category][1]);
-
+            for(let i = 0; i <= budget.customIncomes["income"].length; i++){
                 if(budget.customIncomes["income"][i]._id === items[0]._id) {
                     await budget.customIncomes["income"].splice(i, 1);
                     budget.markModified('customIncomes');

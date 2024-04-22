@@ -136,17 +136,16 @@ app.post("/api/deletecustom", (req,res) => {
     category: data.category,
     items: data.customData
   }
-  console.log("username:" , username, "incomeorexpense:", data.incomeOrExpense, "deleteData:", deleteData);
   controller
     .deleteCustom(username, deleteData, incomeOrExpense)
     .then((result) => {
       // Budget update successful
-      console.log("Result: \n" + result);
+      console.log("Budget update successful....Result: \n" + result);
       res.json({ message: "Custom data deleted successfully: \n" + result });
     })
-    .catch((err) => {
+    .catch((error) => {
       // If anything goes wrong
-      res.status(500).json({ message: "Error in deleting custom." });
+      res.status(500).json({ message: "Error deleting custom income/expense.", error });
     });
 });
 
