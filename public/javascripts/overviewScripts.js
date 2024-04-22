@@ -3,9 +3,9 @@
 //#####################
 const body = document.querySelector('body');
 const pie = document.querySelector('.pie');
-const totalAmount = document.querySelector(".total");
-const spentAmount = document.querySelector(".spent");
-const leftAmount = document.querySelector(".left");
+const totalAmount = document.querySelector('.total');
+const spentAmount = document.querySelector('.spent');
+const leftAmount = document.querySelector('.left');
 const API_ENDPOINTS = {
   fetchBudget: "/api/budget/:budgetID",
   updateBudget: "/api/update_budget",
@@ -13,43 +13,47 @@ const API_ENDPOINTS = {
   addCustomIncome: "/api/addcustom/income",
 };
 
-//#####################
-// Q-SELECTORS POPUPS
-//#####################
+//#############
+// Q-SELECTORS
+//#############
+
 // FIXED
 const showPopupFixed = document.querySelector('.show-popup-fixed');
 const popupContainerFixed = document.querySelector('.popup-container-fixed');
 const closeBtnFixed = document.querySelector('.close-btn-fixed');
 const saveBtnFixed = document.querySelector('.save-btn-fixed');
-const incomeFixed = document.querySelector(".income-fixed");
-const expenseFixed = document.querySelector(".expense-fixed");
+const incomeFixed = document.querySelector('.income-fixed');
+const expenseFixed = document.querySelector('.expense-fixed');
 
 // EXPENSE
 const showPopupCustomExpense = document.querySelector('.show-popup-expense');
 const popupContainerCustomExpense = document.querySelector('.popup-container-expense');
 const closeBtnCustomExpense = document.querySelector('.close-btn-expense');
 const saveBtnCustomExpense = document.querySelector('.save-btn-expense');
-const dropdownExpense = document.querySelector(".dropdown-expense");
-const nameCustomExpense = document.querySelector(".name-expense");
-const valueCustomExpense = document.querySelector(".value-expense");
+const dropdownExpense = document.querySelector('.dropdown-expense');
+const nameCustomExpense = document.querySelector('.name-expense');
+const valueCustomExpense = document.querySelector('.value-expense');
 
 // INCOME
 const showPopupCustomIncome = document.querySelector('.show-popup-income');
 const popupContainerCustomIncome = document.querySelector('.popup-container-income');
 const closeBtnCustomIncome = document.querySelector('.close-btn-income');
 const saveBtnCustomIncome = document.querySelector('.save-btn-income');
-const dropdownIncome = document.querySelector(".dropdown-income");
-const nameCustomIncome = document.querySelector(".name-income");
-const valueCustomIncome = document.querySelector(".value-income");
+const dropdownIncome = document.querySelector('.dropdown-income');
+const nameCustomIncome = document.querySelector('.name-income');
+const valueCustomIncome = document.querySelector('.value-income');
 
 // CATEGORIES
-const categoryBtn = document.querySelector(".add-circle");
-const categoryDialog = document.querySelector(".dialog");
-const categoryName = document.querySelector(".category-name");
-const categoryGoal = document.querySelector(".category-goal");
-const categoryColor = document.querySelector(".category-color");
+const categoryBtn = document.querySelector('.add-circle');
+const categoryDialog = document.querySelector('.dialog');
+const categoryName = document.querySelector('.category-name');
+const categoryGoal = document.querySelector('.category-goal');
+const categoryColor = document.querySelector('.category-color');
 const closeBtnCategory = document.querySelector('.close-btn-category');
 const saveBtnCategory = document.querySelector('.save-btn-category');
+
+// HISTORY
+const table = document.querySelector('.styled-table');
 
 //#####################
 // FUNCTIONS FOR POPUP
@@ -75,7 +79,7 @@ saveBtnFixed.onclick = async () => {
     goal: 320,
   };
 
-  await updateBudget(data);                     // Firstly update the budget  in the database with new values
+  await upBudget(data);                     // Firstly update the budget  in the database with new values
   await updateUserValuesView();                 // Here we update the userValues showed within the piechart with values from database
 
   popupContainerFixed.classList.remove("active");    // Deactivates popup by removing class from div
@@ -275,7 +279,7 @@ async function fetchData(url, options = {}) {
     }
     return await response.json();
   } catch (error) {
-    console.error("Fetch error:", error);
+    console.error("Fetch Data error:", error);
     throw error;
   }
 }
@@ -297,9 +301,13 @@ function getDate() {
   const month = now.getMonth() + 1;
   const day = now.getDate();
   const hour = now.getHours();
-  const formattedDate = `${year}-${month}-${day} ${hour}`;
+  const minute = now.getMinutes();
+  const second = now.getSeconds();
+  const formattedDate = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
   return formattedDate;
 }
+
+
 //#####################
 // Data Handling
 //##################### 
@@ -313,13 +321,18 @@ async function fetchDatabase() {
 }
 
 async function fetchCategories() {
-  const data = await fetchDatabase();
-  const categories = data.customExpenses ? Object.keys(data.customExpenses) : [];
+  try {
+    const data = await fetchDatabase();
+    const categories = data.customExpenses ? Object.keys(data.customExpenses) : [];
 
-  categories.forEach(category => {
-    spawnCategory(category, data.customExpenses[category][0].color); // getCategoryColor(category)
-  });
-  updateCategory();
+    categories.forEach(category => {
+      spawnCategory(category, data.customExpenses[category][0].color); // getCategoryColor(category)
+    });
+    updateCategory();
+  } catch (error) {
+    console.log('Error fetching categories: ', error);
+    throw error;
+  }
 }
 
 async function updateBudget(data) {
@@ -368,13 +381,63 @@ async function fetchAndProcessIncomeData() {
         categoriesData[category] = { totalIncome };
       }
     }
-
-    console.log(categoriesData);
     return categoriesData;
   } catch (error) {
     console.error('Error processing category data:', error);
   }
 }
+
+async function fetchHistory() { 
+  try {
+    const data = await fetchDatabase();
+    const categoriesExpenses = data.customExpenses ? Object.keys(data.customExpenses) : []; // Add names of all categories to array
+    let arrayOfHistories = [];
+
+    // Get name, price, category and timestamp for each expense in database
+    categoriesExpenses.forEach(category => {
+      data.customExpenses[category].forEach(expense => {    // Iterate over the expenses array directly
+        if (expense.name == '##GOAL##'){   // Exclude first entry in database containing the category goal
+          return;
+        }
+        let name = expense.name;
+        let price = expense.amount;
+        let timestamp = expense.date;
+
+        let history = {name: name, price: price, category: category, timestamp: timestamp}; // Insert into object
+        arrayOfHistories.push(history);   // Add object to array
+        
+      });
+    });
+
+    // Get name, price, category and timestamp for each income in database
+    const categoriesIncomes = data.customIncomes ? Object.keys(data.customIncomes) : [];
+    categoriesIncomes.forEach(category => {
+      data.customIncomes[category].forEach(income => {  // Iterate over the incomes array directly
+        if (income.name == '##GOAL##'){   // Exclude first entry in database containing the category goal
+          return;
+        }
+        let name = 'incomenameManglerMissingFixPLEASE';
+        let price = income.amount;
+        let timestamp = income.date;
+        
+        let history = {name: name, price: price, category: category, timestamp: timestamp}; // Insert into object
+        arrayOfHistories.push(history);   // Add object to array
+      });
+    });
+
+    arrayOfHistories.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));  // Sort array after timestamp
+    console.log(arrayOfHistories);
+    
+    arrayOfHistories.forEach(history => {   // Create table for each income and expense entry in database
+      creatTable(history.name, history.price, history.category, history.timestamp); // TODO: Add parameter for editBtn
+    });
+    
+  } catch (error) {
+    console.log('Error trying to fetch history: ', error);
+  }
+  
+}
+
 //#####################
 // UI Updates
 //##################### 
@@ -407,10 +470,56 @@ async function updateUserValuesView() {
     console.error("Error: ", error);
   }
 }
+
+//#####################
+// HISTORY TABLE
+//#####################
+function creatTable(name, price, category, timestamp){
+  // Builds row 1 for the history window 
+  const row1 = document.createElement('tr');
+  
+  const expenseName = document.createElement('td');
+  const expensePrice = document.createElement('td');
+
+  expenseName.textContent = name;
+  expensePrice.textContent = price + ' DKK';
+
+  row1.appendChild(expenseName);
+  row1.appendChild(expensePrice);
+
+  table.appendChild(row1);      // set the row in the table
+  
+  // Builds row 2 for the history window 
+  const row2 = document.createElement('tr');
+
+  const expenceCategory = document.createElement('td');
+  const historyExpenseEdit = document.createElement('td');
+  const editBtn = document.createElement('button');
+
+  expenceCategory.textContent = category + ' - ' + timestamp;
+  editBtn.textContent = 'Edit';
+  
+  editBtn.classList.add('editHistory');
+  historyExpenseEdit.appendChild(editBtn);
+  
+  row2.appendChild(expenceCategory);
+  row2.appendChild(historyExpenseEdit);
+  
+  table.appendChild(row2);      // adds the second row to the table
+
+  // Adds funcunality to the "edit" button
+  editBtn.addEventListener('click', () => {   
+    // Add function for button                  // right now the show modal is used for testing
+    categoryDialog.showModal();
+  });
+  
+}
+
+
 //#####################
 // EVENT HANDLERS
 //##################### 
-function setupEventListeners() {
+async function setupEventListeners() {
   document.querySelector('.show-popup-fixed').onclick = () => {
     document.querySelector('.popup-container-fixed').classList.add("active");
   };
@@ -502,10 +611,11 @@ function setupEventListeners() {
 //#####################
 // INITIALIZATION
 //##################### 
-function initialize() {
-  setupEventListeners();
-  updateUserValuesView();
-  fetchCategories();
+async function initialize() {
+  await setupEventListeners();
+  await updateUserValuesView();
+  await fetchCategories();
+  await fetchHistory();
 }
 
 // Call initialize to start the app
