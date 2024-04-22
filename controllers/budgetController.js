@@ -166,6 +166,7 @@ async function addCustomIncome(username, { category, items }) {
         if (!budget.customIncomes[category]) {
             budget.customIncomes[category] = [];
         }
+
         // Add the new items to the category
         items.forEach(item => budget.customIncomes[category].push(item));
         // Mark the customIncomes field as modified
@@ -221,6 +222,14 @@ async function deleteUser(username) {
     }
 }
 
+
+// Example usage of the updateBudget function
+// updateBudget(username, {
+//     income: income,
+//     expenses: expenses,
+//     goal: goal
+// });
+
 async function fetchCustomExpensesByMonthAndYear(username, month, year) {
     try {
         const budgetId = await fetchUserBudgetId(username);
@@ -242,12 +251,53 @@ async function fetchCustomExpensesByMonthAndYear(username, month, year) {
             });
         }
 
+
         return filteredExpenses;
     } catch (error) {
         throw new Error(`Problem fetching custom expenses for ${username}: ${error.message}`);
     }
 }
 // Exporting functions and models for external use
+
+// At the end of the file, add a call to fetchCategoryExpensesAndGoals for testing purposes
+
+async function deleteCustom(username, { category, items }, incomeOrExpense){
+
+    try {
+        const budgetId = await fetchUserBudgetId(username);
+        if (!budgetId) {
+            throw new Error(`No budget found for user ${username}`);
+        }
+        const budget = await Budget.findById(budgetId);
+        if (!budget) {
+            throw new Error('Budget not found');
+        }
+        if(incomeOrExpense === "expense"){
+            for(let i = 1; i <= budget.customExpenses[category].length; i++){
+                if(budget.customExpenses[category][i]._id === items[0]._id) {
+                    await budget.customExpenses[category].splice(i, 1);
+                    budget.markModified('customExpenses');
+                    break;
+                }
+            }
+        }
+        if (incomeOrExpense === "income"){
+            for(let i = 0; i <= budget.customIncomes["income"].length; i++){
+                if(budget.customIncomes["income"][i]._id === items[0]._id) {
+                    await budget.customIncomes["income"].splice(i, 1);
+                    budget.markModified('customIncomes');
+                    break;
+                }
+            }
+        }
+        await budget.save();
+        
+    } catch (error) {
+        throw new Error(`Error deleting custom income/expense ${username}: ${error.message}`);
+    }
+}
+
+
 module.exports = {
     User: User,
     Budget: Budget,
@@ -259,5 +309,8 @@ module.exports = {
     deleteUser: deleteUser,
     findUserByUsernameAndPassword: findUserByUsernameAndPassword,
     fetchCustomExpensesByMonthAndYear: fetchCustomExpensesByMonthAndYear,
+    deleteCustom: deleteCustom,
 };
+
 // At the end of the file, add a call to fetchCategoryExpensesAndGoals for testing purposes
+

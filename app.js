@@ -122,10 +122,32 @@ app.post("/api/addcustom/income", (req, res) => {
     })
     .catch((err) => {
       // If anything goes wrong
-      res.status(500).json({ message: "Error in adding expene." });
+      res.status(500).json({ message: "Error in adding income." });
     });
 });
 
+// Deleting custom inputs from database
+app.post("/api/deletecustom", (req,res) => {
+  let data = req.body;
+
+  let username = data.username;
+  let incomeOrExpense = data.incomeOrExpense;
+  let deleteData = {
+    category: data.category,
+    items: data.customData
+  }
+  controller
+    .deleteCustom(username, deleteData, incomeOrExpense)
+    .then((result) => {
+      // Budget update successful
+      console.log("Budget update successful....Result: \n" + result);
+      res.json({ message: "Custom data deleted successfully: \n" + result });
+    })
+    .catch((error) => {
+      // If anything goes wrong
+      res.status(500).json({ message: "Error deleting custom income/expense.", error });
+    });
+});
 
 
 //###########################

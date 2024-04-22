@@ -14,7 +14,9 @@ const API_ENDPOINTS = {
   updateBudget: "/api/update_budget",
   addCustomExpense: "/api/addcustom/expense",
   addCustomIncome: "/api/addcustom/income",
+  deleteData: "/api/deletecustom",
   fetchCustomExpensesByMonthAndYear: "/api/customexpenses/:month/:year",
+
 };
 
 //#############
@@ -268,7 +270,7 @@ async function dropDownFetchCategoriesExpense() {
   }
 }
 
-async function dropDownFetchCategoriesIncome() {
+/*async function dropDownFetchCategoriesIncome() {
   try {
     dropdownIncome.innerHTML = ''; // Clear existing options
     let data = await fetchDatabase();
@@ -281,7 +283,7 @@ async function dropDownFetchCategoriesIncome() {
   } catch (error) {
     console.error('An error occurred fetching categories from database:', error);
   }
-}
+}*/
 
 //#####################
 // Utility Functions
@@ -290,7 +292,7 @@ async function fetchData(url, options = {}) {
   try {
     const response = await fetch(url, options);
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      throw new Error("Network response was not ok", response);
     }
     return await response.json();
   } catch (error) {
@@ -310,7 +312,7 @@ function setPieColor(piechart, color) {
   piechart.style.setProperty("--c", color);
 }
 
-function getDate() {
+function getFormattedDate() {
   let now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
@@ -378,6 +380,16 @@ async function updateCustomIncome(dataIncome) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(dataIncome),
+  });
+}
+
+async function deleteCustomData(data) {
+  return fetchData(API_ENDPOINTS.deleteData, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
   });
 }
 
@@ -602,17 +614,20 @@ async function setupEventListeners() {
 
   document.querySelector('.show-popup-income').onclick = () => {
     document.querySelector('.popup-container-income').classList.add("active");
-    dropDownFetchCategoriesIncome();
+    //dropDownFetchCategoriesIncome();
   };
   document.querySelector('.close-btn-income').onclick = () => {
     document.querySelector('.popup-container-income').classList.remove("active");
   };
   document.querySelector('.save-btn-income').onclick = async () => {
     const valueCustomIncome = document.querySelector(".value-income");
-    let value = valueCustomIncome.value;
-    let date = getDate();
 
-    let items = [{ "amount": value, "date": date }];
+    let name = nameCustomIncome.value;
+    let value = valueCustomIncome.value;
+    let date = getFormattedDate();
+    let id = Date.now().toString();
+
+    let items = [{ "name": name, "amount": value, "date": date, "_id": id }];
 
     let dataIncome = {
       username,
@@ -641,9 +656,10 @@ async function setupEventListeners() {
 
     let name = nameCustomExpense.value;
     let value = valueCustomExpense.value;
-    let date = getDate();
+    let date = getFormattedDate();
+    let id = Date.now().toString();
 
-    let items = [{ "name": name, "amount": value, "date": date }];
+    let items = [{ "name": name, "amount": value, "date": date, "_id": id }];
 
     let dataExpense = {
       username,
@@ -662,6 +678,40 @@ async function setupEventListeners() {
   // Add more event listeners here
 }
 
+
+// TEST TIL DELETE CUSTOM (BEHOLD)
+
+let items1 = [{
+  name: "idtest",
+  amount: 700,
+  date: "2024-4-22 10",
+  _id: "1713808910591"
+}]
+let items2 = [{
+  name: "idtest",
+  amount: 700,
+  date: "2024-4-22 10",
+  _id: "1713808010246"
+}]
+
+let dataForDeletionIncome = {
+  username,
+  customData: items1,
+  category: "income",
+  incomeOrExpense: "income",
+}
+let dataForDeletionExpense = {
+  username,
+  customData: items2,
+  category: "munke",
+  incomeOrExpense: "expense",
+}
+
+//deleteCustomData(dataForDeletionIncome);
+//deleteCustomData(dataForDeletionExpense);
+
+
+
 // Save to localStorage on input change
 incomeFixed.addEventListener('input', function() {
   localStorage.setItem('incomeFixed', this.value);
@@ -674,6 +724,7 @@ expenseFixed.addEventListener('input', function() {
 savingsFixed.addEventListener('input', function() {
   localStorage.setItem('savingsFixed', this.value);
 });
+
 
 //#####################
 // INITIALIZATION
@@ -693,3 +744,4 @@ async function initialize() {
 
 // Call initialize to start the app
 initialize();
+
