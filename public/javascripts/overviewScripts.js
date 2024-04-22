@@ -11,6 +11,7 @@ const API_ENDPOINTS = {
   updateBudget: "/api/update_budget",
   addCustomExpense: "/api/addcustom/expense",
   addCustomIncome: "/api/addcustom/income",
+  deleteData: "/api/deletecustom",
 };
 
 //#####################
@@ -249,7 +250,7 @@ async function dropDownFetchCategoriesExpense() {
   }
 }
 
-async function dropDownFetchCategoriesIncome() {
+/*async function dropDownFetchCategoriesIncome() {
   try {
     dropdownIncome.innerHTML = ''; // Clear existing options
     let data = await fetchDatabase();
@@ -262,7 +263,7 @@ async function dropDownFetchCategoriesIncome() {
   } catch (error) {
     console.error('An error occurred fetching categories from database:', error);
   }
-}
+}*/
 
 //#####################
 // Utility Functions
@@ -271,7 +272,7 @@ async function fetchData(url, options = {}) {
   try {
     const response = await fetch(url, options);
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      throw new Error("Network response was not ok", response);
     }
     return await response.json();
   } catch (error) {
@@ -440,7 +441,7 @@ function setupEventListeners() {
 
   document.querySelector('.show-popup-income').onclick = () => {
     document.querySelector('.popup-container-income').classList.add("active");
-    dropDownFetchCategoriesIncome();
+    //dropDownFetchCategoriesIncome();
   };
   document.querySelector('.close-btn-income').onclick = () => {
     document.querySelector('.popup-container-income').classList.remove("active");
@@ -501,6 +502,61 @@ function setupEventListeners() {
 
   // Add more event listeners here
 }
+
+async function deleteCustomData(data) {         // A function to update the custom expense data
+  try {
+    const response = await fetch("/api/deletecustom", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data), // convert data to JSON
+    });
+    console.log(response);
+
+    if (!response.ok) {
+      throw new Error("Failed to delete custom");
+    }
+
+    const responseData = await response.json();   // Parse the response as a JSON and put it in responseData
+    console.log("Success:", responseData);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+
+let items1 = [{
+  name: "idtest",
+  amount: 700,
+  date: "2024-4-22 10",
+  _id: "1713785321014"
+}]
+let items2 = [{
+  name: "idtest",
+  amount: 700,
+  date: "2024-4-22 10",
+  _id: "1713785329061"
+}]
+
+let dataForDeletionIncome = {
+  username,
+  customData: items1,
+  category: "income",
+  incomeOrExpense: "income",
+}
+let dataForDeletionExpense = {
+  username,
+  customData: items2,
+  category: "munke",
+  incomeOrExpense: "expense",
+}
+
+deleteCustomData(dataForDeletionIncome);
+deleteCustomData(dataForDeletionExpense);
+
+
+
 //#####################
 // INITIALIZATION
 //##################### 
@@ -512,3 +568,4 @@ function initialize() {
 
 // Call initialize to start the app
 initialize();
+

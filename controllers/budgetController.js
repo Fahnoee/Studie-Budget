@@ -166,6 +166,7 @@ async function addCustomIncome(username, { category, items }) {
         if (!budget.customIncomes[category]) {
             budget.customIncomes[category] = [];
         }
+
         // Add the new items to the category
         items.forEach(item => budget.customIncomes[category].push(item));
         // Mark the customIncomes field as modified
@@ -229,17 +230,7 @@ async function deleteUser(username) {
 // });
 
 // Exporting functions and models for external use
-module.exports = {
-    User: User,
-    Budget: Budget,
-    fetchUserBudgetId: fetchUserBudgetId,
-    updateBudget: updateBudget,
-    createUserWithBudget: createUserWithBudget,
-    addCustomExpense: addCustomExpense,
-    addCustomIncome: addCustomIncome,
-    deleteUser: deleteUser,
-    findUserByUsernameAndPassword: findUserByUsernameAndPassword,
-};
+
 // At the end of the file, add a call to fetchCategoryExpensesAndGoals for testing purposes
 
 async function deleteCustom(username, { category, items }, incomeOrExpense){
@@ -255,14 +246,29 @@ async function deleteCustom(username, { category, items }, incomeOrExpense){
         }
         console.log("Test her =====>", budget.customExpenses[category][1]);
 
-            
-        for(let i = 1; i < budget.customExpenses[category].length; i++){
-            console.log("budget.customExpenses[category][i]._id:", budget.customExpenses[category][i]._id);
-            console.log("items._id:", items[0]._id);
-            if(budget.customExpenses[category][i]._id === items[0]._id) {
-                console.log( "hej if pik hader mit fucking liv");
-                await budget.customExpenses[category].splice(i, 1);
-                budget.markModified('customExpenses');
+        if(incomeOrExpense === "expense"){  
+            for(let i = 1; i < budget.customExpenses[category].length; i++){
+                console.log("budget.customExpenses[category][i]._id:", budget.customExpenses[category][i]._id);
+                console.log("items._id:", items[0]._id);
+                console.log("Test her =====> if#1", budget.customExpenses[category][1]);
+                if(budget.customExpenses[category][i]._id === items[0]._id) {
+                    await budget.customExpenses[category].splice(i, 1);
+                    budget.markModified('customExpenses');
+                    break;
+                }
+            }
+        }
+        if (incomeOrExpense === "income"){
+            for(let i = 0; i < budget.customIncomes["income"].length; i++){
+                console.log("budget.customIncomes[0][i]._id:", budget.customIncomes["income"][i]._id);
+                console.log("items._id:", items[0]._id);
+                console.log("Test her =====> if#2", budget.customExpenses[category][1]);
+
+                if(budget.customIncomes["income"][i]._id === items[0]._id) {
+                    await budget.customIncomes["income"].splice(i, 1);
+                    budget.markModified('customIncomes');
+                    break;
+                }
             }
         }
         await budget.save();
@@ -272,12 +278,16 @@ async function deleteCustom(username, { category, items }, incomeOrExpense){
     }
 }
 
-let category = "munke";
-let items = [{
-    name: "idtest",
-    amount: 700,
-    date: "2024-4-22 10",
-    _id: "1713777037724"
-}]
 
-deleteCustom("mot", {category, items}, 7);
+module.exports = {
+    User: User,
+    Budget: Budget,
+    fetchUserBudgetId: fetchUserBudgetId,
+    updateBudget: updateBudget,
+    createUserWithBudget: createUserWithBudget,
+    addCustomExpense: addCustomExpense,
+    addCustomIncome: addCustomIncome,
+    deleteUser: deleteUser,
+    findUserByUsernameAndPassword: findUserByUsernameAndPassword,
+    deleteCustom: deleteCustom,
+};
