@@ -142,13 +142,11 @@ p {
   border-radius: 5px;
   cursor: pointer;
   margin: 5%;
-  font-family: sans-serif;
   background-color: #0000ff;
   color: white;
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
-  border: none;
 }
 
 .show-popup-fixed:hover {
@@ -237,7 +235,6 @@ p {
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
-  border: none;
 }
 
 .show-popup-income:hover {
@@ -326,7 +323,6 @@ p {
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
-  border: none;
 }
 
 .show-popup-expense:hover {
@@ -548,20 +544,70 @@ dialog .category-color{
   border-spacing: 0px -5px; /* Juster denne værdi efter behov */
 }
 
-.editHistory{
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin: 5%;
-  font-family: sans-serif;
-  background-color: grey;
-  color: white;
-  width: auto;
-  /* height: 50px; */
-  transition: background-color 0.3s ease;
-}
 
-.historyBtns {
+.editHistoryBtn{
   display: flex;
   justify-content: flex-end;
 }
+.calendar-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 days a week */
+  gap: 5px;
+}
+
+.day {
+  padding: 10px;
+  background-color: #f0f0f0;
+  text-align: center;
+  cursor: pointer;
+}
+
+.day:hover {
+  background-color: #ddd;
+}
+.popup-container-calendar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-container-calendar.active {
+  display: flex;
+}
+
+.month-navigation {
+  display: flex;
+  justify-content: space-between; /* Adjusted spacing between elements */
+  align-items: center;
+  padding: 10px; /* Added padding */
+  background-color: #f0f0f0; /* Added background color */
+  border-radius: 5px; /* Added border radius */
+}
+
+#currentMonth {
+  font-weight: bold;
+}
+
+#prevMonth::before {
+  content: "←";
+  padding-right: 5px; /* Added padding to separate the arrow from the text */
+}
+
+#nextMonth::before {
+  content: "→";
+  padding-left: 5px; /* Added padding to separate the arrow from the text */
+}
+
