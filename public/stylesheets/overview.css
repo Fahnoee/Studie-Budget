@@ -72,7 +72,7 @@ p {
   position: absolute;
   border-radius: 50%;
   inset: calc(50% - var(--b)/2);
-  background: rgb(0, 0, 56);
+  background: rgb(0, 0, 26);
   transform: rotate(calc(var(--p)*3.6deg)) translateY(calc(16.5% - var(--w)/2));
 }
 
