@@ -74,13 +74,25 @@ async function createUserWithBudget(username, password) {
         throw new Error('User already exists');
     }
 
-    // Set default values for the budget
+    // Get current month and year
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-indexed
+    const currentYear = currentDate.getFullYear();
+
+    // Set default values for the budget, including an initial monthly record
     const defaultBudget = {
         income: 0,
         expenses: 0,
         savings: 0,
         customExpenses: {},
-        customIncome: {}
+        customIncome: {},
+        monthlyRecords: [{
+            month: currentMonth,
+            year: currentYear,
+            income: 0,
+            expenses: 0,
+            savings: 0
+        }]
     };
 
     try {
@@ -297,6 +309,28 @@ async function deleteCustom(username, { category, items }, incomeOrExpense){
     }
 }
 
+async function getMonthlyBudget(username, month, year) {
+  const budgetId = await fetchUserBudgetId(username);
+  const budget = await Budget.findById(budgetId);
+  const monthlyRecord = budget.monthlyRecords.find(record => record.month === month && record.year === year);
+  return monthlyRecord || { month, year, income: 0, expenses: 0, savings: 0 };
+}
+
+async function updateMonthlyBudget(username, month, year, { income, expenses, savings }) {
+  const budgetId = await fetchUserBudgetId(username);
+  const budget = await Budget.findById(budgetId);
+  let monthlyRecord = budget.monthlyRecords.find(record => record.month === month && record.year === year);
+  
+  if (monthlyRecord) {
+    monthlyRecord.income = income;
+    monthlyRecord.expenses = expenses;
+    monthlyRecord.savings = savings;
+  } else {
+    budget.monthlyRecords.push({ month, year, income, expenses, savings });
+  }
+
+  await budget.save();
+}
 
 module.exports = {
     User: User,
@@ -310,7 +344,6 @@ module.exports = {
     findUserByUsernameAndPassword: findUserByUsernameAndPassword,
     fetchCustomExpensesByMonthAndYear: fetchCustomExpensesByMonthAndYear,
     deleteCustom: deleteCustom,
+    getMonthlyBudget: getMonthlyBudget,
+    updateMonthlyBudget: updateMonthlyBudget,
 };
-
-// At the end of the file, add a call to fetchCategoryExpensesAndGoals for testing purposes
-
