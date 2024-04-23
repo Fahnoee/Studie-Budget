@@ -123,14 +123,20 @@ closeBtnCategory.onclick = () => {
 }
 
 saveBtnCategory.onclick = async () => {
-  categoryDialog.close();
-  await inputCategoryToBackend();
-  await spawnCategory(categoryName.value, categoryColor.value);  // Create category
-  await updateCategory();
-  await updateUserValuesView();
-  categoryName.value = "";
-  categoryGoal.value = "";
-  
+
+    if(await categoryAvailableCheck(categoryName.value)){
+      alert("Category name already in use");
+    }
+    else{
+      categoryDialog.close();
+      await inputCategoryToBackend();
+      await spawnCategory(categoryName.value, categoryColor.value);  // Create category
+      await updateCategory();
+      await updateUserValuesView();
+      categoryName.value = "";
+      categoryGoal.value = "";
+    }
+
 };
 
 //#####################
@@ -175,7 +181,6 @@ async function fetchAndProcessCategoryData() {
 
   return categoriesData;
 }
-
 
 async function inputCategoryToBackend() {
   let name = "##GOAL##";
@@ -400,6 +405,21 @@ async function deleteCustomData(data) {
   });
 }
 
+// Function to check if a given category is already taken --- 1 = category exist, 0 == category does not exits
+async function categoryAvailableCheck(categoryInput) {
+  try {
+    let data = await fetchDatabase();                  //Fetches data from database
+    let categories = Object.keys(data.customExpenses); //Accesses all category names in that budget
+    for(let i = 0; i < categories.length; i++){
+      if(categories[i] === categoryInput){
+        return 1;
+      }
+    } return 0;
+  } catch (error) {
+    console.error('An error occurred fetching categories from database:', error);
+  }
+}
+
 //Function to get all costume income and add them together
 async function fetchAndProcessIncomeData() {
   try {
@@ -538,7 +558,6 @@ async function updateUserValuesView() {
   }
 }
 
-
 async function updateHistory(category) {
   try {
     const data = await fetchDatabase();
@@ -582,7 +601,6 @@ async function updateHistory(category) {
     console.error('Error updating history:', error);
   }
 }
-
 
 //#####################
 // HISTORY TABLE
@@ -633,14 +651,14 @@ function createTable(name, price, category, timestamp, newOrOld = 0){
     // Add function for button                  // right now the show modal is used for testing
     categoryDialog.showModal();
   });
+
   // Adds funcunality to the "delete" button
   deleteBtn.addEventListener('click', () => {   
     // Add function for button                  // right now the show modal is used for testing
     categoryDialog.showModal();
   });
-  
+ 
 }
-
 
 //#####################
 // EVENT HANDLERS
