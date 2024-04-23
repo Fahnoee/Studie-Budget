@@ -123,18 +123,20 @@ closeBtnCategory.onclick = () => {
 }
 
 saveBtnCategory.onclick = async () => {
+
     if(await categoryAvailableCheck(categoryName.value)){
       alert("Category name already in use");
     }
     else{
+      categoryDialog.close();
       await inputCategoryToBackend();
       await spawnCategory(categoryName.value, categoryColor.value);  // Create category
       await updateCategory();
       await updateUserValuesView();
       categoryName.value = "";
       categoryGoal.value = "";
-      categoryDialog.close();
     }
+
 };
 
 //#####################
@@ -219,6 +221,7 @@ async function spawnCategory(categoryTitle, color) {
     pie.classList.add('pie', 'animate'); // Add classes for styling 
     pie.style.setProperty('--w', '105px');  // Set size of circle
     pie.style.setProperty('--b', '10px');  // Set size of circle
+    pie.style.setProperty('--l', '1%');  // Set size of circle
     setPieColor(pie, color)
 
     // Create paragraph element
@@ -559,16 +562,35 @@ async function updateHistory(category) {
   try {
     const data = await fetchDatabase();
     const categoriesExpenses = data.customExpenses ? Object.keys(data.customExpenses) : []; // Add names of all categories to array
+    const categoriesIncomes = data.customIncomes ? Object.keys(data.customIncomes) : []; // Add names of all categories to array
 
+    // Update expenses
     if (categoriesExpenses.includes(category)) {        // Checks if the category exsists
       const expenses = data.customExpenses[category];   // Put array of expenses in category into variable
       if (expenses.length > 0) {
         const lastExpense = expenses[expenses.length - 1];
 
-        let simpleDate = new Date(lastExpense.date).toDateString().slice(4);    //slice to remove the name of the day
+        let simpleDate = new Date(lastExpense.date).toDateString().slice(4);    // Slice to remove the name of the day
         console.log(lastExpense);
         console.log(simpleDate);
         createTable(lastExpense.name, lastExpense.amount, category, simpleDate, 1);
+      } else {
+        console.log('No expenses in this category yet.');
+      }
+    } else {
+      console.log('Category not found.');
+    }
+
+    // Update incomes
+    if (categoriesIncomes.includes(category)) {        // Checks if the category exsists
+      const incomes = data.customIncomes[category];   // Put array of expenses in category into variable
+      if (incomes.length > 0) {
+        const lastIncome = incomes[incomes.length - 1];
+
+        let simpleDate = new Date(lastIncome.date).toDateString().slice(4);    // Slice to remove the name of the day
+        console.log(lastIncome);
+        console.log(simpleDate);
+        createTable(lastIncome.name, lastIncome.amount, category, simpleDate, 1);
       } else {
         console.log('No expenses in this category yet.');
       }
@@ -602,12 +624,17 @@ function createTable(name, price, category, timestamp, newOrOld = 0){
   const expenceCategory = document.createElement('td');
   const historyExpenseEdit = document.createElement('td');
   const editBtn = document.createElement('button');
+  const deleteBtn = document.createElement('button');
 
   expenceCategory.textContent = category + ' - ' + timestamp;
   editBtn.textContent = 'Edit';
+  deleteBtn.textContent = 'Delete';
   
   editBtn.classList.add('editHistory');
+  deleteBtn.classList.add('editHistory');
+  historyExpenseEdit.classList.add('historyBtns');
   historyExpenseEdit.appendChild(editBtn);
+  historyExpenseEdit.appendChild(deleteBtn);
   
   row2.appendChild(expenceCategory);
   row2.appendChild(historyExpenseEdit);
@@ -624,6 +651,13 @@ function createTable(name, price, category, timestamp, newOrOld = 0){
     // Add function for button                  // right now the show modal is used for testing
     categoryDialog.showModal();
   });
+
+  // Adds funcunality to the "delete" button
+  deleteBtn.addEventListener('click', () => {   
+    // Add function for button                  // right now the show modal is used for testing
+    categoryDialog.showModal();
+  });
+ 
 }
 
 //#####################
@@ -680,7 +714,7 @@ async function setupEventListeners() {
     let dataIncome = {
       username,
       customIncome: items,
-      category: "income",
+      category: "Income",
     };
     document.querySelector('.popup-container-income').classList.remove("active");
     await updateCustomIncome(dataIncome);

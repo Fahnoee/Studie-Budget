@@ -34,6 +34,7 @@ p {
   --b: 15px; /* Adjust as needed */
   --p: 0; /* Adjust as needed */
   --c: #0000ff; /* Adjust as needed */
+  --l: 18%;  /*radius for small circles to their black dot*/
 }
 
 /* Adjust sizes and positions for smaller screens */
@@ -73,7 +74,7 @@ p {
   border-radius: 50%;
   inset: calc(50% - var(--b)/2);
   background: rgb(0, 0, 26);
-  transform: rotate(calc(var(--p)*3.6deg)) translateY(calc(16.5% - var(--w)/2));
+  transform: rotate(calc(var(--p)*3.6deg)) translateY(calc(var(--l) - var(--w)/2));
 }
 
 @property --p{
@@ -139,14 +140,17 @@ p {
 /*///////*/
 
 .show-popup-fixed {
+  border: none;
   border-radius: 5px;
   cursor: pointer;
   margin: 5%;
+  font-family: sans-serif;
   background-color: #0000ff;
   color: white;
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
+  border: none;
 }
 
 .show-popup-fixed:hover {
@@ -227,6 +231,7 @@ p {
 /*///////////////*/
 
 .show-popup-income {
+  border: none;
   border-radius: 5px;
   cursor: pointer;
   margin: 5%;
@@ -235,6 +240,7 @@ p {
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
+  border: none;
 }
 
 .show-popup-income:hover {
@@ -315,6 +321,7 @@ p {
 /*?//////////////*/
 
 .show-popup-expense {
+  border: none;
   border-radius: 5px;
   cursor: pointer;
   margin: 5%;
@@ -323,6 +330,7 @@ p {
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
+  border: none;
 }
 
 .show-popup-expense:hover {
@@ -544,11 +552,24 @@ dialog .category-color{
   border-spacing: 0px -5px; /* Juster denne værdi efter behov */
 }
 
+.editHistory{
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5%;
+  font-family: sans-serif;
+  background-color: grey;
+  color: white;
+  width: auto;
+  /* height: 50px; */
+  transition: background-color 0.3s ease;
+}
 
-.editHistoryBtn{
+.historyBtns {
   display: flex;
   justify-content: flex-end;
 }
+
 .calendar-container {
   display: flex;
   justify-content: center;
