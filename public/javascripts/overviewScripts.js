@@ -585,12 +585,17 @@ function createTable(name, price, category, timestamp, newOrOld = 0){
   const expenceCategory = document.createElement('td');
   const historyExpenseEdit = document.createElement('td');
   const editBtn = document.createElement('button');
+  const deleteBtn = document.createElement('button');
 
   expenceCategory.textContent = category + ' - ' + timestamp;
   editBtn.textContent = 'Edit';
+  deleteBtn.textContent = 'Delete'
   
   editBtn.classList.add('editHistory');
+  deleteBtn.classList.add('editHistory');
+  historyExpenseEdit.classList.add('historyBtns')
   historyExpenseEdit.appendChild(editBtn);
+  historyExpenseEdit.appendChild(deleteBtn);
   
   row2.appendChild(expenceCategory);
   row2.appendChild(historyExpenseEdit);
@@ -604,6 +609,11 @@ function createTable(name, price, category, timestamp, newOrOld = 0){
 
   // Adds funcunality to the "edit" button
   editBtn.addEventListener('click', () => {   
+    // Add function for button                  // right now the show modal is used for testing
+    categoryDialog.showModal();
+  });
+  // Adds funcunality to the "delete" button
+  deleteBtn.addEventListener('click', () => {   
     // Add function for button                  // right now the show modal is used for testing
     categoryDialog.showModal();
   });
