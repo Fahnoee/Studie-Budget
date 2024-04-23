@@ -47,6 +47,26 @@ block content
         button.close-btn-expense CLOSE
         button.save-btn-expense SAVE
   
+  div.month-navigation
+    button#prevMonth(data-text="←") 
+    span#currentMonth
+    button#nextMonth(data-text="→")
+
+    
+  //- script.
+  //-   document.addEventListener('DOMContentLoaded', function() {
+  //-     const currentMonthSpan = document.querySelector('#currentMonth');
+  //-     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  //-     const currentDate = new Date();
+  //-     const currentMonthIndex = currentDate.getMonth();
+  //-     const currentYear = currentDate.getFullYear();
+  //-     const currentMonthName = monthNames[currentMonthIndex];
+  //-     currentMonthSpan.textContent = currentMonthName + ' ' + currentYear;
+  //-   });
+
+
+
+
   dialog().dialog
     h3 Create category
     p Enter category: 
@@ -59,6 +79,9 @@ block content
       button.close-btn-category CLOSE 
       button.save-btn-category SAVE
     
+  button.show-calendar-popup Show Calendar
+  div.popup-container-calendar
+  
   main
     div.all
       h1= title

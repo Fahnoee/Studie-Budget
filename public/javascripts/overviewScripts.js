@@ -64,6 +64,9 @@ const saveBtnCategory = document.querySelector('.save-btn-category');
 // HISTORY
 const table = document.querySelector('.styled-table');
 
+
+
+
 //#####################
 // FUNCTIONS FOR POPUP
 //#####################
@@ -745,3 +748,102 @@ async function initialize() {
 // Call initialize to start the app
 initialize();
 
+//#####################
+// CALENDAR FUNCTIONALITY
+//#####################
+document.querySelector('.show-calendar-popup').onclick = () => {
+  document.querySelector('.popup-container-calendar').classList.add('active');
+  generateCalendar();
+};
+
+const closeCalendarPopup = document.querySelector('.close-calendar-popup');
+if (closeCalendarPopup) {
+  closeCalendarPopup.onclick = () => {
+    const popupContainerCalendar = document.querySelector('.popup-container-calendar');
+    if (popupContainerCalendar) {
+      popupContainerCalendar.classList.remove('active');
+    }
+  };
+}
+
+function generateCalendar() {
+  const container = document.querySelector('.popup-container-calendar');
+  // Clear previous calendar
+  container.innerHTML = '';
+  const calendar = document.createElement('div');
+  calendar.className = 'calendar';
+
+  // Generate days here based on the current month
+  const currentDate = new Date();
+  // Get the number of days in the current month
+  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+  console.log(daysInMonth);
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayElement = document.createElement('div');
+    dayElement.className = 'day';
+    dayElement.textContent = day;
+    dayElement.onclick = () => alert(`Clicked on day ${day}`);
+    calendar.appendChild(dayElement);
+  }
+
+  container.appendChild(calendar);
+}
+
+//#####################
+// MONTH NAVIGATION
+//#####################
+// JavaScript months are 0-indexed
+// Define global variables
+document.addEventListener('DOMContentLoaded', () => {
+  // Define global variables
+  let currentYear = new Date().getFullYear();
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  let currentMonthIndex = new Date().getMonth();
+  let currentMonthName = monthNames[currentMonthIndex];
+
+  // Select the elements using querySelector
+  const prevMonthButton = document.querySelector('#prevMonth');
+  const currentMonthSpan = document.querySelector('#currentMonth');
+  const nextMonthButton = document.querySelector('#nextMonth');
+
+  // Function to update month display
+  function updateMonthDisplay() {
+    currentMonthName = monthNames[currentMonthIndex];
+    currentMonthSpan.textContent = currentMonthName + ' ' + currentYear;
+  }
+
+  // Call the function to set the initial month display
+  updateMonthDisplay();
+
+  // Event listeners for changing months
+  prevMonthButton.addEventListener('click', () => {
+    if (currentMonthIndex === 0) {
+      currentMonthIndex = 11;
+      currentYear -= 1;
+    } else {
+      currentMonthIndex -= 1;
+    }
+    updateMonthDisplay();
+  });
+
+  nextMonthButton.addEventListener('click', () => {
+    if (currentMonthIndex === 11) {
+      currentMonthIndex = 0;
+      currentYear += 1;
+    } else {
+      currentMonthIndex += 1;
+    }
+    updateMonthDisplay();
+  });
+});
+
+
+// document.addEventListener('DOMContentLoaded', function () {
+//   const currentMonthSpan = document.querySelector('#currentMonth');
+//   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+//   const currentDate = new Date();
+//   const currentMonthIndex = currentDate.getMonth();
+//   const currentYear = currentDate.getFullYear();
+//   const currentMonthName = monthNames[currentMonthIndex];
+//   currentMonthSpan.textContent = currentMonthName + ' ' + currentYear;
+// });
