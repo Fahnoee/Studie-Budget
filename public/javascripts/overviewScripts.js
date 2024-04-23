@@ -590,9 +590,7 @@ function creatTable(name, price, category, timestamp){
     // Add function for button                  // right now the show modal is used for testing
     categoryDialog.showModal();
   });
-  
 }
-
 
 //#####################
 // EVENT HANDLERS
@@ -693,7 +691,6 @@ async function setupEventListeners() {
 
   // Add more event listeners here
 }
-
 
 // TEST TIL DELETE CUSTOM (BEHOLD)
 
