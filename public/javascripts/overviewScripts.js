@@ -182,6 +182,7 @@ async function spawnCategory(categoryTitle, color) {
     // Create elements for the category
     const categoryDiv = document.createElement('div');
     categoryDiv.classList.add('pie-line');  // Set class to "pie-line" to create grey circle
+    categoryDiv.style.setProperty('--b', '10px');
     categoryDiv.style.marginBottom = '7%';
 
     // Create span element
@@ -192,7 +193,8 @@ async function spawnCategory(categoryTitle, color) {
     // Create a div element for the pie chart 
     const pie = document.createElement('div');
     pie.classList.add('pie', 'animate'); // Add classes for styling 
-    pie.style.setProperty('--w', '100px');  // Set size of circle
+    pie.style.setProperty('--w', '105px');  // Set size of circle
+    pie.style.setProperty('--b', '10px');  // Set size of circle
     setPieColor(pie, color)
 
     // Create paragraph element
@@ -427,11 +429,9 @@ async function fetchHistory() {
 
     arrayOfHistories.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));  // Sort array after timestamp
     
-    console.log(arrayOfHistories);
-    
     arrayOfHistories.forEach(history => {   // Create table for each income and expense entry in database
       let simpleDate = new Date(history.timestamp).toDateString().slice(4);    //slice to remove the name of the day
-      creatTable(history.name, history.price, history.category, simpleDate); // TODO: Add parameter for editBtn
+      createTable(history.name, history.price, history.category, simpleDate); // TODO: Add parameter for editBtn
     });
     
   } catch (error) {
@@ -453,18 +453,18 @@ async function updateUserValuesView() {
 
     Object.entries(customExpenseData).forEach(([category, items]) => { //Add all custom expenses together
       totalCustomExpense += items.totalExpense;
-      console.log("Expense cirkeltest: " + totalCustomExpense);
     });
 
     Object.entries(customIncomeData).forEach(([category, items]) => { //Add all custom expenses together
       totalCustomIncome += items.totalIncome;
-      console.log("Expense cirkeltest: " + totalCustomIncome);
     });
 
     let netExpenses = (data.expenses + totalCustomExpense - totalCustomIncome);
 
     totalAmount.textContent = "Fixed Income: " + data.income;      // Place data into variables
     spentAmount.textContent = "Net expenses: " + netExpenses;
+    console.log(netExpenses);
+    console.log(data.income - netExpenses);
     leftAmount.textContent = "Available: " + (data.income - netExpenses);
     setPiePercentage(((netExpenses) / (data.income) * 100), pie);    // Calculates the percentage that need to be painted
   } catch (error) {
@@ -473,16 +473,34 @@ async function updateUserValuesView() {
 }
 
 async function updateHistory(category) {
-  const data = await fetchDatabase();
-  const categoriesExpenses = data.customExpenses ? Object.keys(data.customExpenses) : []; // Add names of all categories to array
+  try {
+    const data = await fetchDatabase();
+    const categoriesExpenses = data.customExpenses ? Object.keys(data.customExpenses) : []; // Add names of all categories to array
 
-  
+    if (categoriesExpenses.includes(category)) {        // Checks if the category exsists
+      const expenses = data.customExpenses[category];   // Put array of expenses in category into variable
+      if (expenses.length > 0) {
+        const lastExpense = expenses[expenses.length - 1];
+
+        let simpleDate = new Date(lastExpense.date).toDateString().slice(4);    //slice to remove the name of the day
+        console.log(lastExpense);
+        console.log(simpleDate);
+        createTable(lastExpense.name, lastExpense.amount, category, simpleDate, 1);
+      } else {
+        console.log('No expenses in this category yet.');
+      }
+    } else {
+      console.log('Category not found.');
+    }
+  } catch (error) {
+    console.error('Error updating history:', error);
+  }
 }
 
 //#####################
 // HISTORY TABLE
 //#####################
-function creatTable(name, price, category, timestamp){
+function createTable(name, price, category, timestamp, newOrOld = 0){
   // Builds row 1 for the history window 
   const row1 = document.createElement('tr');
   
@@ -494,8 +512,6 @@ function creatTable(name, price, category, timestamp){
 
   row1.appendChild(expenseName);
   row1.appendChild(expensePrice);
-
-  table.appendChild(row1);      // set the row in the table
   
   // Builds row 2 for the history window 
   const row2 = document.createElement('tr');
@@ -518,8 +534,13 @@ function creatTable(name, price, category, timestamp){
   
   row2.appendChild(expenceCategory);
   row2.appendChild(historyExpenseEdit);
-  
-  table.appendChild(row2);      // adds the second row to the table
+  if (newOrOld) {   // If true == new
+    table.prepend(row2);      // adds the second row to the table
+    table.prepend(row1);      // set the row in the table
+  } else {
+    table.appendChild(row1);      // set the row in the table
+    table.appendChild(row2);      // adds the second row to the table
+  }
 
   // Adds funcunality to the "edit" button
   editBtn.addEventListener('click', () => {   
@@ -584,9 +605,8 @@ async function setupEventListeners() {
     document.querySelector('.popup-container-income').classList.remove("active");
     await updateCustomIncome(dataIncome);
     await updateUserValuesView();
+    await updateHistory('Income');
     valueCustomIncome.value = "";
-
-    location.reload();    // Reload page to update history
   };
 
   document.querySelector('.show-popup-expense').onclick = () => {
@@ -618,10 +638,9 @@ async function setupEventListeners() {
     await updateCustomExpense(dataExpense);
     await updateCategory();
     await updateUserValuesView();
+    await updateHistory(category);
     nameCustomExpense.value = "";
     valueCustomExpense.value = "";
-    
-    location.reload();    // Reload page to update history
   };
 
   // Add more event listeners here
