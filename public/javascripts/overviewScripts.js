@@ -498,6 +498,22 @@ async function logCustomExpensesForCurrentMonth() {
 // Call the function to log the expenses
 logCustomExpensesForCurrentMonth();        //test function der skal slettes senere
 
+// CHECK IF CATEGORY ALREADY EXISTS
+
+async function checkCategoryAvailability(categoryInput) {
+  try {
+    let data = await fetchDatabase();                  //Fetches data from database
+    let categories = Object.keys(data.customExpenses); //Accesses all category names in that budget
+    categories.forEach(category => {                   //Puts them into an array and displays them in the dropdown menu on the "add custom" popup
+      if(category === categoryInput){
+        return 1;
+      }else return 0;
+    });
+  } catch (error) {
+    console.error('An error occurred fetching categories from database:', error);
+  }
+}
+
 
 //#####################
 // UI Updates
