@@ -142,11 +142,13 @@ p {
   border-radius: 5px;
   cursor: pointer;
   margin: 5%;
+  font-family: sans-serif;
   background-color: #0000ff;
   color: white;
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
+  border: none;
 }
 
 .show-popup-fixed:hover {
@@ -235,6 +237,7 @@ p {
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
+  border: none;
 }
 
 .show-popup-income:hover {
@@ -323,6 +326,7 @@ p {
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
+  border: none;
 }
 
 .show-popup-expense:hover {
@@ -544,8 +548,20 @@ dialog .category-color{
   border-spacing: 0px -5px; /* Juster denne værdi efter behov */
 }
 
+.editHistory{
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5%;
+  font-family: sans-serif;
+  background-color: grey;
+  color: white;
+  width: auto;
+  /* height: 50px; */
+  transition: background-color 0.3s ease;
+}
 
-.editHistoryBtn{
+.historyBtns {
   display: flex;
   justify-content: flex-end;
 }

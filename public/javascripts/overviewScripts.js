@@ -3,20 +3,14 @@
 //#####################
 const body = document.querySelector('body');
 const pie = document.querySelector('.pie');
-
-const totalAmount = document.querySelector(".total");
-const spentAmount = document.querySelector(".spent");
-const leftAmount = document.querySelector(".left");
-const savingsAmount = document.querySelector(".savings");
-
+const totalAmount = document.querySelector('.total');
+const spentAmount = document.querySelector('.spent');
+const leftAmount = document.querySelector('.left');
 const API_ENDPOINTS = {
   fetchBudget: "/api/budget/:budgetID",
   updateBudget: "/api/update_budget",
   addCustomExpense: "/api/addcustom/expense",
   addCustomIncome: "/api/addcustom/income",
-  deleteData: "/api/deletecustom",
-  fetchCustomExpensesByMonthAndYear: "/api/customexpenses/:month/:year",
-
 };
 
 //#############
@@ -28,11 +22,8 @@ const showPopupFixed = document.querySelector('.show-popup-fixed');
 const popupContainerFixed = document.querySelector('.popup-container-fixed');
 const closeBtnFixed = document.querySelector('.close-btn-fixed');
 const saveBtnFixed = document.querySelector('.save-btn-fixed');
-
-const incomeFixed = document.querySelector(".income-fixed");
-const expenseFixed = document.querySelector(".expense-fixed");
-const savingsFixed = document.querySelector(".savings-fixed");
-
+const incomeFixed = document.querySelector('.income-fixed');
+const expenseFixed = document.querySelector('.expense-fixed');
 
 // EXPENSE
 const showPopupCustomExpense = document.querySelector('.show-popup-expense');
@@ -71,9 +62,6 @@ const table = document.querySelector('.styled-table');
 // Function for popup buttons
 showPopupFixed.onclick = () => {
   popupContainerFixed.classList.add("active");     // Activates popup by adding class to div
-  incomeFixed.value = localStorage.getItem('incomeFixed') || '';
-  expenseFixed.value = localStorage.getItem('expenseFixed') || '';
-  savingsFixed.value = localStorage.getItem('savingsFixed') || '';
 };
 // Function for the Close Button
 closeBtnFixed.onclick = () => {
@@ -84,26 +72,24 @@ closeBtnFixed.onclick = () => {
 saveBtnFixed.onclick = async () => {
   let incomeVal = incomeFixed.value;
   let expenseVal = expenseFixed.value;
-  let savingsVal = savingsFixed.value;
   let data = {
     username,
     income: incomeVal,
     expenses: expenseVal,
-    savings: savingsVal,
+    goal: 320,
   };
-
-  await upBudget(data);                     // Firstly update the budget  in the database with new values
-  await updateUserValuesView();                 // Here we update the userValues showed within the piechart with values from database
 
   popupContainerFixed.classList.remove("active");    // Deactivates popup by removing class from div
 
+  await updateBudget(data);                     // Firstly update the budget  in the database with new values
+  await updateUserValuesView();                 // Here we update the userValues showed within the piechart with values from database
+
   // Save changed income/expense to pie chart
-  let getPieStyle = getComputedStyle(pie)
+  let getPieStyle = getComputedStyle(pie);
   let getPieValue = getPieStyle.getPropertyValue('--p');
   console.log("The value of --p is: " + getPieValue);
-  incomeFixed.value = localStorage.getItem('incomeFixed') || '';
-  expenseFixed.value = localStorage.getItem('expenseFixed') || '';
-  savingsFixed.value = localStorage.getItem('savingsFixed') || '';
+  incomeFixed.value = "";
+  expenseFixed.value = "";
 };
 
 
@@ -120,13 +106,13 @@ closeBtnCategory.onclick = () => {
 }
 
 saveBtnCategory.onclick = async () => {
+  categoryDialog.close();
   await inputCategoryToBackend();
   await spawnCategory(categoryName.value, categoryColor.value);  // Create category
   await updateCategory();
   await updateUserValuesView();
   categoryName.value = "";
   categoryGoal.value = "";
-  categoryDialog.close();
 };
 
 //#####################
@@ -149,26 +135,23 @@ async function updateCategory() {
 }
 
 async function fetchAndProcessCategoryData() {
-  const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const year = now.getFullYear().toString();
-
-  const expenses = await fetchCustomExpensesByMonthAndYear(username, month, year);
+  const data = await fetchDatabase();
   const categoriesData = {};
 
-  for (const category in expenses) {
-    let totalExpense = 0;
-    let goal = 0; // Default goal to 0 if not found
-    expenses[category].forEach(item => {
-      if (item.name === "##GOAL##") {
-        goal = parseFloat(item.value);
-      } else {
-        totalExpense += parseFloat(item.amount);
-      }
-    });
-    categoriesData[category] = { totalExpense, goal };
+  if (data && data.customExpenses) {
+    for (const category in data.customExpenses) {
+      let totalExpense = 0;
+      let goal = null;
+      data.customExpenses[category].forEach(item => {
+        if (item.name === "##GOAL##") {
+          goal = parseFloat(item.value);
+        } else {
+          totalExpense += parseFloat(item.amount);
+        }
+      });
+      categoriesData[category] = { totalExpense, goal };
+    }
   }
-
   return categoriesData;
 }
 
@@ -270,7 +253,7 @@ async function dropDownFetchCategoriesExpense() {
   }
 }
 
-/*async function dropDownFetchCategoriesIncome() {
+async function dropDownFetchCategoriesIncome() {
   try {
     dropdownIncome.innerHTML = ''; // Clear existing options
     let data = await fetchDatabase();
@@ -283,7 +266,7 @@ async function dropDownFetchCategoriesExpense() {
   } catch (error) {
     console.error('An error occurred fetching categories from database:', error);
   }
-}*/
+}
 
 //#####################
 // Utility Functions
@@ -292,7 +275,7 @@ async function fetchData(url, options = {}) {
   try {
     const response = await fetch(url, options);
     if (!response.ok) {
-      throw new Error("Network response was not ok", response);
+      throw new Error("Network response was not ok");
     }
     return await response.json();
   } catch (error) {
@@ -312,7 +295,7 @@ function setPieColor(piechart, color) {
   piechart.style.setProperty("--c", color);
 }
 
-function getFormattedDate() {
+function getDate() {
   let now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
@@ -383,16 +366,6 @@ async function updateCustomIncome(dataIncome) {
   });
 }
 
-async function deleteCustomData(data) {
-  return fetchData(API_ENDPOINTS.deleteData, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-}
-
 //Function to get all costume income and add them together
 async function fetchAndProcessIncomeData() {
   try {
@@ -443,7 +416,7 @@ async function fetchHistory() {
         if (income.name == '##GOAL##'){   // Exclude first entry in database containing the category goal
           return;
         }
-        let name = 'incomenameManglerMissingFixPLEASE';
+        let name = income.name;
         let price = income.amount;
         let timestamp = income.date;
         
@@ -457,7 +430,7 @@ async function fetchHistory() {
     console.log(arrayOfHistories);
     
     arrayOfHistories.forEach(history => {   // Create table for each income and expense entry in database
-      let simpleDate = new Date(history.timestamp).toDateString();
+      let simpleDate = new Date(history.timestamp).toDateString().slice(4);    //slice to remove the name of the day
       creatTable(history.name, history.price, history.category, simpleDate); // TODO: Add parameter for editBtn
     });
     
@@ -466,45 +439,12 @@ async function fetchHistory() {
   } 
 }
 
-async function fetchCustomExpensesByMonthAndYear(username, month, year) {
-  const url = API_ENDPOINTS.fetchCustomExpensesByMonthAndYear
-    .replace(':username', username)
-    .replace(':month', month)
-    .replace(':year', year);
-
-  return fetchData(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-}
-
-// Example usage
-async function logCustomExpensesForCurrentMonth() {
-  const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const year = now.getFullYear();
-
-  console.log('Passing month:', month, 'and year:', year, 'to fetchCustomExpensesByMonthAndYear');
-
-  try {
-    const expenses = await fetchCustomExpensesByMonthAndYear(username, month, year);
-    console.log('Custom expenses for the current month:', expenses);
-  } catch (error) {
-    console.error('Error fetching custom expenses:', error);
-  }
-}
-// Call the function to log the expenses
-logCustomExpensesForCurrentMonth();        //test function der skal slettes senere
-
-
 //#####################
 // UI Updates
 //##################### 
 async function updateUserValuesView() {
   try {
-    const data = await fetchDatabase();
+    const data = await fetchDatabase();       // Call fetchDatabase and get userbudget-data returned.
     const customExpenseData = await fetchAndProcessCategoryData();
     const customIncomeData = await fetchAndProcessIncomeData();
     // Update UI with fetched data
@@ -525,12 +465,18 @@ async function updateUserValuesView() {
 
     totalAmount.textContent = "Fixed Income: " + data.income;      // Place data into variables
     spentAmount.textContent = "Net expenses: " + netExpenses;
-    leftAmount.textContent = "Available: " + (data.income - netExpenses - data.savings) ;
-    savingsAmount.textContent = "Savings: " + data.savings;
-    setPiePercentage(((netExpenses + data.savings) / (data.income) * 100), pie);    // Calculates the percentage that need to be painted
+    leftAmount.textContent = "Available: " + (data.income - netExpenses);
+    setPiePercentage(((netExpenses) / (data.income) * 100), pie);    // Calculates the percentage that need to be painted
   } catch (error) {
     console.error("Error: ", error);
   }
+}
+
+async function updateHistory(category) {
+  const data = await fetchDatabase();
+  const categoriesExpenses = data.customExpenses ? Object.keys(data.customExpenses) : []; // Add names of all categories to array
+
+  
 }
 
 //#####################
@@ -557,12 +503,18 @@ function creatTable(name, price, category, timestamp){
   const expenceCategory = document.createElement('td');
   const historyExpenseEdit = document.createElement('td');
   const editBtn = document.createElement('button');
+  const deleteBtn = document.createElement('button');
 
   expenceCategory.textContent = category + ' - ' + timestamp;
-  editBtn.textContent = 'Edit';
+  editBtn.textContent = 'Edit'; 
+  deleteBtn.textContent = 'Delete';
   
   editBtn.classList.add('editHistory');
+  deleteBtn.classList.add('editHistory');
+  historyExpenseEdit.classList.add('historyBtns');
+  
   historyExpenseEdit.appendChild(editBtn);
+  historyExpenseEdit.appendChild(deleteBtn);
   
   row2.appendChild(expenceCategory);
   row2.appendChild(historyExpenseEdit);
@@ -591,54 +543,50 @@ async function setupEventListeners() {
   document.querySelector('.save-btn-fixed').onclick = async () => {
     const incomeFixed = document.querySelector(".income-fixed");
     const expenseFixed = document.querySelector(".expense-fixed");
-    const savingsFixed = document.querySelector(".savings-fixed");
     let incomeVal = incomeFixed.value;
     let expenseVal = expenseFixed.value;
-    let savingsVal = savingsFixed.value;
 
     let data = {
       username,
       income: incomeVal,
       expenses: expenseVal,
-      savings: savingsVal,
+      goal: 320,
     };
 
     await updateBudget(data);
     await updateUserValuesView();
 
     document.querySelector('.popup-container-fixed').classList.remove("active");
-    incomeFixed.value = localStorage.getItem('incomeFixed') || '';
-    expenseFixed.value = localStorage.getItem('expenseFixed') || '';
-    savingsFixed.value = localStorage.getItem('savingsFixed') || '';
+    incomeFixed.value = "";
+    expenseFixed.value = "";
   };
 
   document.querySelector('.show-popup-income').onclick = () => {
     document.querySelector('.popup-container-income').classList.add("active");
-    //dropDownFetchCategoriesIncome();
+    dropDownFetchCategoriesIncome();
   };
   document.querySelector('.close-btn-income').onclick = () => {
     document.querySelector('.popup-container-income').classList.remove("active");
   };
   document.querySelector('.save-btn-income').onclick = async () => {
     const valueCustomIncome = document.querySelector(".value-income");
-
-    let name = nameCustomIncome.value;
     let value = valueCustomIncome.value;
-    let date = getFormattedDate();
-    let id = Date.now().toString();
+    let date = getDate();
 
-    let items = [{ "name": name, "amount": value, "date": date, "_id": id }];
+    let items = [{ "amount": value, "date": date }];
 
     let dataIncome = {
       username,
       customIncome: items,
-      category: "income",
+      category: "Income",
     };
 
+    document.querySelector('.popup-container-income').classList.remove("active");
     await updateCustomIncome(dataIncome);
     await updateUserValuesView();
-    document.querySelector('.popup-container-income').classList.remove("active");
     valueCustomIncome.value = "";
+
+    location.reload();    // Reload page to update history
   };
 
   document.querySelector('.show-popup-expense').onclick = () => {
@@ -656,10 +604,9 @@ async function setupEventListeners() {
 
     let name = nameCustomExpense.value;
     let value = valueCustomExpense.value;
-    let date = getFormattedDate();
-    let id = Date.now().toString();
+    let date = getDate();
 
-    let items = [{ "name": name, "amount": value, "date": date, "_id": id }];
+    let items = [{ "name": name, "amount": value, "date": date }];
 
     let dataExpense = {
       username,
@@ -667,81 +614,27 @@ async function setupEventListeners() {
       category: category,
     };
 
+    document.querySelector('.popup-container-expense').classList.remove("active");
     await updateCustomExpense(dataExpense);
     await updateCategory();
     await updateUserValuesView();
-    document.querySelector('.popup-container-expense').classList.remove("active");
     nameCustomExpense.value = "";
     valueCustomExpense.value = "";
+    
+    location.reload();    // Reload page to update history
   };
 
   // Add more event listeners here
 }
-
-
-// TEST TIL DELETE CUSTOM (BEHOLD)
-
-let items1 = [{
-  name: "idtest",
-  amount: 700,
-  date: "2024-4-22 10",
-  _id: "1713808910591"
-}]
-let items2 = [{
-  name: "idtest",
-  amount: 700,
-  date: "2024-4-22 10",
-  _id: "1713808010246"
-}]
-
-let dataForDeletionIncome = {
-  username,
-  customData: items1,
-  category: "income",
-  incomeOrExpense: "income",
-}
-let dataForDeletionExpense = {
-  username,
-  customData: items2,
-  category: "munke",
-  incomeOrExpense: "expense",
-}
-
-//deleteCustomData(dataForDeletionIncome);
-//deleteCustomData(dataForDeletionExpense);
-
-
-
-// Save to localStorage on input change
-incomeFixed.addEventListener('input', function() {
-  localStorage.setItem('incomeFixed', this.value);
-});
-
-expenseFixed.addEventListener('input', function() {
-  localStorage.setItem('expenseFixed', this.value);
-});
-
-savingsFixed.addEventListener('input', function() {
-  localStorage.setItem('savingsFixed', this.value);
-});
-
-
 //#####################
 // INITIALIZATION
 //##################### 
-
 async function initialize() {
   await setupEventListeners();
   await updateUserValuesView();
   await fetchCategories();
   await fetchHistory();
-
-  // Set input values from localStorage on page load
-  incomeFixed.value = localStorage.getItem('incomeFixed') || '';
-  expenseFixed.value = localStorage.getItem('expenseFixed') || '';
-  savingsFixed.value = localStorage.getItem('savingsFixed') || '';
 }
 
 // Call initialize to start the app
 initialize();
-
