@@ -64,9 +64,6 @@ const saveBtnCategory = document.querySelector('.save-btn-category');
 // HISTORY
 const table = document.querySelector('.styled-table');
 
-
-
-
 //#####################
 // FUNCTIONS FOR POPUP
 //#####################
@@ -159,9 +156,9 @@ async function updateCategory() {
 }
 
 async function fetchAndProcessCategoryData() {
-  const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const year = now.getFullYear().toString();
+  // Use currentMonthIndex and currentYear from the global scope
+  const month = String(currentMonthIndex + 1).padStart(2, '0');
+  const year = currentYear.toString();
 
   const expenses = await fetchCustomExpensesByMonthAndYear(username, month, year);
   const categoriesData = {};
@@ -327,7 +324,7 @@ function setPieColor(piechart, color) {
 function getFormattedDate() {
   let now = new Date();
   const year = now.getFullYear();
-  const month = now.getMonth() + 1;
+  const month = currentMonthIndex+ 1;
   const day = now.getDate();
   const hour = now.getHours();
   const minute = now.getMinutes();
@@ -508,9 +505,8 @@ async function fetchCustomExpensesByMonthAndYear(username, month, year) {
 
 // Example usage
 async function logCustomExpensesForCurrentMonth() {
-  const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const year = now.getFullYear();
+  const month = String(currentMonthIndex + 1).padStart(2, '0');
+  const year = currentYear.toString();
 
   console.log('Passing month:', month, 'and year:', year, 'to fetchCustomExpensesByMonthAndYear');
 
@@ -832,14 +828,14 @@ initialize();
 //#####################
 // CALENDAR FUNCTIONALITY
 //#####################
-document.querySelector('.show-calendar-popup').onclick = () => {
+document.querySelector('.show-calendar-popup').onclick = async () => {
   document.querySelector('.popup-container-calendar').classList.add('active');
-  generateCalendar();
+  await generateCalendar();
 };
 
 const closeCalendarPopup = document.querySelector('.close-calendar-popup');
 if (closeCalendarPopup) {
-  closeCalendarPopup.onclick = () => {
+  closeCalendarPopup.onclick = async () => {
     const popupContainerCalendar = document.querySelector('.popup-container-calendar');
     if (popupContainerCalendar) {
       popupContainerCalendar.classList.remove('active');
@@ -847,7 +843,7 @@ if (closeCalendarPopup) {
   };
 }
 
-function generateCalendar() {
+async function generateCalendar() {
   const container = document.querySelector('.popup-container-calendar');
   // Clear previous calendar
   container.innerHTML = '';
@@ -875,56 +871,47 @@ function generateCalendar() {
 //#####################
 // JavaScript months are 0-indexed
 // Define global variables
-document.addEventListener('DOMContentLoaded', () => {
-  // Define global variables
-  let currentYear = new Date().getFullYear();
+let currentYear = new Date().getFullYear();
+let currentMonthIndex = new Date().getMonth();
+
+document.addEventListener('DOMContentLoaded', async () => {
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  let currentMonthIndex = new Date().getMonth();
   let currentMonthName = monthNames[currentMonthIndex];
 
-  // Select the elements using querySelector
   const prevMonthButton = document.querySelector('#prevMonth');
   const currentMonthSpan = document.querySelector('#currentMonth');
   const nextMonthButton = document.querySelector('#nextMonth');
 
-  // Function to update month display
-  function updateMonthDisplay() {
+  async function updateMonthDisplay() {
     currentMonthName = monthNames[currentMonthIndex];
     currentMonthSpan.textContent = currentMonthName + ' ' + currentYear;
   }
 
-  // Call the function to set the initial month display
-  updateMonthDisplay();
+  await updateMonthDisplay();
 
-  // Event listeners for changing months
-  prevMonthButton.addEventListener('click', () => {
+  prevMonthButton.addEventListener('click', async () => {
     if (currentMonthIndex === 0) {
       currentMonthIndex = 11;
       currentYear -= 1;
     } else {
       currentMonthIndex -= 1;
     }
-    updateMonthDisplay();
+    await updateMonthDisplay();
+    // await fetchAndProcessCategoryData();
+    await updateUserValuesView();
+    await updateCategory();
   });
 
-  nextMonthButton.addEventListener('click', () => {
+  nextMonthButton.addEventListener('click', async () => {
     if (currentMonthIndex === 11) {
       currentMonthIndex = 0;
       currentYear += 1;
     } else {
       currentMonthIndex += 1;
     }
-    updateMonthDisplay();
+    await updateMonthDisplay();
+    // await fetchAndProcessCategoryData();
+    await updateUserValuesView();
+    await updateCategory();
   });
 });
-
-
-// document.addEventListener('DOMContentLoaded', function () {
-//   const currentMonthSpan = document.querySelector('#currentMonth');
-//   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-//   const currentDate = new Date();
-//   const currentMonthIndex = currentDate.getMonth();
-//   const currentYear = currentDate.getFullYear();
-//   const currentMonthName = monthNames[currentMonthIndex];
-//   currentMonthSpan.textContent = currentMonthName + ' ' + currentYear;
-// });
