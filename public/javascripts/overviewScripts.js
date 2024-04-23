@@ -123,13 +123,18 @@ closeBtnCategory.onclick = () => {
 }
 
 saveBtnCategory.onclick = async () => {
-  await inputCategoryToBackend();
-  await spawnCategory(categoryName.value, categoryColor.value);  // Create category
-  await updateCategory();
-  await updateUserValuesView();
-  categoryName.value = "";
-  categoryGoal.value = "";
-  categoryDialog.close();
+    if(await categoryAvailableCheck(categoryName.value)){
+      alert("Category name already in use");
+    }
+    else{
+      await inputCategoryToBackend();
+      await spawnCategory(categoryName.value, categoryColor.value);  // Create category
+      await updateCategory();
+      await updateUserValuesView();
+      categoryName.value = "";
+      categoryGoal.value = "";
+      categoryDialog.close();
+    }
 };
 
 //#####################
