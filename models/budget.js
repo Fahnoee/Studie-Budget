@@ -2,10 +2,16 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const MonthlyRecordSchema = new Schema({
+  month: { type: Number, required: true },
+  year: { type: Number, required: true },
+  income: { type: Number, default: 0 },
+  expenses: { type: Number, default: 0 },
+  savings: { type: Number, default: 0 }
+}, { _id: false });
+
 const BudgetSchema = new Schema({
-  income: { type: Number, required: true },
-  expenses: { type: Number, required: true },
-  savings: { type: Number, required: true },
+  monthlyRecords: [MonthlyRecordSchema],
   customExpenses: { type: mongoose.Schema.Types.Mixed, default: {} },
   customIncomes: { type: mongoose.Schema.Types.Mixed, default: {} }
 });

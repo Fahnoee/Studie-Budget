@@ -3,7 +3,8 @@
 //#####################
 const body = document.querySelector('body');
 const pie = document.querySelector('.pie');
-
+let currentYear = new Date().getFullYear();
+let currentMonthIndex = new Date().getMonth();
 const totalAmount = document.querySelector(".total");
 const spentAmount = document.querySelector(".spent");
 const leftAmount = document.querySelector(".left");
@@ -16,7 +17,8 @@ const API_ENDPOINTS = {
   addCustomIncome: "/api/addcustom/income",
   deleteData: "/api/deletecustom",
   fetchCustomExpensesByMonthAndYear: "/api/customexpenses/:month/:year",
-
+  fetchMonthlyBudget: "/api/monthlybudget/:month/:year", // Added new API endpoint for fetching monthly budget
+  updateMonthlyBudget: "/api/update_monthly_budget" // Added new API endpoint for updating monthly budget
 };
 
 //#############
@@ -82,28 +84,21 @@ closeBtnFixed.onclick = () => {
 
 // Function for the Save Button
 saveBtnFixed.onclick = async () => {
-  let incomeVal = incomeFixed.value;
-  let expenseVal = expenseFixed.value;
-  let savingsVal = savingsFixed.value;
-  let data = {
-    username,
-    income: incomeVal,
-    expenses: expenseVal,
-    savings: savingsVal,
-  };
+  const currentMonth = String(currentMonthIndex + 1).padStart(2, '0'); // Ensure month is in MM format
+  const income = incomeFixed.value || 0;
+  const expenses = expenseFixed.value || 0;
+  const savings = savingsFixed.value || 0;
 
-  await upBudget(data);                     // Firstly update the budget  in the database with new values
-  await updateUserValuesView();                 // Here we update the userValues showed within the piechart with values from database
-
-  popupContainerFixed.classList.remove("active");    // Deactivates popup by removing class from div
-
-  // Save changed income/expense to pie chart
-  let getPieStyle = getComputedStyle(pie)
-  let getPieValue = getPieStyle.getPropertyValue('--p');
-  console.log("The value of --p is: " + getPieValue);
-  incomeFixed.value = localStorage.getItem('incomeFixed') || '';
-  expenseFixed.value = localStorage.getItem('expenseFixed') || '';
-  savingsFixed.value = localStorage.getItem('savingsFixed') || '';
+  // Call saveMonthlyBudget with the current month, year, and the new values
+  await saveMonthlyBudget(currentMonth, currentYear, income, expenses, savings)
+    .then(response => {
+      console.log(response.message); // Log success message
+      // Optionally, update the UI to reflect changes or notify the user of success
+    })
+    .catch(error => {
+      console.error("Failed to update monthly budget:", error);
+      // Handle error (e.g., show error message to the user)
+    });
 };
 
 
@@ -503,51 +498,37 @@ async function fetchCustomExpensesByMonthAndYear(username, month, year) {
   });
 }
 
-// Example usage
-async function logCustomExpensesForCurrentMonth() {
-  const month = String(currentMonthIndex + 1).padStart(2, '0');
-  const year = currentYear.toString();
-
-  console.log('Passing month:', month, 'and year:', year, 'to fetchCustomExpensesByMonthAndYear');
-
-  try {
-    const expenses = await fetchCustomExpensesByMonthAndYear(username, month, year);
-    console.log('Custom expenses for the current month:', expenses);
-  } catch (error) {
-    console.error('Error fetching custom expenses:', error);
-  }
-}
-// Call the function to log the expenses
-logCustomExpensesForCurrentMonth();        //test function der skal slettes senere
-
-
 //#####################
 // UI Updates
 //##################### 
 async function updateUserValuesView() {
   try {
-    const data = await fetchDatabase();
+    const currentMonth = String(currentMonthIndex + 1).padStart(2, '0');
+    // Use currentYear directly without redeclaring it
+    const yearString = currentYear.toString();
+    const monthlyBudget = await fetchMonthlyBudget(currentMonth, yearString);
+    
     const customExpenseData = await fetchAndProcessCategoryData();
     const customIncomeData = await fetchAndProcessIncomeData();
-    // Update UI with fetched data
+    
     let totalCustomExpense = 0;
     let totalCustomIncome = 0;
 
-    Object.entries(customExpenseData).forEach(([category, items]) => { //Add all custom expenses together
+    Object.entries(customExpenseData).forEach(([category, items]) => {
       totalCustomExpense += items.totalExpense;
     });
 
-    Object.entries(customIncomeData).forEach(([category, items]) => { //Add all custom expenses together
+    Object.entries(customIncomeData).forEach(([category, items]) => { 
       totalCustomIncome += items.totalIncome;
     });
 
-    let netExpenses = (data.expenses + totalCustomExpense - totalCustomIncome);
+    let netExpenses = (monthlyBudget.expenses + totalCustomExpense - totalCustomIncome);
 
-    totalAmount.textContent = "Fixed Income: " + data.income;      // Place data into variables
+    totalAmount.textContent = "Fixed Income: " + monthlyBudget.income;
     spentAmount.textContent = "Net expenses: " + netExpenses;
-    leftAmount.textContent = "Available: " + (data.income - netExpenses - data.savings) ;
-    savingsAmount.textContent = "Savings: " + data.savings;
-    setPiePercentage(((netExpenses + data.savings) / (data.income) * 100), pie);    // Calculates the percentage that need to be painted
+    leftAmount.textContent = "Available: " + (monthlyBudget.income - netExpenses - monthlyBudget.savings);
+    savingsAmount.textContent = "Savings: " + monthlyBudget.savings;
+    setPiePercentage(((netExpenses + monthlyBudget.savings) / (monthlyBudget.income) * 100), pie);
     
   } catch (error) {
     console.error("Error: ", error);
@@ -673,17 +654,32 @@ async function setupEventListeners() {
     let incomeVal = incomeFixed.value;
     let expenseVal = expenseFixed.value;
     let savingsVal = savingsFixed.value;
-
+  
+    // Assuming currentMonthIndex and currentYear are already defined and hold the correct values
+    let month = currentMonthIndex + 1; // JavaScript months are 0-indexed, add 1 for consistency with common representations
+    let year = currentYear;
+  
     let data = {
-      username,
+      username, // Ensure username is correctly defined or fetched from a reliable source, e.g., session storage or a global variable
+      month: month,
+      year: year,
       income: incomeVal,
       expenses: expenseVal,
       savings: savingsVal,
     };
-
-    await updateBudget(data);
-    await updateUserValuesView();
-
+  
+    // Assuming saveMonthlyBudget is a function that correctly handles the API request to your backend
+    await saveMonthlyBudget(month, year, incomeVal, expenseVal, savingsVal)
+      .then(() => {
+        // Handle success
+        console.log("Monthly budget updated successfully.");
+        updateUserValuesView(); // Update the UI to reflect the new budget values
+      })
+      .catch(error => {
+        // Handle error
+        console.error("Error updating monthly budget:", error);
+      });
+  
     document.querySelector('.popup-container-fixed').classList.remove("active");
     incomeFixed.value = localStorage.getItem('incomeFixed') || '';
     expenseFixed.value = localStorage.getItem('expenseFixed') || '';
@@ -811,15 +807,12 @@ savingsFixed.addEventListener('input', function() {
 //##################### 
 
 async function initialize() {
+  currentYear = new Date().getFullYear(); // Ensure currentYear is set
   await setupEventListeners();
+  await updateBudgetView(currentMonth, currentYear);
   await updateUserValuesView();
   await fetchCategories();
   await fetchHistory();
-
-  // Set input values from localStorage on page load
-  incomeFixed.value = localStorage.getItem('incomeFixed') || '';
-  expenseFixed.value = localStorage.getItem('expenseFixed') || '';
-  savingsFixed.value = localStorage.getItem('savingsFixed') || '';
 }
 
 // Call initialize to start the app
@@ -871,8 +864,7 @@ async function generateCalendar() {
 //#####################
 // JavaScript months are 0-indexed
 // Define global variables
-let currentYear = new Date().getFullYear();
-let currentMonthIndex = new Date().getMonth();
+
 
 document.addEventListener('DOMContentLoaded', async () => {
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -915,3 +907,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     await updateCategory();
   });
 });
+async function fetchMonthlyBudget(month, year) {
+  const url = API_ENDPOINTS.fetchMonthlyBudget.replace(':month', month).replace(':year', year);
+  return fetchData(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+async function updateBudgetView(month, year) {
+  const monthlyBudget = await fetchMonthlyBudget(month, year);
+  incomeFixed.value = monthlyBudget.income || 0;
+  expenseFixed.value = monthlyBudget.expenses || 0;
+  savingsFixed.value = monthlyBudget.savings || 0;
+  // Update the UI elements here as needed
+}
+
+async function saveMonthlyBudget(month, year, income, expenses, savings) {
+  const data = { month, year, income, expenses, savings };
+  return fetchData(API_ENDPOINTS.updateMonthlyBudget, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+}

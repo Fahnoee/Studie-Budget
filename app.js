@@ -237,6 +237,28 @@ app.get('/api/customexpenses/:month/:year', async (req, res) => {
   }
 });
 
+app.get('/api/monthlybudget/:month/:year', async (req, res) => {
+  try {
+    const username = req.session.username;
+    const { month, year } = req.params;
+    const monthlyBudget = await controller.getMonthlyBudget(username, parseInt(month), parseInt(year));
+    res.json(monthlyBudget);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/api/update_monthly_budget', async (req, res) => {
+  try {
+    const username = req.session.username;
+    const { month, year, income, expenses, savings } = req.body;
+    await controller.updateMonthlyBudget(username, parseInt(month), parseInt(year), { income, expenses, savings });
+    res.json({ message: 'Monthly budget updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // View engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");   // Set pug as the view engine
