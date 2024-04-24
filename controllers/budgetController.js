@@ -269,11 +269,39 @@ async function fetchCustomExpensesByMonthAndYear(username, month, year) {
         throw new Error(`Problem fetching custom expenses for ${username}: ${error.message}`);
     }
 }
+
+async function fetchCustomIncomesByMonthAndYear(username, month, year) {
+    try {
+        const budgetId = await fetchUserBudgetId(username);
+        const budget = await Budget.findById(budgetId);
+
+        const filteredIncomes = {};
+        for (const category in budget.customIncomes) {
+            filteredIncomes[category] = budget.customIncomes[category].filter(item => {
+                if (item.name === "##GOAL##") {
+                    return true; // Always include the goal item
+                } else if (item.date) {
+                    const [itemDate, itemTime] = item.date.split(' ');
+                    const [itemYear, itemMonth] = itemDate.split('-').map(val => parseInt(val, 10));
+                    const parsedYear = parseInt(year, 10);
+                    const parsedMonth = parseInt(month, 10);
+                    return itemYear === parsedYear && itemMonth === parsedMonth;
+                }
+                return false;
+            });
+        }
+
+
+        return filteredIncomes;
+    } catch (error) {
+        throw new Error(`Problem fetching custom incomes for ${username}: ${error.message}`);
+    }
+}
 // Exporting functions and models for external use
 
 // At the end of the file, add a call to fetchCategoryExpensesAndGoals for testing purposes
 
-async function deleteCustom(username, { category, items }, incomeOrExpense){
+async function deleteCustom(username, { category, items }, incomeOrExpense) {
 
     try {
         const budgetId = await fetchUserBudgetId(username);
@@ -284,18 +312,18 @@ async function deleteCustom(username, { category, items }, incomeOrExpense){
         if (!budget) {
             throw new Error('Budget not found');
         }
-        if(incomeOrExpense === "expense"){
-            for(let i = 1; i <= budget.customExpenses[category].length; i++){
-                if(budget.customExpenses[category][i]._id === items[0]._id) {
+        if (incomeOrExpense === "expense") {
+            for (let i = 1; i <= budget.customExpenses[category].length; i++) {
+                if (budget.customExpenses[category][i]._id === items[0]._id) {
                     await budget.customExpenses[category].splice(i, 1);
                     budget.markModified('customExpenses');
                     break;
                 }
             }
         }
-        if (incomeOrExpense === "income"){
-            for(let i = 0; i <= budget.customIncomes["income"].length; i++){
-                if(budget.customIncomes["income"][i]._id === items[0]._id) {
+        if (incomeOrExpense === "income") {
+            for (let i = 0; i <= budget.customIncomes["income"].length; i++) {
+                if (budget.customIncomes["income"][i]._id === items[0]._id) {
                     await budget.customIncomes["income"].splice(i, 1);
                     budget.markModified('customIncomes');
                     break;
@@ -303,33 +331,33 @@ async function deleteCustom(username, { category, items }, incomeOrExpense){
             }
         }
         await budget.save();
-        
+
     } catch (error) {
         throw new Error(`Error deleting custom income/expense ${username}: ${error.message}`);
     }
 }
 
 async function getMonthlyBudget(username, month, year) {
-  const budgetId = await fetchUserBudgetId(username);
-  const budget = await Budget.findById(budgetId);
-  const monthlyRecord = budget.monthlyRecords.find(record => record.month === month && record.year === year);
-  return monthlyRecord || { month, year, income: 0, expenses: 0, savings: 0 };
+    const budgetId = await fetchUserBudgetId(username);
+    const budget = await Budget.findById(budgetId);
+    const monthlyRecord = budget.monthlyRecords.find(record => record.month === month && record.year === year);
+    return monthlyRecord || { month, year, income: 0, expenses: 0, savings: 0 };
 }
 
 async function updateMonthlyBudget(username, month, year, { income, expenses, savings }) {
-  const budgetId = await fetchUserBudgetId(username);
-  const budget = await Budget.findById(budgetId);
-  let monthlyRecord = budget.monthlyRecords.find(record => record.month === month && record.year === year);
-  
-  if (monthlyRecord) {
-    monthlyRecord.income = income;
-    monthlyRecord.expenses = expenses;
-    monthlyRecord.savings = savings;
-  } else {
-    budget.monthlyRecords.push({ month, year, income, expenses, savings });
-  }
+    const budgetId = await fetchUserBudgetId(username);
+    const budget = await Budget.findById(budgetId);
+    let monthlyRecord = budget.monthlyRecords.find(record => record.month === month && record.year === year);
 
-  await budget.save();
+    if (monthlyRecord) {
+        monthlyRecord.income = income;
+        monthlyRecord.expenses = expenses;
+        monthlyRecord.savings = savings;
+    } else {
+        budget.monthlyRecords.push({ month, year, income, expenses, savings });
+    }
+
+    await budget.save();
 }
 
 module.exports = {
@@ -343,6 +371,7 @@ module.exports = {
     deleteUser: deleteUser,
     findUserByUsernameAndPassword: findUserByUsernameAndPassword,
     fetchCustomExpensesByMonthAndYear: fetchCustomExpensesByMonthAndYear,
+    fetchCustomIncomesByMonthAndYear: fetchCustomIncomesByMonthAndYear,
     deleteCustom: deleteCustom,
     getMonthlyBudget: getMonthlyBudget,
     updateMonthlyBudget: updateMonthlyBudget,

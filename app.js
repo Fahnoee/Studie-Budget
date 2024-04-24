@@ -237,6 +237,17 @@ app.get('/api/customexpenses/:month/:year', async (req, res) => {
   }
 });
 
+app.get('/api/customeincomes/:month/:year', async (req, res) => {
+  try {
+    const username = req.session.username;
+    const { month, year } = req.params;
+    const incomes = await controller.fetchCustomIncomesByMonthAndYear(username, month, year);
+    res.json(incomes);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 app.get('/api/monthlybudget/:month/:year', async (req, res) => {
   try {
     const username = req.session.username;

@@ -18,7 +18,8 @@ const API_ENDPOINTS = {
   deleteData: "/api/deletecustom",
   fetchCustomExpensesByMonthAndYear: "/api/customexpenses/:month/:year",
   fetchMonthlyBudget: "/api/monthlybudget/:month/:year", // Added new API endpoint for fetching monthly budget
-  updateMonthlyBudget: "/api/update_monthly_budget" // Added new API endpoint for updating monthly budget
+  updateMonthlyBudget: "/api/update_monthly_budget", // Added new API endpoint for updating monthly budget
+  fetchCustomIncomesByMonthAndYear: "/api/customeincomes/:month/:year",
 };
 
 //#############
@@ -116,18 +117,18 @@ closeBtnCategory.onclick = () => {
 
 saveBtnCategory.onclick = async () => {
 
-    if(await categoryAvailableCheck(categoryName.value)){
-      alert("Category name already in use");
-    }
-    else{
-      categoryDialog.close();
-      await inputCategoryToBackend();
-      await spawnCategory(categoryName.value, categoryColor.value);  // Create category
-      await updateCategory();
-      await updateUserValuesView();
-      categoryName.value = "";
-      categoryGoal.value = "";
-    }
+  if (await categoryAvailableCheck(categoryName.value)) {
+    alert("Category name already in use");
+  }
+  else {
+    categoryDialog.close();
+    await inputCategoryToBackend();
+    await spawnCategory(categoryName.value, categoryColor.value);  // Create category
+    await updateCategory();
+    await updateUserValuesView();
+    categoryName.value = "";
+    categoryGoal.value = "";
+  }
 
 };
 
@@ -319,7 +320,7 @@ function setPieColor(piechart, color) {
 function getFormattedDate() {
   let now = new Date();
   const year = now.getFullYear();
-  const month = currentMonthIndex+ 1;
+  const month = currentMonthIndex + 1;
   const day = now.getDate();
   const hour = now.getHours();
   const minute = now.getMinutes();
@@ -402,8 +403,8 @@ async function categoryAvailableCheck(categoryInput) {
   try {
     let data = await fetchDatabase();                  //Fetches data from database
     let categories = Object.keys(data.customExpenses); //Accesses all category names in that budget
-    for(let i = 0; i < categories.length; i++){
-      if(categories[i] === categoryInput){
+    for (let i = 0; i < categories.length; i++) {
+      if (categories[i] === categoryInput) {
         return 1;
       }
     } return 0;
@@ -414,26 +415,30 @@ async function categoryAvailableCheck(categoryInput) {
 
 //Function to get all costume income and add them together
 async function fetchAndProcessIncomeData() {
-  try {
-    const data = await fetchDatabase(); // Assuming this function fetches the full budget data
-    const categoriesData = {};
+  // Use currentMonthIndex and currentYear from the global scope
+  const month = String(currentMonthIndex + 1).padStart(2, '0');
+  const year = currentYear.toString();
 
-    if (data && data.customIncomes) {
-      for (const category in data.customIncomes) {
-        let totalIncome = 0;
-        data.customIncomes[category].forEach(item => {
-          totalIncome += parseFloat(item.amount);
-        });
-        categoriesData[category] = { totalIncome };
+  const incomes = await fetchCustomIncomesByMonthAndYear(username, month, year);
+  const categoriesData = {};
+
+  for (const category in incomes) {
+    let totalIncome = 0;
+    let goal = 0; // Default goal to 0 if not found
+    incomes[category].forEach(item => {
+      if (item.name === "##GOAL##") {
+        goal = parseFloat(item.value);
+      } else {
+        totalIncome += parseFloat(item.amount);
       }
-    }
-    return categoriesData;
-  } catch (error) {
-    console.error('Error processing category data:', error);
+    });
+    categoriesData[category] = { totalIncome, goal };
   }
+
+  return categoriesData;
 }
 
-async function fetchHistory() { 
+async function fetchHistory() {
   try {
     const data = await fetchDatabase();
     const categoriesExpenses = data.customExpenses ? Object.keys(data.customExpenses) : []; // Add names of all categories to array
@@ -442,16 +447,16 @@ async function fetchHistory() {
     // Get name, price, category and timestamp for each expense in database
     categoriesExpenses.forEach(category => {
       data.customExpenses[category].forEach(expense => {    // Iterate over the expenses array directly
-        if (expense.name == '##GOAL##'){   // Exclude first entry in database containing the category goal
+        if (expense.name == '##GOAL##') {   // Exclude first entry in database containing the category goal
           return;
         }
         let name = expense.name;
         let price = expense.amount;
         let timestamp = expense.date;
 
-        let history = {name: name, price: price, category: category, timestamp: timestamp}; // Insert into object
+        let history = { name: name, price: price, category: category, timestamp: timestamp }; // Insert into object
         arrayOfHistories.push(history);   // Add object to array
-        
+
       });
     });
 
@@ -459,33 +464,47 @@ async function fetchHistory() {
     const categoriesIncomes = data.customIncomes ? Object.keys(data.customIncomes) : [];
     categoriesIncomes.forEach(category => {
       data.customIncomes[category].forEach(income => {  // Iterate over the incomes array directly
-        if (income.name == '##GOAL##'){   // Exclude first entry in database containing the category goal
+        if (income.name == '##GOAL##') {   // Exclude first entry in database containing the category goal
           return;
         }
         let name = income.name;
         let price = income.amount;
         let timestamp = income.date;
-        
-        let history = {name: name, price: price, category: category, timestamp: timestamp}; // Insert into object
+
+        let history = { name: name, price: price, category: category, timestamp: timestamp }; // Insert into object
         arrayOfHistories.push(history);   // Add object to array
       });
     });
 
     arrayOfHistories.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));  // Sort array after timestamp
-    
+
     arrayOfHistories.forEach(history => {   // Create table for each income and expense entry in database
       let simpleDate = new Date(history.timestamp).toDateString().slice(4);    //slice to remove the name of the day
       createTable(history.name, history.price, history.category, simpleDate); // TODO: Add parameter for editBtn
 
     });
-    
+
   } catch (error) {
     console.log('Error trying to fetch history: ', error);
-  } 
+  }
 }
 
 async function fetchCustomExpensesByMonthAndYear(username, month, year) {
   const url = API_ENDPOINTS.fetchCustomExpensesByMonthAndYear
+    .replace(':username', username)
+    .replace(':month', month)
+    .replace(':year', year);
+
+  return fetchData(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+async function fetchCustomIncomesByMonthAndYear(username, month, year) {
+  const url = API_ENDPOINTS.fetchCustomIncomesByMonthAndYear
     .replace(':username', username)
     .replace(':month', month)
     .replace(':year', year);
@@ -507,10 +526,10 @@ async function updateUserValuesView() {
     // Use currentYear directly without redeclaring it
     const yearString = currentYear.toString();
     const monthlyBudget = await fetchMonthlyBudget(currentMonth, yearString);
-    
+
     const customExpenseData = await fetchAndProcessCategoryData();
     const customIncomeData = await fetchAndProcessIncomeData();
-    
+
     let totalCustomExpense = 0;
     let totalCustomIncome = 0;
 
@@ -518,7 +537,7 @@ async function updateUserValuesView() {
       totalCustomExpense += items.totalExpense;
     });
 
-    Object.entries(customIncomeData).forEach(([category, items]) => { 
+    Object.entries(customIncomeData).forEach(([category, items]) => {
       totalCustomIncome += items.totalIncome;
     });
 
@@ -529,7 +548,7 @@ async function updateUserValuesView() {
     leftAmount.textContent = "Available: " + (monthlyBudget.income - netExpenses - monthlyBudget.savings);
     savingsAmount.textContent = "Savings: " + monthlyBudget.savings;
     setPiePercentage(((netExpenses + monthlyBudget.savings) / (monthlyBudget.income) * 100), pie);
-    
+
   } catch (error) {
     console.error("Error: ", error);
   }
@@ -582,10 +601,10 @@ async function updateHistory(category) {
 //#####################
 // HISTORY TABLE
 //#####################
-function createTable(name, price, category, timestamp, newOrOld = 0){
+function createTable(name, price, category, timestamp, newOrOld = 0) {
   // Builds row 1 for the history window 
   const row1 = document.createElement('tr');
-  
+
   const expenseName = document.createElement('td');
   const expensePrice = document.createElement('td');
 
@@ -594,7 +613,7 @@ function createTable(name, price, category, timestamp, newOrOld = 0){
 
   row1.appendChild(expenseName);
   row1.appendChild(expensePrice);
-  
+
   // Builds row 2 for the history window 
   const row2 = document.createElement('tr');
 
@@ -606,13 +625,13 @@ function createTable(name, price, category, timestamp, newOrOld = 0){
   expenceCategory.textContent = category + ' - ' + timestamp;
   editBtn.textContent = 'Edit';
   deleteBtn.textContent = 'Delete';
-  
+
   editBtn.classList.add('editHistory');
   deleteBtn.classList.add('editHistory');
   historyExpenseEdit.classList.add('historyBtns');
   historyExpenseEdit.appendChild(editBtn);
   historyExpenseEdit.appendChild(deleteBtn);
-  
+
   row2.appendChild(expenceCategory);
   row2.appendChild(historyExpenseEdit);
   if (newOrOld) {   // If true == new
@@ -624,17 +643,17 @@ function createTable(name, price, category, timestamp, newOrOld = 0){
   }
 
   // Adds funcunality to the "edit" button
-  editBtn.addEventListener('click', () => {   
+  editBtn.addEventListener('click', () => {
     // Add function for button                  // right now the show modal is used for testing
     categoryDialog.showModal();
   });
 
   // Adds funcunality to the "delete" button
-  deleteBtn.addEventListener('click', () => {   
+  deleteBtn.addEventListener('click', () => {
     // Add function for button                  // right now the show modal is used for testing
     categoryDialog.showModal();
   });
- 
+
 }
 
 //#####################
@@ -654,11 +673,11 @@ async function setupEventListeners() {
     let incomeVal = incomeFixed.value;
     let expenseVal = expenseFixed.value;
     let savingsVal = savingsFixed.value;
-  
+
     // Assuming currentMonthIndex and currentYear are already defined and hold the correct values
     let month = currentMonthIndex + 1; // JavaScript months are 0-indexed, add 1 for consistency with common representations
     let year = currentYear;
-  
+
     let data = {
       username, // Ensure username is correctly defined or fetched from a reliable source, e.g., session storage or a global variable
       month: month,
@@ -667,7 +686,7 @@ async function setupEventListeners() {
       expenses: expenseVal,
       savings: savingsVal,
     };
-  
+
     // Assuming saveMonthlyBudget is a function that correctly handles the API request to your backend
     await saveMonthlyBudget(month, year, incomeVal, expenseVal, savingsVal)
       .then(() => {
@@ -679,7 +698,7 @@ async function setupEventListeners() {
         // Handle error
         console.error("Error updating monthly budget:", error);
       });
-  
+
     document.querySelector('.popup-container-fixed').classList.remove("active");
     incomeFixed.value = localStorage.getItem('incomeFixed') || '';
     expenseFixed.value = localStorage.getItem('expenseFixed') || '';
@@ -789,15 +808,15 @@ let dataForDeletionExpense = {
 
 
 // Save to localStorage on input change
-incomeFixed.addEventListener('input', function() {
+incomeFixed.addEventListener('input', function () {
   localStorage.setItem('incomeFixed', this.value);
 });
 
-expenseFixed.addEventListener('input', function() {
+expenseFixed.addEventListener('input', function () {
   localStorage.setItem('expenseFixed', this.value);
 });
 
-savingsFixed.addEventListener('input', function() {
+savingsFixed.addEventListener('input', function () {
   localStorage.setItem('savingsFixed', this.value);
 });
 
