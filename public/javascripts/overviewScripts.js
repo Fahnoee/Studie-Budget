@@ -652,6 +652,7 @@ function createTable(name, price, category, timestamp, newOrOld = 0) {
   deleteBtn.addEventListener('click', () => {
     // Add function for button                  // right now the show modal is used for testing
     categoryDialog.showModal();
+    //deleteCustomData();                       //implementer delete function her
   });
 
 }
