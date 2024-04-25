@@ -1,0 +1,64 @@
+.all {
+    margin-left: 4%;
+    margin-right: 4%;
+}
+
+p {
+    font-size: large;
+}
+
+.topRow {
+    text-align: center;
+    margin-top: 1%;
+    display: flex;
+    justify-content: center;
+    text-align: left;
+}
+
+.intro {
+    max-width: 50%;
+}
+
+.middleRow {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1%;
+}
+
+.pdfColumn,
+.videoColumn {
+    width: 48%; /* Adjusted to accommodate for spacing */
+    display: flex;
+    justify-content: center;
+    text-align: left;
+}
+
+.bottomRow {
+    text-align: left; /* Ensure text alignment is left */
+    margin-top: 5%;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    flex-direction: column; /* Stack items vertically */
+}
+
+
+.bottomRow p1 {
+    color: #585858; /* Adjusted color for a lighter gray */
+    font-weight: bold; /* Making the text bold */
+}
+
+.bottomRow p2 {
+    color: #585858; /* Adjusted color for a lighter gray */
+    
+}
+
+.q1 {
+    max-width: 48%;
+    margin-bottom: 1%;
+
+}
+
+.q2 {
+    max-width: 48%;
+    margin-bottom: 1%;
+}
