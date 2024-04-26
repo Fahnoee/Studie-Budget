@@ -337,6 +337,36 @@ async function deleteCustom(username, { category, items }, incomeOrExpense) {
     }
 }
 
+async function deleteCategory(username, categoryName){
+
+    try {
+        const budgetId = await fetchUserBudgetId(username);
+        if (!budgetId) {
+            throw new Error(`No budget found for user ${username}`);
+        }
+        const budget = await Budget.findById(budgetId);
+        if (!budget) {
+            throw new Error('Budget not found');
+        }
+
+        if (budget.customExpenses[categoryName]) {
+            console.log("TEST HER======>" ,budget.customExpenses[categoryName]);
+            const update = { $unset: { [`budget.customExpenses[${categoryName}]`]: 1 } };
+            await budget.updateOne({}, update);
+            console.log("category: \"", categoryName, "\"deleted from database")
+        }
+
+    } catch (error) {
+        throw new Error(`Error deleting category: ${categoryName} , ${username}: ${error.message}`);
+    }
+}
+
+async function test(){
+    deleteCategory("ross", "Blå");
+}
+test();
+
+
 async function getMonthlyBudget(username, month, year) {
     const budgetId = await fetchUserBudgetId(username);
     const budget = await Budget.findById(budgetId);
