@@ -1,0 +1,17 @@
+.leftfrontpage {
+    display: flex;
+    justify-content: flex-start;
+    width: 50%;
+  }
+  
+  .rightfrontpage {
+    display: flex;
+    justify-content: flex-end;
+    width: 50%;
+  }
+
+  .img {
+    width: 50%;
+    position: relative;
+    float: left;
+  }

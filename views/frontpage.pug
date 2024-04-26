@@ -1,6 +1,8 @@
 extends layout
 
 block navbar
+    html 
+    link(rel='stylesheet', href='/stylesheets/restrictednavbar.css')
     nav.navbar-default  
         ul
           div.leftfrontpage
@@ -9,13 +11,10 @@ block navbar
                 img(src="./images/studieLogoHjoerneHvid.png", alt="Good Pic", id="logo")
           div.rightfrontpage 
             li
-              a.el Log in
+              a.el(href='/logIn') Log in
             li 
-              a.el Sign up
-            li 
-              a.el Help
+              a.el(href='/signUp') Sign up
             li
-              a.el Settings
 
 block content
   html
@@ -34,6 +33,3 @@ block content
             img.img(src="./images/studentBudgetLogo2.png", alt="Good Pic")
 
     script(src='/javascripts/frontpage.js')
-
-
-

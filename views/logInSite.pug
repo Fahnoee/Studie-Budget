@@ -1,9 +1,25 @@
 extends layout
 
+block navbar
+    html 
+    link(rel='stylesheet', href='/stylesheets/restrictednavbar.css')
+    nav.navbar-default  
+        ul
+          div.leftfrontpage
+            li 
+              a(href='/')
+                img(src="./images/studieLogoHjoerneHvid.png", alt="Good Pic", id="logo")
+          div.rightfrontpage 
+            li
+              a.el(href='/logIn') Log in
+            li 
+              a.el(href='/signUp') Sign up
+            li
+
 block content
   html 
   link(rel='stylesheet', href='/stylesheets/logIn.css')
-  link(rel='stylesheet', href='/stylesheets/layout.css')
+  //link(rel='stylesheet', href='/stylesheets/layout.css')
   div.centerColum
     h1 Log into your account
     form(action="/login" method="POST")
