@@ -20,6 +20,7 @@ const API_ENDPOINTS = {
   fetchMonthlyBudget: "/api/monthlybudget/:month/:year", // Added new API endpoint for fetching monthly budget
   updateMonthlyBudget: "/api/update_monthly_budget", // Added new API endpoint for updating monthly budget
   fetchCustomIncomesByMonthAndYear: "/api/customeincomes/:month/:year",
+  deleteCategory: "/api/deletecategory",
 };
 
 //#############
@@ -398,6 +399,19 @@ async function deleteCustomData(data) {
   });
 }
 
+// This function needs username & category for deletion
+// like this:
+// await deleteCategory({username:username,category:category})
+async function deleteCategory(data) {
+  return fetchData(API_ENDPOINTS.deleteCategory, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+}
+
 // Function to check if a given category is already taken --- 1 = category exist, 0 == category does not exits
 async function categoryAvailableCheck(categoryInput) {
   try {
@@ -516,6 +530,8 @@ async function fetchCustomIncomesByMonthAndYear(username, month, year) {
     },
   });
 }
+
+
 
 //#####################
 // UI Updates
