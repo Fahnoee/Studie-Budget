@@ -150,6 +150,26 @@ app.post("/api/deletecustom", (req,res) => {
     });
 });
 
+// Deleting categories from database
+app.post("/api/deletecategory", (req,res) => {
+  let data = req.body;
+
+  let username = data.username;
+  let categoryName = data.category;
+  controller
+    .deleteCategory(username, categoryName)
+    .then((result) => {
+      // Budget update successful
+      console.log("Budget update successful....Result: \n" + result);
+      res.json({ message: "Category deleted successfully: \n" + result });
+    })
+    .catch((error) => {
+      // If anything goes wrong
+      res.status(500).json({ message: "Error deleting category.", error });
+    });
+});
+
+
 
 //###########################
 // READING DATA FROM MONGO-DB

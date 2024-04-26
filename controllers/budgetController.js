@@ -404,4 +404,5 @@ module.exports = {
     deleteCustom: deleteCustom,
     getMonthlyBudget: getMonthlyBudget,
     updateMonthlyBudget: updateMonthlyBudget,
+    deleteCategory: deleteCategory,
 };
