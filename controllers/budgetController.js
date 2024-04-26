@@ -301,6 +301,7 @@ async function fetchCustomIncomesByMonthAndYear(username, month, year) {
 
 // At the end of the file, add a call to fetchCategoryExpensesAndGoals for testing purposes
 
+// Function for deleting custom income or expense. 
 async function deleteCustom(username, { category, items }, incomeOrExpense) {
 
     try {
@@ -315,7 +316,7 @@ async function deleteCustom(username, { category, items }, incomeOrExpense) {
         if (incomeOrExpense === "expense") {
             for (let i = 1; i <= budget.customExpenses[category].length; i++) {
                 if (budget.customExpenses[category][i]._id === items[0]._id) {
-                    await budget.customExpenses[category].splice(i, 1);
+                    await budget.customExpenses[category].splice(i, 1);  //When custom expense is found, splice from array
                     budget.markModified('customExpenses');
                     break;
                 }
@@ -324,7 +325,7 @@ async function deleteCustom(username, { category, items }, incomeOrExpense) {
         if (incomeOrExpense === "income") {
             for (let i = 0; i <= budget.customIncomes["income"].length; i++) {
                 if (budget.customIncomes["income"][i]._id === items[0]._id) {
-                    await budget.customIncomes["income"].splice(i, 1);
+                    await budget.customIncomes["income"].splice(i, 1); //When custom income is found, splice from array
                     budget.markModified('customIncomes');
                     break;
                 }
@@ -337,6 +338,7 @@ async function deleteCustom(username, { category, items }, incomeOrExpense) {
     }
 }
 
+// This function deletes entire category based on input category.
 async function deleteCategory(username, categoryName){
 
     try {
@@ -350,21 +352,18 @@ async function deleteCategory(username, categoryName){
         }
 
         if (budget.customExpenses[categoryName]) {
-            console.log("TEST HER======>" ,budget.customExpenses[categoryName]);
-            const update = { $unset: { [`budget.customExpenses[${categoryName}]`]: 1 } };
-            await budget.updateOne({}, update);
-            console.log("category: \"", categoryName, "\"deleted from database")
+            await budget.updateOne(
+                { $unset: { [`customExpenses.${categoryName}`]: 1 } } // Removes field from database
+            );
+            console.log(`Category "${categoryName}" deleted from database`);
+        } else {
+            console.log(`Category "${categoryName}" not found in database`);
         }
 
     } catch (error) {
         throw new Error(`Error deleting category: ${categoryName} , ${username}: ${error.message}`);
     }
 }
-
-async function test(){
-    deleteCategory("ross", "Blå");
-}
-test();
 
 
 async function getMonthlyBudget(username, month, year) {
