@@ -235,7 +235,7 @@ p {
   border-radius: 5px;
   cursor: pointer;
   margin: 5%;
-  background-color: rgb(57, 149, 85);
+  background-color: rgb(113, 180, 192);
   color: white;
   width: auto;
   height: 50px;
@@ -244,7 +244,7 @@ p {
 }
 
 .show-popup-income:hover {
-  background-color: rgb(26, 126, 56); 
+  background-color: rgb(66, 105, 112); 
 }
 
 .popup-container-income {
@@ -325,7 +325,7 @@ p {
   border-radius: 5px;
   cursor: pointer;
   margin: 5%;
-  background-color: rgb(229, 50, 14);
+  background-color: rgb(113, 180, 192);
   color: white;
   width: auto;
   height: 50px;
@@ -334,7 +334,7 @@ p {
 }
 
 .show-popup-expense:hover {
-  background-color: rgb(203, 34, 34); 
+  background-color: rgb(66, 105, 112); 
 }
 
 
