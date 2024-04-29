@@ -890,6 +890,23 @@ async function setupEventListeners() {
   };
 
   // Add more event listeners here
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      if (document.querySelector('.popup-container-fixed').classList.contains('active')) {
+        document.querySelector('.save-btn-fixed').click();
+      } else if (document.querySelector('.popup-container-income').classList.contains('active')) {
+        document.querySelector('.save-btn-income').click();
+      } else if (document.querySelector('.popup-container-expense').classList.contains('active')) {
+        document.querySelector('.save-btn-expense').click();
+      }
+      else if (document.querySelector('.add-category-dialog').classList.contains('active')) {
+        document.querySelector('.save-btn-category').click();
+      }
+      else if (document.querySelector('.edit-category-dialog').classList.contains('active')) {
+        document.querySelector('.save-btn-category-edit').click();
+      }
+    }
+  });
 }
 
 
