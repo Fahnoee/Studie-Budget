@@ -45,36 +45,6 @@ async function main() {
 //############################ 
 // UPDATING DATA IN MONGODB 
 //############################ 
-
-// Updating FIXED INCOME/EXPENSES in database
-
-app.post("/api/update_budget", (req, res) => {
-  // Get data sent from the frontend
-  let data = req.body;
-
-  let username = data.username;
-  let incomeVal = data.income;
-  let expenseVal = data.expenses;
-  let savings = data.savings;
-
-  // Call your controller's method
-  controller
-    .updateBudget(username, {
-      income: incomeVal,
-      expenses: expenseVal,
-      savings: savings,
-    })
-    .then((result) => {
-      // Budget update successful
-      console.log("Result: \n" + result);
-      res.json({ message: "Budget updated successfully: \n" + result });
-    })
-    .catch((err) => {
-      // If anything goes wrong
-      res.status(500).json({ message: "Error in updating budget." });
-    });
-});
-
 // Adding custom expense to MongoDB
 
 app.post("/api/addcustom/expense", (req, res) => {
