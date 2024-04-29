@@ -76,6 +76,16 @@ block content
     div.buttons
       button.close-btn-category-edit CLOSE 
       button.save-btn-category-edit SAVE
+  
+  dialog().edit-history
+    h3 Edit history
+    p Edit name
+      input.name-edit-history(style="float: right")
+    p Edit value
+      input.value-edit-history(style="float: right")
+    div.buttons
+      button.close-btn-history-edit CLOSE 
+      button.save-btn-history-edit SAVE
     
   
   main
@@ -91,7 +101,7 @@ block content
               p.left 
               p.savings
           div
-          button.show-popup-fixed Edit fixed income and expenses
+          button.show-popup-fixed Set-up fixed income and expenses
         div.column
           h2 Categories
           div.categories
@@ -102,10 +112,8 @@ block content
           h2 Custom expense history
           div.history
             table.styled-table
-          button.show-popup-income Add custom income
-          button.show-popup-expense Add custom expense
-      div.tips
-        h2 Financial Advice
+          button.show-popup-income Add income
+          button.show-popup-expense Add expense
   script.
     let username = "#{username}";
   script(src="/javascripts/overviewScripts.js")
