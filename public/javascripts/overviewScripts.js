@@ -65,6 +65,9 @@ const saveBtnCategory = document.querySelector('.save-btn-category');
 // EDIT CATEGORIES
 const editCategoryDialog = document.querySelector('.edit-category-dialog');
 const editCategoryBtn = document.querySelector('.show-edit-categories');
+const deleteBtnEditCategory = document.querySelector('.delete-btn-category-edit');
+const editCategoryName = document.querySelector('.name-edit');
+const editCategoryGoal = document.querySelector('.goal-edit');
 const closeBtnEditCategory = document.querySelector('.close-btn-category-edit');
 const saveBtnEditCategory = document.querySelector('.save-btn-category-edit');
 const dropdownEdit = document.querySelector('.dropdown-edit');
@@ -150,6 +153,17 @@ editCategoryBtn.onclick = async () => {
   editCategoryDialog.showModal();
 };
 
+deleteBtnEditCategory.onclick = async () => {
+  const dataPackage = {
+    username,
+    category: dropdownEdit.value,
+  };
+  await deleteCategory(dataPackage);
+  editCategoryDialog.close();
+  await updateCategory();
+  await updateUserValuesView();
+};
+
 closeBtnEditCategory.onclick = () => {
   categoryName.value = "";
   categoryGoal.value = "";
@@ -157,7 +171,9 @@ closeBtnEditCategory.onclick = () => {
 };
 
 saveBtnEditCategory.onclick = async () => {
-
+  editCategoryDialog.close();
+  await editCategoryToBackend();
+  await fetchCategories();
 };
 
 
@@ -217,6 +233,20 @@ async function inputCategoryToBackend() {
   }
   await updateCustomExpense(goalData); //Sends the goal data to backend
 }
+
+async function editCategoryToBackend() {
+  let name = "##GOAL##";
+  let items = [{ "name": name, "value": editCategoryGoal.value }];
+
+  goalData = {
+    username,
+    customExpense: items,
+    category: dropdownEdit.value,
+    newName: editCategoryName.value,
+  }
+  await updateCustomExpense(goalData); //Sends the goal data to backend
+}
+
 
 // Function for creating a new catogory in the html and the database
 async function spawnCategory(categoryTitle, color) {
@@ -649,7 +679,12 @@ function createTable(data, category, newOrOld = 0) {
   const expensePrice = document.createElement('td');
 
   expenseName.textContent = data.name;
-  expensePrice.textContent = data.amount + ' DKK';
+  if (category != 'Income') {
+    expensePrice.textContent = '-' + data.amount + ' DKK';
+  } else {
+    expensePrice.textContent = data.amount + ' DKK';
+  }
+
 
   row1.appendChild(expenseName);
   row1.appendChild(expensePrice);
@@ -887,23 +922,6 @@ savingsFixed.addEventListener('input', function () {
   localStorage.setItem('savingsFixed', this.value);
 });
 
-
-//#####################
-// INITIALIZATION
-//##################### 
-
-async function initialize() {
-  currentYear = new Date().getFullYear(); // Ensure currentYear is set
-  await setupEventListeners();
-  await updateBudgetView(currentMonth, currentYear);
-  await updateUserValuesView();
-  await fetchCategories();
-  await fetchHistory();
-}
-
-// Call initialize to start the app
-initialize();
-
 //#####################
 // CALENDAR FUNCTIONALITY
 //#####################
@@ -1021,3 +1039,19 @@ async function saveMonthlyBudget(month, year, income, expenses, savings) {
     body: JSON.stringify(data),
   });
 }
+
+//#####################
+// INITIALIZATION
+//##################### 
+
+async function initialize() {
+  currentYear = new Date().getFullYear(); // Ensure currentYear is set
+  await setupEventListeners();
+  await updateBudgetView(currentMonth, currentYear);
+  await updateUserValuesView();
+  await fetchCategories();
+  await fetchHistory();
+}
+
+// Call initialize to start the app
+initialize();
