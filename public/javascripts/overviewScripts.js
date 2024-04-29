@@ -12,7 +12,6 @@ const savingsAmount = document.querySelector(".savings");
 
 const API_ENDPOINTS = {
   fetchBudget: "/api/budget/:budgetID",
-  updateBudget: "/api/update_budget",
   addCustomExpense: "/api/addcustom/expense",
   addCustomIncome: "/api/addcustom/income",
   deleteData: "/api/deletecustom",
@@ -364,16 +363,6 @@ async function fetchCategories() {
   }
 }
 
-async function updateBudget(data) {
-  return fetchData(API_ENDPOINTS.updateBudget, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-}
 
 async function updateCustomExpense(dataExpense) {
   return fetchData(API_ENDPOINTS.addCustomExpense, {
