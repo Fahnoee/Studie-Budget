@@ -640,6 +640,13 @@ function createTable(data, category, newOrOld = 0) {
   expenseName.textContent = data.name;
   expensePrice.textContent = data.amount + ' DKK';
 
+  //Changes the look in the history, so expences has a '-' infront
+  if (!(category == 'Income')) {
+    expensePrice.textContent = '-' + data.amount + ' DKK';
+    expensePrice.style.color = '#CC3333'; // Add this line to set the text color to red
+  }
+
+
   row1.appendChild(expenseName);
   row1.appendChild(expensePrice);
 
@@ -711,10 +718,18 @@ async function setupEventListeners() {
     const expenseFixed = document.querySelector(".expense-fixed");
     const savingsFixed = document.querySelector(".savings-fixed");
 
+
+    if (incomeFixed.value == '' || expenseFixed.value == '' || savingsFixed.value == '') {
+      alert("Please enter numbers in all number-fields");
+      return; // Exit function if any input is not a number
+    }
+
     if (isNaN(incomeFixed.value) || isNaN(expenseFixed.value) || isNaN(savingsFixed.value)) {
       alert("Please enter valid numbers for income, expenses, and savings.");
       return; // Exit function if any input is not a number
     }
+
+   
 
     let incomeVal = incomeFixed.value;
     let expenseVal = expenseFixed.value;
@@ -760,12 +775,18 @@ async function setupEventListeners() {
   };
   document.querySelector('.save-btn-income').onclick = async () => {
     const valueCustomIncome = document.querySelector(".value-income");
-    if (isNaN(valueCustomIncome)) {
+    if (isNaN(valueCustomIncome.value)) {
       alert("Please enter valid number for the income.");
       return; // Exit function if any input is not a number
     }
     let name = nameCustomIncome.value;
+
+    //check if user has used a minus when typing the number, converts it to positive.
     let value = valueCustomIncome.value;
+    if (value < 0) {
+      value = value * -1;
+    } 
+
     let date = getFormattedDate();
     let id = Date.now().toString();
 
@@ -799,13 +820,20 @@ async function setupEventListeners() {
     const dropdownExpense = document.querySelector(".dropdown-expense");
     let category = dropdownExpense.value;
 
+    //checks if user try to enter letters into expense number field
     if (isNaN(valueCustomExpense.value)) {
       alert("Please enter valid number for expenses.");
       return; // Exit function if any input is not a number
     }
-
-    let name = nameCustomExpense.value;
+    
     let value = valueCustomExpense.value;
+
+    //if user enters negative number, it will be converted to positive
+    if (value < 0) {
+      value = value * -1;
+    } 
+    
+    let name = nameCustomExpense.value;
     let date = getFormattedDate();
     let id = Date.now().toString();
 
@@ -896,43 +924,43 @@ initialize();
 //#####################
 // CALENDAR FUNCTIONALITY
 //#####################
-document.querySelector('.show-calendar-popup').onclick = async () => {
-  document.querySelector('.popup-container-calendar').classList.add('active');
-  await generateCalendar();
-};
+// document.querySelector('.show-calendar-popup').onclick = async () => {
+//   document.querySelector('.popup-container-calendar').classList.add('active');
+//   await generateCalendar();
+// };
 
-const closeCalendarPopup = document.querySelector('.close-calendar-popup');
-if (closeCalendarPopup) {
-  closeCalendarPopup.onclick = async () => {
-    const popupContainerCalendar = document.querySelector('.popup-container-calendar');
-    if (popupContainerCalendar) {
-      popupContainerCalendar.classList.remove('active');
-    }
-  };
-}
+// const closeCalendarPopup = document.querySelector('.close-calendar-popup');
+// if (closeCalendarPopup) {
+//   closeCalendarPopup.onclick = async () => {
+//     const popupContainerCalendar = document.querySelector('.popup-container-calendar');
+//     if (popupContainerCalendar) {
+//       popupContainerCalendar.classList.remove('active');
+//     }
+//   };
+// }
 
-async function generateCalendar() {
-  const container = document.querySelector('.popup-container-calendar');
-  // Clear previous calendar
-  container.innerHTML = '';
-  const calendar = document.createElement('div');
-  calendar.className = 'calendar';
+// async function generateCalendar() {
+//   const container = document.querySelector('.popup-container-calendar');
+//   // Clear previous calendar
+//   container.innerHTML = '';
+//   const calendar = document.createElement('div');
+//   calendar.className = 'calendar';
 
-  // Generate days here based on the current month
-  const currentDate = new Date();
-  // Get the number of days in the current month
-  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-  console.log(daysInMonth);
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dayElement = document.createElement('div');
-    dayElement.className = 'day';
-    dayElement.textContent = day;
-    dayElement.onclick = () => alert(`Clicked on day ${day}`);
-    calendar.appendChild(dayElement);
-  }
+//   // Generate days here based on the current month
+//   const currentDate = new Date();
+//   // Get the number of days in the current month
+//   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+//   console.log(daysInMonth);
+//   for (let day = 1; day <= daysInMonth; day++) {
+//     const dayElement = document.createElement('div');
+//     dayElement.className = 'day';
+//     dayElement.textContent = day;
+//     dayElement.onclick = () => alert(`Clicked on day ${day}`);
+//     calendar.appendChild(dayElement);
+//   }
 
-  container.appendChild(calendar);
-}
+//   container.appendChild(calendar);
+// }
 
 //#####################
 // MONTH NAVIGATION
