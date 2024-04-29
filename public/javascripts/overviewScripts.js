@@ -665,7 +665,6 @@ function createTable(data, category, newOrOld = 0) {
     let dataPackage = {
       username: username,
       category: category,
-      incomeOrExpense: "",
       customData: [data],
     }
     // Add function for button                 // right now the show modal is used for testing

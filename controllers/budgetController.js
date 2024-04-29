@@ -302,7 +302,7 @@ async function fetchCustomIncomesByMonthAndYear(username, month, year) {
 // At the end of the file, add a call to fetchCategoryExpensesAndGoals for testing purposes
 
 // Function for deleting custom income or expense. 
-async function deleteCustom(username, { category, items }, incomeOrExpense) {
+async function deleteCustom(username, { category, items }) {
 
     try {
         const budgetId = await fetchUserBudgetId(username);
