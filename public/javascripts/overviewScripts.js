@@ -170,9 +170,19 @@ closeBtnEditCategory.onclick = () => {
 };
 
 saveBtnEditCategory.onclick = async () => {
+  
   editCategoryDialog.close();
+  
+  if (isNaN(editCategoryGoal.value)) {
+    alert("Please enter valid number for expenses.");
+    return; // Exit function if any input is not a number
+  }
   await editCategoryToBackend();
+  await updateUserValuesView();
   await fetchCategories();
+ 
+  
+
 };
 
 
@@ -923,8 +933,6 @@ let dataForDeletionExpense = {
 
 //deleteCustomData(dataForDeletionIncome);
 //deleteCustomData(dataForDeletionExpense);
-
-
 
 // Save to localStorage on input change
 incomeFixed.addEventListener('input', function () {
