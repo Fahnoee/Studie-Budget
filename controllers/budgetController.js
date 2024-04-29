@@ -109,10 +109,11 @@ async function createUserWithBudget(username, password) {
  * @async
  * @param {string} username - The username of the user.
  * @param {{category: string, items: Array}} param1 - The category and items to add.
- * @returns {Promise<Object>} A promise that resolves with the updated budget document.
- * @throws {Error} If no budget is found for the user or if the update operation fails.
+ * @param {string} newName - The new name for a given category
+ * @returns {Promise<Object>} - A promise that resolves with the updated budget document.
+ * @throws {Error} - If no budget is found for the user or if the update operation fails.
  */
-async function addCustomExpense(username, { category, items }) {
+async function addCustomExpense(username, { category, items }, newName) {
     try {
         const budgetId = await fetchUserBudgetId(username);
         if (!budgetId) {
@@ -134,9 +135,16 @@ async function addCustomExpense(username, { category, items }) {
             budget.markModified('customExpenses');
         }
         else if (budget.customExpenses[category][0].name === "##GOAL##" && items[0].name === "##GOAL##") {
-            budget.customExpenses[category][0] = items[0];
+            if(items[0].value){
+                budget.customExpenses[category][0].value = items[0].value;
+            }
+            if(newName){
+                budget.customExpenses[newName] = budget.customExpenses[category];
+                delete budget.customExpenses[category];
+            }
             budget.markModified('customExpenses');
         }
+        
         // Add the new items to the category
         else {
             console.log("TEST ##3");
@@ -152,6 +160,13 @@ async function addCustomExpense(username, { category, items }) {
         throw new Error(`Problem adding custom expense for ${username}: ${error.message}`);
     }
 }
+
+// let items = [{ "name": "##GOAL##", 
+//     "value": "400", 
+//     "color": "#f00000" }];
+
+// addCustomExpense("test123", { category: "sislefifpi", items}, "gangnamstyle");
+
 
 /**
  * Adds custom income items under a specific category for a user's budget.
