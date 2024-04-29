@@ -25,39 +25,6 @@ async function fetchUserBudgetId(username) {
 }
 
 /**
- * Updates the budget for a given user.
- * @async
- * @param {string} username - The username of the user whose budget is to be updated.
- * @param {Object} newData - The new data to update the budget with.
- * @returns {Promise<Object>} A promise that resolves with the updated budget document.
- * @throws {TypeError} If newData is not an object or is null.
- * @throws {Error} If no budget is found for the user or if the update operation fails.
- */
-async function updateBudget(username, newData) {
-    if (!newData || typeof newData !== 'object') {
-        // Validate newData is a non-null object
-        throw new TypeError('newData must be a non-null object');
-    }
-    try {
-        const budgetId = await fetchUserBudgetId(username);
-        if (!budgetId) {
-            // If no budget ID is found, throw an error
-            throw new Error(`No budget found for user ${username}`);
-        }
-        const updatedBudget = await Budget.findByIdAndUpdate(budgetId, newData, { new: true }).exec();
-        if (!updatedBudget) {
-            // If the update operation does not return a document, throw an error
-            throw new Error('Budget update failed');
-        }
-        // Return the updated budget document
-        return updatedBudget;
-    } catch (error) {
-        // Catch and re-throw any errors encountered during the update operation
-        throw new Error(`Problem updating budget for ${username}: ${error.message}`);
-    }
-};
-
-/**
  * Creates a new user with a default budget.
  * @async
  * @param {string} username - The username for the new user.
@@ -389,26 +356,32 @@ async function getMonthlyBudget(username, month, year) {
 }
 
 async function updateMonthlyBudget(username, month, year, { income, expenses, savings }) {
-    const budgetId = await fetchUserBudgetId(username);
-    const budget = await Budget.findById(budgetId);
-    let monthlyRecord = budget.monthlyRecords.find(record => record.month === month && record.year === year);
+    try {
+        const budgetId = await fetchUserBudgetId(username);
+        const budget = await Budget.findById(budgetId);
+        let monthlyRecord = budget.monthlyRecords.find(record => record.month === month && record.year === year);
+        // Throw error if no data was given to function
+        if (!income || !expenses || !savings) {
+            throw new Error(`One or more of the data fields are empty`);
+        }
+        if (monthlyRecord) {
+            monthlyRecord.income = income;
+            monthlyRecord.expenses = expenses;
+            monthlyRecord.savings = savings;
+        } else {
+            budget.monthlyRecords.push({ month, year, income, expenses, savings });
+        }
 
-    if (monthlyRecord) {
-        monthlyRecord.income = income;
-        monthlyRecord.expenses = expenses;
-        monthlyRecord.savings = savings;
-    } else {
-        budget.monthlyRecords.push({ month, year, income, expenses, savings });
+        await budget.save();
+    } catch (error) {
+        throw new Error(`Problem updating monthly budget for ${username}: ${error.message}`);
     }
-
-    await budget.save();
 }
 
 module.exports = {
     User: User,
     Budget: Budget,
     fetchUserBudgetId: fetchUserBudgetId,
-    updateBudget: updateBudget,
     createUserWithBudget: createUserWithBudget,
     addCustomExpense: addCustomExpense,
     addCustomIncome: addCustomIncome,
