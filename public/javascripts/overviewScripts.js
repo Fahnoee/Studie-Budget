@@ -673,7 +673,7 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
   const expensePrice = document.createElement('td');
 
   expenseName.textContent = data.name;
-  
+
   //Changes the look in the history, so expences has a '-' infront
   if (!(category == 'Income')) {
     expensePrice.textContent = '-' + data.amount + ' DKK';
@@ -724,6 +724,11 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
   };
   
   saveBtnEditHistory.onclick = async () => {
+    if (isNaN(editHistoryValue.value)) {
+      alert("Please enter valid numbers for value.");
+      return; // Exit function if any input is not a number
+    }
+
     let dataPackage = {
       username: username,
       category: category,
