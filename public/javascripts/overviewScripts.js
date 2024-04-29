@@ -89,23 +89,27 @@ closeBtnFixed.onclick = () => {
 };
 
 // Function for the Save Button
-saveBtnFixed.onclick = async () => {
-  const currentMonth = String(currentMonthIndex + 1).padStart(2, '0'); // Ensure month is in MM format
-  const income = incomeFixed.value || 0;
-  const expenses = expenseFixed.value || 0;
-  const savings = savingsFixed.value || 0;
+// saveBtnFixed.onclick = async () => {
+//   console.log("Not a number");
 
-  // Call saveMonthlyBudget with the current month, year, and the new values
-  await saveMonthlyBudget(currentMonth, currentYear, income, expenses, savings)
-    .then(response => {
-      console.log(response.message); // Log success message
-      // Optionally, update the UI to reflect changes or notify the user of success
-    })
-    .catch(error => {
-      console.error("Failed to update monthly budget:", error);
-      // Handle error (e.g., show error message to the user)
-    });
-};
+//   const currentMonth = String(currentMonthIndex + 1).padStart(2, '0'); // Ensure month is in MM format
+//   const income = incomeFixed.value || 0;
+//   const expenses = expenseFixed.value || 0;
+//   const savings = savingsFixed.value || 0;
+
+
+
+//   // Call saveMonthlyBudget with the current month, year, and the new values
+//   await saveMonthlyBudget(currentMonth, currentYear, income, expenses, savings)
+//     .then(response => {
+//       console.log(response.message); // Log success message
+//       // Optionally, update the UI to reflect changes or notify the user of success
+//     })
+//     .catch(error => {
+//       console.error("Failed to update monthly budget:", error);
+//       // Handle error (e.g., show error message to the user)
+//     });
+// };
 
 
 categoryBtn.onclick = () => {
@@ -121,6 +125,10 @@ closeBtnCategory.onclick = () => {
 };
 
 saveBtnCategory.onclick = async () => {
+  if (isNaN(parseFloat(categoryGoal.value))) {
+    alert("Please enter a valid number for the category goal.");
+    return; // Exit function if the category goal is not a number
+  }
 
   if (await categoryAvailableCheck(categoryName.value)) {
     alert("Category name already in use");
@@ -704,13 +712,21 @@ async function setupEventListeners() {
   document.querySelector('.show-popup-fixed').onclick = () => {
     document.querySelector('.popup-container-fixed').classList.add("active");
   };
+
   document.querySelector('.close-btn-fixed').onclick = () => {
     document.querySelector('.popup-container-fixed').classList.remove("active");
   };
+
   document.querySelector('.save-btn-fixed').onclick = async () => {
     const incomeFixed = document.querySelector(".income-fixed");
     const expenseFixed = document.querySelector(".expense-fixed");
     const savingsFixed = document.querySelector(".savings-fixed");
+
+    if (isNaN(incomeFixed.value) || isNaN(expenseFixed.value) || isNaN(savingsFixed.value)) {
+      alert("Please enter valid numbers for income, expenses, and savings.");
+      return; // Exit function if any input is not a number
+    }
+
     let incomeVal = incomeFixed.value;
     let expenseVal = expenseFixed.value;
     let savingsVal = savingsFixed.value;
@@ -755,7 +771,10 @@ async function setupEventListeners() {
   };
   document.querySelector('.save-btn-income').onclick = async () => {
     const valueCustomIncome = document.querySelector(".value-income");
-
+    if (isNaN(valueCustomIncome)) {
+      alert("Please enter valid number for the income.");
+      return; // Exit function if any input is not a number
+    }
     let name = nameCustomIncome.value;
     let value = valueCustomIncome.value;
     let date = getFormattedDate();
@@ -780,14 +799,21 @@ async function setupEventListeners() {
     document.querySelector('.popup-container-expense').classList.add("active");
     await dropDownFetchCategoriesExpense(dropdownExpense);
   };
+
   document.querySelector('.close-btn-expense').onclick = () => {
     document.querySelector('.popup-container-expense').classList.remove("active");
   };
+
   document.querySelector('.save-btn-expense').onclick = async () => {
     const nameCustomExpense = document.querySelector(".name-expense");
     const valueCustomExpense = document.querySelector(".value-expense");
     const dropdownExpense = document.querySelector(".dropdown-expense");
     let category = dropdownExpense.value;
+
+    if (isNaN(valueCustomExpense.value)) {
+      alert("Please enter valid number for expenses.");
+      return; // Exit function if any input is not a number
+    }
 
     let name = nameCustomExpense.value;
     let value = valueCustomExpense.value;
