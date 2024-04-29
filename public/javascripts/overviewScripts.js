@@ -32,11 +32,9 @@ const showPopupFixed = document.querySelector('.show-popup-fixed');
 const popupContainerFixed = document.querySelector('.popup-container-fixed');
 const closeBtnFixed = document.querySelector('.close-btn-fixed');
 const saveBtnFixed = document.querySelector('.save-btn-fixed');
-
 const incomeFixed = document.querySelector(".income-fixed");
 const expenseFixed = document.querySelector(".expense-fixed");
 const savingsFixed = document.querySelector(".savings-fixed");
-
 
 // EXPENSE
 const showPopupCustomExpense = document.querySelector('.show-popup-expense');
@@ -52,18 +50,24 @@ const showPopupCustomIncome = document.querySelector('.show-popup-income');
 const popupContainerCustomIncome = document.querySelector('.popup-container-income');
 const closeBtnCustomIncome = document.querySelector('.close-btn-income');
 const saveBtnCustomIncome = document.querySelector('.save-btn-income');
-const dropdownIncome = document.querySelector('.dropdown-income');
 const nameCustomIncome = document.querySelector('.name-income');
 const valueCustomIncome = document.querySelector('.value-income');
 
-// CATEGORIES
+// ADD CATEGORIES
 const categoryBtn = document.querySelector('.add-circle');
-const categoryDialog = document.querySelector('.dialog');
+const addCategoryDialog = document.querySelector('.add-category-dialog');
 const categoryName = document.querySelector('.category-name');
 const categoryGoal = document.querySelector('.category-goal');
 const categoryColor = document.querySelector('.category-color');
 const closeBtnCategory = document.querySelector('.close-btn-category');
 const saveBtnCategory = document.querySelector('.save-btn-category');
+
+// EDIT CATEGORIES
+const editCategoryDialog = document.querySelector('.edit-category-dialog');
+const editCategoryBtn = document.querySelector('.show-edit-categories');
+const closeBtnEditCategory = document.querySelector('.close-btn-category-edit');
+const saveBtnEditCategory = document.querySelector('.save-btn-category-edit');
+const dropdownEdit = document.querySelector('.dropdown-edit');
 
 // HISTORY
 const table = document.querySelector('.styled-table');
@@ -106,15 +110,15 @@ saveBtnFixed.onclick = async () => {
 
 categoryBtn.onclick = () => {
   console.log("Activated");
-  categoryDialog.showModal();
+  addCategoryDialog.showModal();
   console.log("Category Name: " + categoryName.value);
 };
 
 closeBtnCategory.onclick = () => {
   categoryName.value = "";
   categoryGoal.value = "";
-  categoryDialog.close();
-}
+  addCategoryDialog.close();
+};
 
 saveBtnCategory.onclick = async () => {
 
@@ -122,7 +126,7 @@ saveBtnCategory.onclick = async () => {
     alert("Category name already in use");
   }
   else {
-    categoryDialog.close();
+    addCategoryDialog.close();
     await inputCategoryToBackend();
     await spawnCategory(categoryName.value, categoryColor.value);  // Create category
     await updateCategory();
@@ -130,8 +134,25 @@ saveBtnCategory.onclick = async () => {
     categoryName.value = "";
     categoryGoal.value = "";
   }
+};
+
+
+editCategoryBtn.onclick = async () => {
+  await dropDownFetchCategoriesExpense(dropdownEdit);
+  editCategoryDialog.showModal();
+};
+
+closeBtnEditCategory.onclick = () => {
+  categoryName.value = "";
+  categoryGoal.value = "";
+  editCategoryDialog.close();
+};
+
+saveBtnEditCategory.onclick = async () => {
 
 };
+
+
 
 //#####################
 // FUNCTIONS FOR CATEGORIES
@@ -241,7 +262,7 @@ async function spawnCategory(categoryTitle, color) {
 
     newButton.addEventListener('click', () => {
       console.log("activated")
-      categoryDialog.showModal();
+      addCategoryDialog.showModal();
       console.log("category Name:" + categoryName.value)
     });
 
@@ -260,15 +281,15 @@ async function spawnCategory(categoryTitle, color) {
 //##################### 
 //// These functions fetch categories from the database, and places them into a dropdown menu
 
-async function dropDownFetchCategoriesExpense() {
+async function dropDownFetchCategoriesExpense(dropdown) {
   try {
-    dropdownExpense.innerHTML = ''; // Clear existing options
+    dropdown.innerHTML = ''; // Clear existing options
     let data = await fetchDatabase();                  //Fetches data from database
     let categories = Object.keys(data.customExpenses); //Accesses all category names in that budget
     categories.forEach(category => {                   //Puts them into an array and displays them in the dropdown menu on the "add custom" popup
       let option = document.createElement("option");
       option.textContent = category;
-      dropdownExpense.appendChild(option);
+      dropdown.appendChild(option);
 
     });
   } catch (error) {
@@ -656,7 +677,7 @@ function createTable(data, category, newOrOld = 0) {
   // Adds funcunality to the "edit" button
   editBtn.addEventListener('click', () => {
     // Add function for button                  // right now the show modal is used for testing
-    categoryDialog.showModal();
+    addCategoryDialog.showModal();
   });
 
   // Adds funcunality to the "delete" button
