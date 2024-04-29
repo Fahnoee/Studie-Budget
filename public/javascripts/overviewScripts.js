@@ -778,7 +778,7 @@ async function setupEventListeners() {
 
   document.querySelector('.show-popup-expense').onclick = async () => {
     document.querySelector('.popup-container-expense').classList.add("active");
-    await dropDownFetchCategoriesExpense();
+    await dropDownFetchCategoriesExpense(dropdownExpense);
   };
   document.querySelector('.close-btn-expense').onclick = () => {
     document.querySelector('.popup-container-expense').classList.remove("active");
