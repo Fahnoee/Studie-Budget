@@ -86,10 +86,11 @@ app.post("/api/addcustom/expense", (req, res) => {
     category: data.category,
     items: data.customExpense
   }
+  let newName = data.newName;
 
   // Call your controller's method
   controller
-    .addCustomExpense(username, expenseData)
+    .addCustomExpense(username, expenseData, newName)
     .then((result) => {
       // Budget update successful
       console.log("Result: \n" + result);
