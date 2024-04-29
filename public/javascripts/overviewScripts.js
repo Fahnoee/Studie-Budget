@@ -73,6 +73,11 @@ const dropdownEdit = document.querySelector('.dropdown-edit');
 
 // HISTORY
 const table = document.querySelector('.styled-table');
+const editHistoryDialog = document.querySelector('.edit-history');
+const editHistoryName = document.querySelector('.name-edit-history');
+const editHistoryValue = document.querySelector('.value-edit-history');
+const closeBtnEditHistory = document.querySelector('.close-btn-history-edit');
+const saveBtnEditHistory = document.querySelector('.save-btn-history-edit');
 
 //#####################
 // FUNCTIONS FOR POPUP
@@ -185,8 +190,6 @@ saveBtnEditCategory.onclick = async () => {
 
 };
 
-
-
 //#####################
 // FUNCTIONS FOR CATEGORIES
 //##################### 
@@ -253,7 +256,8 @@ async function editCategoryToBackend() {
     category: dropdownEdit.value,
     newName: editCategoryName.value,
   }
-  await updateCustomExpense(goalData); //Sends the goal data to backend
+  console.log(goalData);
+  await updateCustomExpense(goalData); //Sends the goal data to backend  
 }
 
 
@@ -668,7 +672,8 @@ async function updateHistory(category) {
 //#####################
 // HISTORY TABLE
 //#####################
-function createTable(data, category, newOrOld = 0) {
+function createTable(data, category, newOrOld = 0) {  // data formated as {name, amount, date, _id, category}
+  console.log(data);
   let simpleDate = new Date(data.date).toDateString().slice(4);    // Slice to remove the name of the day
 
   // Builds row 1 for the history window 
@@ -678,17 +683,13 @@ function createTable(data, category, newOrOld = 0) {
   const expensePrice = document.createElement('td');
 
   expenseName.textContent = data.name;
-  if (category != 'Income') {
-    expensePrice.textContent = '-' + data.amount + ' DKK';
-  } else {
-    expensePrice.textContent = data.amount + ' DKK';
-  }
-
-
+  
   //Changes the look in the history, so expences has a '-' infront
   if (!(category == 'Income')) {
     expensePrice.textContent = '-' + data.amount + ' DKK';
     expensePrice.style.color = '#CC3333'; // Add this line to set the text color to red
+  } else {
+    expensePrice.textContent = data.amount + ' DKK';
   }
 
 
@@ -724,24 +725,49 @@ function createTable(data, category, newOrOld = 0) {
   }
 
   // Adds funcunality to the "edit" button
-  editBtn.addEventListener('click', () => {
-    // Add function for button                  // right now the show modal is used for testing
-    addCategoryDialog.showModal();
+  editBtn.addEventListener('click', async () => {
+    editHistoryDialog.showModal();
   });
 
-  // Adds funcunality to the "delete" button
-  deleteBtn.addEventListener('click', async () => {
-    console.log(category);
+  closeBtnEditHistory.onclick = async () => {
+    editHistoryDialog.close();
+  };
+  
+  saveBtnEditHistory.onclick = async () => {
     let dataPackage = {
       username: username,
       category: category,
       customData: [data],
     }
-    // Add function for button                 // right now the show modal is used for testing
-    console.log(dataPackage);
     await deleteCustomData(dataPackage);
-    //deleteCustomData();                       //implementer delete function her
-    
+
+    let newData = {
+      username: username,
+      category: category,
+      customExpense: [data],
+    };
+    let newName = editHistoryName.value
+    let newValue = editHistoryValue.value
+  
+    if(newName){
+      newData.customExpense[0].name = newName
+    };
+    if(newValue){
+      newData.customExpense[0].amount = newValue;
+    };
+  
+    await updateCustomExpense(newData)
+    editHistoryDialog.close();
+  };
+
+  // Adds funcunality to the "delete" button
+  deleteBtn.addEventListener('click', async () => {
+    let dataPackage = {
+      username: username,
+      category: category,
+      customData: [data],
+    }
+    await deleteCustomData(dataPackage);    
   });
 
 }
