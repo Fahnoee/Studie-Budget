@@ -31,11 +31,9 @@ const showPopupFixed = document.querySelector('.show-popup-fixed');
 const popupContainerFixed = document.querySelector('.popup-container-fixed');
 const closeBtnFixed = document.querySelector('.close-btn-fixed');
 const saveBtnFixed = document.querySelector('.save-btn-fixed');
-
 const incomeFixed = document.querySelector(".income-fixed");
 const expenseFixed = document.querySelector(".expense-fixed");
 const savingsFixed = document.querySelector(".savings-fixed");
-
 
 // EXPENSE
 const showPopupCustomExpense = document.querySelector('.show-popup-expense');
@@ -51,18 +49,24 @@ const showPopupCustomIncome = document.querySelector('.show-popup-income');
 const popupContainerCustomIncome = document.querySelector('.popup-container-income');
 const closeBtnCustomIncome = document.querySelector('.close-btn-income');
 const saveBtnCustomIncome = document.querySelector('.save-btn-income');
-const dropdownIncome = document.querySelector('.dropdown-income');
 const nameCustomIncome = document.querySelector('.name-income');
 const valueCustomIncome = document.querySelector('.value-income');
 
-// CATEGORIES
+// ADD CATEGORIES
 const categoryBtn = document.querySelector('.add-circle');
-const categoryDialog = document.querySelector('.dialog');
+const addCategoryDialog = document.querySelector('.add-category-dialog');
 const categoryName = document.querySelector('.category-name');
 const categoryGoal = document.querySelector('.category-goal');
 const categoryColor = document.querySelector('.category-color');
 const closeBtnCategory = document.querySelector('.close-btn-category');
 const saveBtnCategory = document.querySelector('.save-btn-category');
+
+// EDIT CATEGORIES
+const editCategoryDialog = document.querySelector('.edit-category-dialog');
+const editCategoryBtn = document.querySelector('.show-edit-categories');
+const closeBtnEditCategory = document.querySelector('.close-btn-category-edit');
+const saveBtnEditCategory = document.querySelector('.save-btn-category-edit');
+const dropdownEdit = document.querySelector('.dropdown-edit');
 
 // HISTORY
 const table = document.querySelector('.styled-table');
@@ -109,15 +113,15 @@ closeBtnFixed.onclick = () => {
 
 categoryBtn.onclick = () => {
   console.log("Activated");
-  categoryDialog.showModal();
+  addCategoryDialog.showModal();
   console.log("Category Name: " + categoryName.value);
 };
 
 closeBtnCategory.onclick = () => {
   categoryName.value = "";
   categoryGoal.value = "";
-  categoryDialog.close();
-}
+  addCategoryDialog.close();
+};
 
 saveBtnCategory.onclick = async () => {
   if (isNaN(parseFloat(categoryGoal.value))) {
@@ -127,8 +131,9 @@ saveBtnCategory.onclick = async () => {
 
   if (await categoryAvailableCheck(categoryName.value)) {
     alert("Category name already in use");
-  } else {
-    categoryDialog.close();
+  }
+  else {
+    addCategoryDialog.close();
     await inputCategoryToBackend();
     await spawnCategory(categoryName.value, categoryColor.value);  // Create category
     await updateCategory();
@@ -137,6 +142,24 @@ saveBtnCategory.onclick = async () => {
     categoryGoal.value = "";
   }
 };
+
+
+editCategoryBtn.onclick = async () => {
+  await dropDownFetchCategoriesExpense(dropdownEdit);
+  editCategoryDialog.showModal();
+};
+
+closeBtnEditCategory.onclick = () => {
+  categoryName.value = "";
+  categoryGoal.value = "";
+  editCategoryDialog.close();
+};
+
+saveBtnEditCategory.onclick = async () => {
+
+};
+
+
 
 //#####################
 // FUNCTIONS FOR CATEGORIES
@@ -246,7 +269,7 @@ async function spawnCategory(categoryTitle, color) {
 
     newButton.addEventListener('click', () => {
       console.log("activated")
-      categoryDialog.showModal();
+      addCategoryDialog.showModal();
       console.log("category Name:" + categoryName.value)
     });
 
@@ -265,15 +288,15 @@ async function spawnCategory(categoryTitle, color) {
 //##################### 
 //// These functions fetch categories from the database, and places them into a dropdown menu
 
-async function dropDownFetchCategoriesExpense() {
+async function dropDownFetchCategoriesExpense(dropdown) {
   try {
-    dropdownExpense.innerHTML = ''; // Clear existing options
+    dropdown.innerHTML = ''; // Clear existing options
     let data = await fetchDatabase();                  //Fetches data from database
     let categories = Object.keys(data.customExpenses); //Accesses all category names in that budget
     categories.forEach(category => {                   //Puts them into an array and displays them in the dropdown menu on the "add custom" popup
       let option = document.createElement("option");
       option.textContent = category;
-      dropdownExpense.appendChild(option);
+      dropdown.appendChild(option);
 
     });
   } catch (error) {
@@ -384,6 +407,9 @@ async function updateCustomIncome(dataIncome) {
   });
 }
 
+// This function needs username, category, items, & income or expense for deletion
+// like this:
+// await deleteCategory({category:category, })
 async function deleteCustomData(data) {
   return fetchData(API_ENDPOINTS.deleteData, {
     method: "POST",
@@ -396,7 +422,7 @@ async function deleteCustomData(data) {
 
 // This function needs username & category for deletion
 // like this:
-// await deleteCategory({username:username,category:category})
+// await deleteCategory({username:username, category:category})
 async function deleteCategory(data) {
   return fetchData(API_ENDPOINTS.deleteCategory, {
     method: "POST",
@@ -459,12 +485,9 @@ async function fetchHistory() {
         if (expense.name == '##GOAL##') {   // Exclude first entry in database containing the category goal
           return;
         }
-        let name = expense.name;
-        let price = expense.amount;
-        let timestamp = expense.date;
 
-        let history = { name: name, price: price, category: category, timestamp: timestamp }; // Insert into object
-        arrayOfHistories.push(history);   // Add object to array
+        expense.category = category;
+        arrayOfHistories.push(expense);   // Add object to array
 
       });
     });
@@ -476,21 +499,16 @@ async function fetchHistory() {
         if (income.name == '##GOAL##') {   // Exclude first entry in database containing the category goal
           return;
         }
-        let name = income.name;
-        let price = income.amount;
-        let timestamp = income.date;
 
-        let history = { name: name, price: price, category: category, timestamp: timestamp }; // Insert into object
-        arrayOfHistories.push(history);   // Add object to array
+        income.category = category;
+        arrayOfHistories.push(income);   // Add object to array
       });
     });
 
-    arrayOfHistories.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));  // Sort array after timestamp
+    arrayOfHistories.sort((a, b) => new Date(b.date) - new Date(a.date));  // Sort array after timestamp
 
     arrayOfHistories.forEach(history => {   // Create table for each income and expense entry in database
-      let simpleDate = new Date(history.timestamp).toDateString().slice(4);    //slice to remove the name of the day
-      createTable(history.name, history.price, history.category, simpleDate); // TODO: Add parameter for editBtn
-
+      createTable(history, history.category, 0); // TODO: Add parameter for editBtn
     });
 
   } catch (error) {
@@ -577,15 +595,14 @@ async function updateHistory(category) {
       if (expenses.length > 0) {
         const lastExpense = expenses[expenses.length - 1];
 
-        let simpleDate = new Date(lastExpense.date).toDateString().slice(4);    // Slice to remove the name of the day
+        console.log(category);
         console.log(lastExpense);
-        console.log(simpleDate);
-        createTable(lastExpense.name, lastExpense.amount, category, simpleDate, 1);
+        createTable(lastExpense, category, 1);
       } else {
         console.log('No expenses in this category yet.');
       }
     } else {
-      console.log('Category not found.');
+      console.log('Category (expense) not found. Must likely because this is an income instead');
     }
 
     // Update incomes
@@ -594,15 +611,14 @@ async function updateHistory(category) {
       if (incomes.length > 0) {
         const lastIncome = incomes[incomes.length - 1];
 
-        let simpleDate = new Date(lastIncome.date).toDateString().slice(4);    // Slice to remove the name of the day
+        console.log(category);
         console.log(lastIncome);
-        console.log(simpleDate);
-        createTable(lastIncome.name, lastIncome.amount, category, simpleDate, 1);
+        createTable(lastIncome, category, 1);
       } else {
         console.log('No expenses in this category yet.');
       }
     } else {
-      console.log('Category not found.');
+      console.log('Category (income) not found. Must likely because this is an expense instead');
     }
   } catch (error) {
     console.error('Error updating history:', error);
@@ -612,15 +628,17 @@ async function updateHistory(category) {
 //#####################
 // HISTORY TABLE
 //#####################
-function createTable(name, price, category, timestamp, newOrOld = 0) {
+function createTable(data, category, newOrOld = 0) {
+  let simpleDate = new Date(data.date).toDateString().slice(4);    // Slice to remove the name of the day
+
   // Builds row 1 for the history window 
   const row1 = document.createElement('tr');
 
   const expenseName = document.createElement('td');
   const expensePrice = document.createElement('td');
 
-  expenseName.textContent = name;
-  expensePrice.textContent = price + ' DKK';
+  expenseName.textContent = data.name;
+  expensePrice.textContent = data.amount + ' DKK';
 
   row1.appendChild(expenseName);
   row1.appendChild(expensePrice);
@@ -633,7 +651,7 @@ function createTable(name, price, category, timestamp, newOrOld = 0) {
   const editBtn = document.createElement('button');
   const deleteBtn = document.createElement('button');
 
-  expenceCategory.textContent = category + ' - ' + timestamp;
+  expenceCategory.textContent = category + ' - ' + simpleDate;
   editBtn.textContent = 'Edit';
   deleteBtn.textContent = 'Delete';
 
@@ -656,14 +674,22 @@ function createTable(name, price, category, timestamp, newOrOld = 0) {
   // Adds funcunality to the "edit" button
   editBtn.addEventListener('click', () => {
     // Add function for button                  // right now the show modal is used for testing
-    categoryDialog.showModal();
+    addCategoryDialog.showModal();
   });
 
   // Adds funcunality to the "delete" button
-  deleteBtn.addEventListener('click', () => {
-    // Add function for button                  // right now the show modal is used for testing
-    categoryDialog.showModal();
+  deleteBtn.addEventListener('click', async () => {
+    console.log(category);
+    let dataPackage = {
+      username: username,
+      category: category,
+      customData: [data],
+    }
+    // Add function for button                 // right now the show modal is used for testing
+    console.log(dataPackage);
+    await deleteCustomData(dataPackage);
     //deleteCustomData();                       //implementer delete function her
+    
   });
 
 }
@@ -758,9 +784,9 @@ async function setupEventListeners() {
     valueCustomIncome.value = "";
   };
 
-  document.querySelector('.show-popup-expense').onclick = () => {
+  document.querySelector('.show-popup-expense').onclick = async () => {
     document.querySelector('.popup-container-expense').classList.add("active");
-    dropDownFetchCategoriesExpense();
+    await dropDownFetchCategoriesExpense(dropdownExpense);
   };
 
   document.querySelector('.close-btn-expense').onclick = () => {
@@ -813,10 +839,10 @@ let items1 = [{
   _id: "1713808910591"
 }]
 let items2 = [{
-  name: "idtest",
+  name: "test6",
   amount: 700,
   date: "2024-4-22 10",
-  _id: "1713808010246"
+  _id: "1714380055527"
 }]
 
 let dataForDeletionIncome = {
@@ -828,7 +854,7 @@ let dataForDeletionIncome = {
 let dataForDeletionExpense = {
   username,
   customData: items2,
-  category: "munke",
+  category: "mad",
   incomeOrExpense: "expense",
 }
 

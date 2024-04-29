@@ -102,13 +102,12 @@ app.post("/api/deletecustom", (req,res) => {
   let data = req.body;
 
   let username = data.username;
-  let incomeOrExpense = data.incomeOrExpense;
   let deleteData = {
     category: data.category,
     items: data.customData
   }
   controller
-    .deleteCustom(username, deleteData, incomeOrExpense)
+    .deleteCustom(username, deleteData)
     .then((result) => {
       // Budget update successful
       console.log("Budget update successful....Result: \n" + result);

@@ -415,21 +415,26 @@ p {
 /* CATEGORIES */
 /*////////////*/
 
-dialog {
+.add-category-dialog {
   border: none;
   border-radius: 6px;
 }
 
-dialog .category-name{
+.add-category-dialog .category-name{
  float: right;
 }
 
-dialog .category-goal{
+.add-category-dialog .category-goal{
   float: right;
 }
 
-dialog .category-color{
+.add-category-dialog .category-color{
   float: right;
+}
+
+.edit-category-dialog {
+  border: none;
+  border-radius: 6px;
 }
 
 .close-btn-category {
@@ -455,6 +460,29 @@ dialog .category-color{
   cursor: pointer; 
 }
 
+.close-btn-category-edit {
+  width: 45%;
+  height: 40px;
+  background: rgb(193, 200, 203);
+  border-radius: 6px; 
+  border: none;
+  outline: none;
+  margin-right: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  cursor: pointer; 
+}
+
+.save-btn-category-edit {
+  width: 45%;
+  height: 40px;
+  background: lightblue;
+  border-radius: 6px; 
+  border: none;
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  cursor: pointer; 
+}
+
 .category-text {
   position: absolute;
   top: -20px;
@@ -468,6 +496,18 @@ dialog .category-color{
   flex-wrap: wrap;
   margin-top: 10%;
   justify-content: center;
+}
+
+.show-edit-categories {
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5%;
+  font-family: sans-serif;
+  background-color: grey;
+  color: white;
+  width: auto;
+  transition: background-color 0.3s ease;
 }
 
 /*///////////////*/

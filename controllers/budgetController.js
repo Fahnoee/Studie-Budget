@@ -269,7 +269,7 @@ async function fetchCustomIncomesByMonthAndYear(username, month, year) {
 // At the end of the file, add a call to fetchCategoryExpensesAndGoals for testing purposes
 
 // Function for deleting custom income or expense. 
-async function deleteCustom(username, { category, items }, incomeOrExpense) {
+async function deleteCustom(username, { category, items }) {
 
     try {
         const budgetId = await fetchUserBudgetId(username);
@@ -280,7 +280,7 @@ async function deleteCustom(username, { category, items }, incomeOrExpense) {
         if (!budget) {
             throw new Error('Budget not found');
         }
-        if (incomeOrExpense === "expense") {
+        if (category !== "Income") {
             for (let i = 1; i <= budget.customExpenses[category].length; i++) {
                 if (budget.customExpenses[category][i]._id === items[0]._id) {
                     await budget.customExpenses[category].splice(i, 1);  //When custom expense is found, splice from array
@@ -289,10 +289,10 @@ async function deleteCustom(username, { category, items }, incomeOrExpense) {
                 }
             }
         }
-        if (incomeOrExpense === "income") {
-            for (let i = 0; i <= budget.customIncomes["income"].length; i++) {
-                if (budget.customIncomes["income"][i]._id === items[0]._id) {
-                    await budget.customIncomes["income"].splice(i, 1); //When custom income is found, splice from array
+        if (category === "Income") {
+            for (let i = 0; i <= budget.customIncomes[category].length; i++) {
+                if (budget.customIncomes[category][i]._id === items[0]._id) {
+                    await budget.customIncomes[category].splice(i, 1); //When custom income is found, splice from array
                     budget.markModified('customIncomes');
                     break;
                 }
