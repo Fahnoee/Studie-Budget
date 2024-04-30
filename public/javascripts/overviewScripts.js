@@ -1306,10 +1306,15 @@ async function fetchMonthlyBudget(month, year) {
 
 async function updateBudgetView(month, year) {
   const monthlyBudget = await fetchMonthlyBudget(month, year);
-  incomeFixed.value = monthlyBudget.income || 0;
-  expenseFixed.value = monthlyBudget.expenses || 0;
-  savingsFixed.value = monthlyBudget.savings || 0;
-  // Update the UI elements here as needed
+  if (monthlyBudget.income > 0) {
+    incomeFixed.value = monthlyBudget.income;
+  }
+  if (monthlyBudget.expenses > 0) {
+    expenseFixed.value = monthlyBudget.expenses;
+  }
+  if (monthlyBudget.savings > 0) {
+    savingsFixed.value = monthlyBudget.savings;
+  }
 }
 
 async function saveMonthlyBudget(month, year, income, expenses, savings) {
@@ -1322,6 +1327,127 @@ async function saveMonthlyBudget(month, year, income, expenses, savings) {
     body: JSON.stringify(data),
   });
 }
+
+function glowButton(buttons) {
+  let current = 0; // Start with the first button
+  let colorPicked = false;
+
+  // Initially disable all non-input buttons
+  buttons.forEach(button => {
+    if (button.tagName !== 'INPUT') {
+      button.disabled = true;
+    }
+  });
+
+  const nextButton = () => {
+    // Disable the previous button and enable the current one
+    if (current > 0) {
+      if (buttons[current - 1].tagName !== 'INPUT') {
+        buttons[current - 1].disabled = true; // Disable the previous button if it's not an input
+      }
+      buttons[current - 1].classList.remove('glow-effect'); // Remove glow from previous button
+    }
+
+    if (current < buttons.length - 3) {
+      buttons[current].disabled = false; // Enable the current button
+      buttons[current].classList.add('glow-effect'); // Add glow to current button
+      if (buttons[current].tagName === 'INPUT') {
+        if (buttons[current].type === 'color') {
+          buttons[current].removeEventListener('input', handleColorPicker);
+          buttons[current].addEventListener('input', handleColorPicker);
+        } else if (buttons[current].classList.contains('category-name') || buttons[current].classList.contains('name-expense') || buttons[current].classList.contains('name-income') || buttons[current].classList.contains('name-edit')) {
+          buttons[current].removeEventListener('input', handleInput);
+          buttons[current].addEventListener('input', handleFreeTextInput);
+        } else {
+          buttons[current].addEventListener('input', handleInput);
+        }
+      } else {
+        buttons[current].addEventListener('click', handleClick);
+      }
+    } else {
+      // Re-enable all buttons at the end of the tutorial
+      buttons.forEach(button => {
+        button.disabled = false;
+        button.classList.remove('glow-effect');
+      });
+    }
+  };
+
+  const handleInput = () => {
+    if (buttons[current].value.trim() !== '' && !isNaN(buttons[current].value)) {
+      current++;
+      nextButton();
+    }
+  };
+
+  const handleFreeTextInput = () => {
+    if (buttons[current].value.trim() !== '') {
+      current++;
+      nextButton();
+    }
+  };
+
+  const handleColorPicker = (event) => {
+    if (!colorPicked) {
+      colorPicked = true;
+      current++;
+      nextButton();
+    }
+  };
+
+  const handleClick = () => {
+    current++;
+    nextButton();
+  };
+
+  nextButton(); // Start the sequence
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Check URL for the startTutorial query parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  const startTutorial = urlParams.get('startTutorial');
+  if (startTutorial === 'true') {
+    localStorage.setItem('startTutorial', 'true');
+    // Optionally, you might want to remove the query parameter from the URL here
+    history.replaceState(null, '', location.pathname);
+  }
+
+  if (localStorage.getItem('startTutorial') === 'true') {
+    const buttons = [
+      document.querySelector('.show-popup-fixed'),
+      document.querySelector('.income-fixed'),
+      document.querySelector('.expense-fixed'),
+      document.querySelector('.savings-fixed'),
+      document.querySelector('.save-btn-fixed'),
+      document.querySelector('.add-circle'),
+      document.querySelector('.category-name'),
+      document.querySelector('.category-goal'),
+      document.querySelector('.category-color'),
+      document.querySelector('.save-btn-category'),
+      document.querySelector('.show-popup-expense'),
+      document.querySelector('.dropdown-expense'),
+      document.querySelector('.name-expense'),
+      document.querySelector('.value-expense'),
+      document.querySelector('.save-btn-expense'),
+      document.querySelector('.show-popup-income'),
+      document.querySelector('.name-income'),
+      document.querySelector('.value-income'),
+      document.querySelector('.save-btn-income'),
+      document.querySelector('.show-edit-categories'),
+      document.querySelector('.dropdown-edit'),
+      document.querySelector('.name-edit'),
+      document.querySelector('.goal-edit'),
+      document.querySelector('.save-btn-category-edit'),
+      // CLose buttons should not run in tutorial
+      document.querySelector('.close-btn-fixed'),
+      document.querySelector('.close-btn-category'),
+      document.querySelector('.close-btn-category-edit'),
+    ];
+    glowButton(buttons);
+    localStorage.removeItem('startTutorial');
+  }
+});
 
 //#####################
 // INITIALIZATION

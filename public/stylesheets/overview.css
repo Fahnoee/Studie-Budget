@@ -684,3 +684,12 @@ p {
   padding-left: 5px; /* Added padding to separate the arrow from the text */
 }
 
+.glow-effect {
+  animation: glow-animation 2s infinite;
+}
+
+@keyframes glow-animation {
+  0% { box-shadow: 0 0 10px 5px #33ccff; }
+  50% { box-shadow: 0 0 30px 10px #33ccff; }
+  100% { box-shadow: 0 0 10px 5px #33ccff; }
+}
