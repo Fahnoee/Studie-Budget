@@ -62,6 +62,7 @@ const closeBtnCategory = document.querySelector('.close-btn-category');
 const saveBtnCategory = document.querySelector('.save-btn-category');
 
 // EDIT CATEGORIES
+const categories = document.querySelector(".categories");
 const editCategoryDialog = document.querySelector('.edit-category-dialog');
 const editCategoryBtn = document.querySelector('.show-edit-categories');
 const deleteBtnEditCategory = document.querySelector('.delete-btn-category-edit');
@@ -73,11 +74,11 @@ const dropdownEdit = document.querySelector('.dropdown-edit');
 
 // HISTORY
 const table = document.querySelector('.styled-table');
-const editHistoryDialog = document.querySelector('.edit-history');
-const editHistoryName = document.querySelector('.name-edit-history');
-const editHistoryValue = document.querySelector('.value-edit-history');
-const closeBtnEditHistory = document.querySelector('.close-btn-history-edit');
-const saveBtnEditHistory = document.querySelector('.save-btn-history-edit');
+// const editHistoryDialog = document.querySelector('.edit-history');
+// const editHistoryName = document.querySelector('.name-edit-history');
+// const editHistoryValue = document.querySelector('.value-edit-history');
+// const closeBtnEditHistory = document.querySelector('.close-btn-history-edit');
+// const saveBtnEditHistory = document.querySelector('.save-btn-history-edit');
 
 //#####################
 // FUNCTIONS FOR POPUP
@@ -150,6 +151,12 @@ saveBtnCategory.onclick = async () => {
     return; // Exit function if the category goal is not a number
   }
 
+  //if user enters negative goal, set it to positive
+  if (categoryGoal.value < 0) {
+    categoryGoal.value *= (-1);
+  }
+
+
   if (await categoryAvailableCheck(categoryName.value)) {
     alert("Category name already in use");
   }
@@ -195,10 +202,23 @@ deleteBtnEditCategory.onclick = async () => {
     username,
     category: dropdownEdit.value,
   };
-  await deleteCategory(dataPackage);
-  editCategoryDialog.close();
-  await updateCategory();
-  await updateUserValuesView();
+  
+  // Get the category name
+  const categoryName = dropdownEdit.value;
+
+  // Confirmation dialog with dynamic category name
+  const confirmation = window.confirm(`Are you sure you want to delete the category "${categoryName}"?`);
+  
+  if (confirmation) {  // User clicked OK, proceed with deletion
+    await deleteCategory(dataPackage);
+    editCategoryDialog.close();
+    await updateCategory();
+    await updateUserValuesView();
+    await refreshCategories();
+  } else {
+    console.log("did nothing")
+  
+  }
 };
 
 closeBtnEditCategory.onclick = () => {
@@ -212,15 +232,18 @@ saveBtnEditCategory.onclick = async () => {
   editCategoryDialog.close();
 
   if (isNaN(editCategoryGoal.value)) {
-    alert("Please enter valid number for expenses.");
+    alert("Please enter valid number for limit.");
     return; // Exit function if any input is not a number
   }
+
+  //If user should enter a negative number, it will be converted to positive
+   if (editCategoryGoal.value < 0) {
+    editCategoryGoal.value = editCategoryGoal.value * (-1);
+  }
+
   await editCategoryToBackend();
   await updateUserValuesView();
-  await fetchCategories();
-
-
-
+  await refreshCategories();
 };
 
 //#####################
@@ -228,7 +251,6 @@ saveBtnEditCategory.onclick = async () => {
 //##################### 
 // Function for updating values of categories in html and database
 async function updateCategory() {
-  const categories = document.querySelector(".categories");
   const paragraphs = categories.querySelectorAll("p");
   const pies = categories.querySelectorAll(".pie");
   const categoryData = await fetchAndProcessCategoryData();
@@ -702,6 +724,29 @@ async function updateHistory(category) {
   }
 }
 
+// Function for deleting history table and then creating it again with the new entries
+async function refreshHistory() {
+  const allTableElements = table.querySelectorAll('p, tr, td, button, dialog, h3, input, div'); // Q-Select all elements currently in the table
+  console.log('Table: ', allTableElements);
+  allTableElements.forEach(element => {
+    element.remove();
+  });
+
+  await updateCategory();
+  await updateUserValuesView();
+  await fetchHistory();
+}
+
+async function refreshCategories() {
+  const allCategoryElements = categories.querySelectorAll('div, span, p'); // Q-Select all elements currently in the table
+  console.log('Category: ', allCategoryElements);
+  allCategoryElements.forEach(element => {
+    element.remove();
+  });
+  await fetchCategories();
+  await refreshHistory();
+}
+
 //#####################
 // HISTORY TABLE
 //#####################
@@ -709,6 +754,9 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
   console.log(data);
   let simpleDate = new Date(data.date).toDateString().slice(4);    // Slice to remove the name of the day
 
+  //#######################
+  // CREATE TABLE ELEMENTS
+  //#######################
   // Builds row 1 for the history window 
   const row1 = document.createElement('tr');
 
@@ -718,13 +766,12 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
   expenseName.textContent = data.name;
 
   //Changes the look in the history, so expences has a '-' infront
-  if (!(category == 'Income')) {
+  if (!(category === 'Income')) {
     expensePrice.textContent = '-' + data.amount + ' DKK';
     expensePrice.style.color = '#CC3333'; // Add this line to set the text color to red
   } else {
     expensePrice.textContent = data.amount + ' DKK';
   }
-
 
   row1.appendChild(expenseName);
   row1.appendChild(expensePrice);
@@ -757,20 +804,86 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
     table.appendChild(row2);      // adds the second row to the table
   }
 
+  //############################
+  // CREATE DIALOGS AND BUTTONS
+  //############################
+  // Create dialog element
+  const editHistoryDialog = document.createElement('dialog');
+  editHistoryDialog.classList.add('edit-history');
+
+  // Create h3 element for heading
+  const editHistoryHeading = document.createElement('h3');
+  editHistoryHeading.textContent = 'Edit history';
+  editHistoryDialog.appendChild(editHistoryHeading);
+
+  // Create paragraph for "Edit name" text and input
+  const editNameParagraph = document.createElement('p');
+  editNameParagraph.textContent = 'Edit name';
+  editHistoryDialog.appendChild(editNameParagraph);
+
+  const nameInput = document.createElement('input');
+  nameInput.setAttribute('type', 'text');
+  nameInput.classList.add('name-edit-history');
+  nameInput.style.float = 'right';
+  editNameParagraph.appendChild(nameInput);
+
+  // Create paragraph for "Edit value" text and input
+  const editValueParagraph = document.createElement('p');
+  editValueParagraph.textContent = 'Edit value';
+  editHistoryDialog.appendChild(editValueParagraph);
+
+  const valueInput = document.createElement('input');
+  valueInput.setAttribute('type', 'text');
+  valueInput.classList.add('value-edit-history');
+  valueInput.style.float = 'right';
+  editValueParagraph.appendChild(valueInput);
+
+  // Create div for buttons
+  const buttonDiv = document.createElement('div');
+  buttonDiv.classList.add('buttons');
+  editHistoryDialog.appendChild(buttonDiv);
+
+  // Create close button
+  const closeButton = document.createElement('button');
+  closeButton.textContent = 'CLOSE';
+  closeButton.classList.add('close-btn-history-edit');
+  buttonDiv.appendChild(closeButton);
+
+  // Create save button
+  const saveButton = document.createElement('button');
+  saveButton.textContent = 'SAVE';
+  saveButton.classList.add('save-btn-history-edit');
+  buttonDiv.appendChild(saveButton);
+
+  // Append dialog to body
+  document.body.appendChild(editHistoryDialog);
+
+  //#################################
+  // ADD EVENT LISTERNERS TO BUTTONS
+  //#################################
   // Adds funcunality to the "edit" button
   editBtn.addEventListener('click', async () => {
     editHistoryDialog.showModal();
   });
 
-  closeBtnEditHistory.onclick = async () => {
+  closeButton.onclick = async () => {
     editHistoryDialog.close();
   };
-
-  saveBtnEditHistory.onclick = async () => {
-    if (isNaN(editHistoryValue.value)) {
+  
+  saveButton.onclick = async () => {
+    if (isNaN(valueInput.value)) {
       alert("Please enter valid numbers for value.");
       return; // Exit function if any input is not a number
     }
+    if (valueInput.value < 0) {
+      valueInput.value *= (-1);
+    }
+
+    //If user should enter a negative number, it will be converted
+    if (editHistoryValue.value < 0) {
+      editHistoryValue.value = editHistoryValue.value * (-1);
+    }
+
 
     let dataPackage = {
       username: username,
@@ -779,24 +892,49 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
     }
     await deleteCustomData(dataPackage);
 
-    let newData = {
-      username: username,
-      category: category,
-      customExpense: [data],
-    };
-    let newName = editHistoryName.value
-    let newValue = editHistoryValue.value
+    editHistoryDialog.close();  // Close dialog
 
-    if (newName) {
-      newData.customExpense[0].name = newName
-    };
-    if (newValue) {
-      newData.customExpense[0].amount = newValue;
-    };
+    if(!(category === "Income")){
+      let newExpenseData = {
+        username: username,
+        category: category,
+        customExpense: [data],
+      };
 
-    await updateCustomExpense(newData)
-    editHistoryDialog.close();
-  };
+      let newName = nameInput.value
+      let newValue = valueInput.value
+
+      if(newName){
+        newExpenseData.customExpense[0].name = newName;
+      }
+      if(newValue){
+        newExpenseData.customExpense[0].amount = newValue;
+      }
+
+      await updateCustomExpense(newExpenseData)
+    } else {
+      let newIncomeData = {
+        username: username,
+        category: category,
+        customIncome: [data],
+      };
+
+      let newName = nameInput.value
+      let newValue = valueInput.value
+
+      if(newName){
+        newIncomeData.customIncome[0].name = newName;
+      }
+
+      if(newValue){
+        newIncomeData.customIncome[0].amount = newValue;
+      }
+
+      await updateCustomIncome(newIncomeData)
+    }
+
+    await refreshHistory();
+  }; 
 
   // Adds funcunality to the "delete" button
   deleteBtn.addEventListener('click', async () => {
@@ -805,9 +943,10 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
       category: category,
       customData: [data],
     }
-    await deleteCustomData(dataPackage);
-  });
 
+    await deleteCustomData(dataPackage);
+    await refreshHistory();
+  });
 }
 
 //#####################
@@ -840,8 +979,15 @@ async function setupEventListeners() {
       return; // Exit function if any input is not a number
     }
 
+    //checks if user enters a negative number and converts it to positivt, not for savings, as some might want to use their savings
+    if ((incomeFixed.value) < 0) {
+      incomeFixed.value *= (-1);
+    }
+    if ((expenseFixed.value) < 0) {
+      expenseFixed.value *= (-1);
+    }
 
-
+   
     let incomeVal = incomeFixed.value;
     let expenseVal = expenseFixed.value;
     let savingsVal = savingsFixed.value;
