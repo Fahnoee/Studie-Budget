@@ -202,13 +202,13 @@ deleteBtnEditCategory.onclick = async () => {
     username,
     category: dropdownEdit.value,
   };
-  
+
   // Get the category name
   const categoryName = dropdownEdit.value;
 
   // Confirmation dialog with dynamic category name
   const confirmation = window.confirm(`Are you sure you want to delete the category "${categoryName}"?`);
-  
+
   if (confirmation) {  // User clicked OK, proceed with deletion
     await deleteCategory(dataPackage);
     editCategoryDialog.close();
@@ -217,7 +217,7 @@ deleteBtnEditCategory.onclick = async () => {
     await refreshCategories();
   } else {
     console.log("did nothing")
-  
+
   }
 };
 
@@ -237,7 +237,7 @@ saveBtnEditCategory.onclick = async () => {
   }
 
   //If user should enter a negative number, it will be converted to positive
-   if (editCategoryGoal.value < 0) {
+  if (editCategoryGoal.value < 0) {
     editCategoryGoal.value = editCategoryGoal.value * (-1);
   }
 
@@ -869,7 +869,7 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
   closeButton.onclick = async () => {
     editHistoryDialog.close();
   };
-  
+
   saveButton.onclick = async () => {
     if (isNaN(valueInput.value)) {
       alert("Please enter valid numbers for value.");
@@ -894,7 +894,7 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
 
     editHistoryDialog.close();  // Close dialog
 
-    if(!(category === "Income")){
+    if (!(category === "Income")) {
       let newExpenseData = {
         username: username,
         category: category,
@@ -904,10 +904,10 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
       let newName = nameInput.value
       let newValue = valueInput.value
 
-      if(newName){
+      if (newName) {
         newExpenseData.customExpense[0].name = newName;
       }
-      if(newValue){
+      if (newValue) {
         newExpenseData.customExpense[0].amount = newValue;
       }
 
@@ -922,11 +922,11 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
       let newName = nameInput.value
       let newValue = valueInput.value
 
-      if(newName){
+      if (newName) {
         newIncomeData.customIncome[0].name = newName;
       }
 
-      if(newValue){
+      if (newValue) {
         newIncomeData.customIncome[0].amount = newValue;
       }
 
@@ -934,7 +934,7 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
     }
 
     await refreshHistory();
-  }; 
+  };
 
   // Adds funcunality to the "delete" button
   deleteBtn.addEventListener('click', async () => {
@@ -993,7 +993,7 @@ async function setupEventListeners() {
       expenseFixed.value *= (-1);
     }
 
-   
+
     let incomeVal = incomeFixed.value;
     let expenseVal = expenseFixed.value;
     let savingsVal = savingsFixed.value;
@@ -1344,3 +1344,20 @@ async function initialize() {
 
 // Call initialize to start the app
 initialize();
+
+
+
+window.onload = function () {
+  var videoContainer = document.querySelector('.video-container');
+  var iframe = document.createElement('iframe');
+  iframe.setAttribute('width', '1078');
+  iframe.setAttribute('height', '541');
+  iframe.setAttribute('src', 'https://www.youtube.com/embed/C61cY9cCnt4');
+  iframe.setAttribute('title', 'student budget');
+  iframe.setAttribute('frameborder', '0');
+  iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+  iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+  iframe.setAttribute('allowfullscreen', '');
+  videoContainer.innerHTML = ''; // Clear the existing content
+  videoContainer.appendChild(iframe);
+}
