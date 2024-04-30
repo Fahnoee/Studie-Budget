@@ -120,10 +120,23 @@ closeBtnFixed.onclick = () => {
 // };
 
 
-categoryBtn.onclick = () => {
-  console.log("Activated");
-  addCategoryDialog.showModal();
-  console.log("Category Name: " + categoryName.value);
+categoryBtn.onclick = async () => {
+  let month = currentMonthIndex + 1; // JavaScript months are 0-indexed, add 1 for consistency with common representations
+  let year = currentYear;
+  const monthlyBudget = await fetchMonthlyBudget(month, year);
+  incomeFixed.value = monthlyBudget.income || 0;
+  expenseFixed.value = monthlyBudget.expenses || 0;
+  savingsFixed.value = monthlyBudget.savings || 0;
+
+  if (incomeFixed.value == '0' && expenseFixed.value == '0' && savingsFixed.value == '0') {
+    alert("Please set up fixed income and expenses first in the primary budget overview");
+    return;
+  }
+  else {
+    console.log("Activated");
+    addCategoryDialog.showModal();
+    console.log("Category Name: " + categoryName.value);
+  }
 };
 
 closeBtnCategory.onclick = () => {
@@ -158,10 +171,30 @@ saveBtnCategory.onclick = async () => {
   }
 };
 
-
 editCategoryBtn.onclick = async () => {
   await dropDownFetchCategoriesExpense(dropdownEdit);
-  editCategoryDialog.showModal();
+  let month = currentMonthIndex + 1;
+  let year = currentYear;
+  let data = await fetchDatabase(); // Fetch data from the database
+  //let categories = Object.keys(data.customExpenses);
+  const monthlyBudget = await fetchMonthlyBudget(month, year);
+  incomeFixed.value = monthlyBudget.income || 0;
+  expenseFixed.value = monthlyBudget.expenses || 0;
+  savingsFixed.value = monthlyBudget.savings || 0;
+
+
+  if (incomeFixed.value == '0' && expenseFixed.value == '0' && savingsFixed.value == '0') {
+    alert("Please set up fixed income and expenses first in the primary budget overview");
+    return;
+  }
+
+  if (!data.customExpenses || Object.keys(data.customExpenses).length === 0) {
+    alert("No category found. Please create category first.");
+    return;
+  } else {
+
+    editCategoryDialog.showModal();
+  }
 };
 
 deleteBtnEditCategory.onclick = async () => {
@@ -181,7 +214,7 @@ deleteBtnEditCategory.onclick = async () => {
     editCategoryDialog.close();
     await updateCategory();
     await updateUserValuesView();
-
+    await refreshCategories();
   } else {
     console.log("did nothing")
   
@@ -195,9 +228,9 @@ closeBtnEditCategory.onclick = () => {
 };
 
 saveBtnEditCategory.onclick = async () => {
-  
+
   editCategoryDialog.close();
-  
+
   if (isNaN(editCategoryGoal.value)) {
     alert("Please enter valid number for limit.");
     return; // Exit function if any input is not a number
@@ -843,7 +876,7 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
       return; // Exit function if any input is not a number
     }
     if (valueInput.value < 0) {
-      valueInput.value *= -1;
+      valueInput.value *= (-1);
     }
 
     //If user should enter a negative number, it will be converted
@@ -920,6 +953,8 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
 // EVENT HANDLERS
 //##################### 
 async function setupEventListeners() {
+
+
   document.querySelector('.show-popup-fixed').onclick = () => {
     document.querySelector('.popup-container-fixed').classList.add("active");
   };
@@ -988,9 +1023,21 @@ async function setupEventListeners() {
     savingsFixed.value = localStorage.getItem('savingsFixed') || '';
   };
 
-  document.querySelector('.show-popup-income').onclick = () => {
-    document.querySelector('.popup-container-income').classList.add("active");
-    //dropDownFetchCategoriesIncome();
+  document.querySelector('.show-popup-income').onclick = async () => {
+    let month = currentMonthIndex + 1; // JavaScript months are 0-indexed, add 1 for consistency with common representations
+    let year = currentYear;
+    const monthlyBudget = await fetchMonthlyBudget(month, year);
+    incomeFixed.value = monthlyBudget.income || 0;
+    expenseFixed.value = monthlyBudget.expenses || 0;
+    savingsFixed.value = monthlyBudget.savings || 0;
+
+    if (incomeFixed.value == '0' && expenseFixed.value == '0' && savingsFixed.value == '0') {
+      alert("Please set up fixed income and expenses first in the primary budget overview");
+      return;
+    }
+    else {
+      document.querySelector('.popup-container-income').classList.add("active");
+    }
   };
   document.querySelector('.close-btn-income').onclick = () => {
     document.querySelector('.popup-container-income').classList.remove("active");
@@ -1007,7 +1054,7 @@ async function setupEventListeners() {
     let value = valueCustomIncome.value;
     if (value < 0) {
       value = value * -1;
-    } 
+    }
 
     let date = getFormattedDate();
     let id = Date.now().toString();
@@ -1028,10 +1075,27 @@ async function setupEventListeners() {
   };
 
   document.querySelector('.show-popup-expense').onclick = async () => {
-    document.querySelector('.popup-container-expense').classList.add("active");
-    await dropDownFetchCategoriesExpense(dropdownExpense);
-  };
+    await dropDownFetchCategoriesExpense(dropdownEdit);
+    let data = await fetchDatabase(); // Fetch data from the database
+    let month = currentMonthIndex + 1; // JavaScript months are 0-indexed, add 1 for consistency with common representations
+    let year = currentYear;
+    const monthlyBudget = await fetchMonthlyBudget(month, year);
+    incomeFixed.value = monthlyBudget.income || 0;
+    expenseFixed.value = monthlyBudget.expenses || 0;
+    savingsFixed.value = monthlyBudget.savings || 0;
 
+    if (incomeFixed.value == '0' && expenseFixed.value == '0' && savingsFixed.value == '0') {
+      alert("Please set up fixed income and expenses first in the primary budget overview");
+      return;
+    }
+    if (!data.customExpenses || Object.keys(data.customExpenses).length === 0) {
+      alert("No category found. Please create category first.");
+      return;
+    } else {
+      document.querySelector('.popup-container-expense').classList.add("active");
+      await dropDownFetchCategoriesExpense(dropdownExpense);
+    };
+  }
   document.querySelector('.close-btn-expense').onclick = () => {
     document.querySelector('.popup-container-expense').classList.remove("active");
   };
@@ -1047,14 +1111,14 @@ async function setupEventListeners() {
       alert("Please enter valid number for expenses.");
       return; // Exit function if any input is not a number
     }
-    
+
     let value = valueCustomExpense.value;
 
     //if user enters negative number, it will be converted to positive
     if (value < 0) {
       value = value * -1;
-    } 
-    
+    }
+
     let name = nameCustomExpense.value;
     let date = getFormattedDate();
     let id = Date.now().toString();
