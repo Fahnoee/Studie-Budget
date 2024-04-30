@@ -137,6 +137,12 @@ saveBtnCategory.onclick = async () => {
     return; // Exit function if the category goal is not a number
   }
 
+  //if user enters negative goal, set it to positive
+  if (categoryGoal.value < 0) {
+    categoryGoal.value *= (-1);
+  }
+
+
   if (await categoryAvailableCheck(categoryName.value)) {
     alert("Category name already in use");
   }
@@ -179,9 +185,15 @@ saveBtnEditCategory.onclick = async () => {
   editCategoryDialog.close();
   
   if (isNaN(editCategoryGoal.value)) {
-    alert("Please enter valid number for expenses.");
+    alert("Please enter valid number for limit.");
     return; // Exit function if any input is not a number
   }
+
+  //If user should enter a negative number, it will be converted to positive
+   if (editCategoryGoal.value < 0) {
+    editCategoryGoal.value = editCategoryGoal.value * (-1);
+  }
+
   await editCategoryToBackend();
   await updateUserValuesView();
   await fetchCategories();
@@ -739,8 +751,6 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
       return; // Exit function if any input is not a number
     }
 
-    console.log("kig her");
-    console.log(editHistoryValue.value);
     //If user should enter a negative number, it will be converted
     if (editHistoryValue.value < 0) {
       editHistoryValue.value = editHistoryValue.value * (-1);
@@ -822,8 +832,15 @@ async function setupEventListeners() {
       return; // Exit function if any input is not a number
     }
 
-   
+    //checks if user enters a negative number and converts it to positivt, not for savings, as some might want to use their savings
+    if ((incomeFixed.value) < 0) {
+      incomeFixed.value *= (-1);
+    }
+    if ((expenseFixed.value) < 0) {
+      expenseFixed.value *= (-1);
+    }
 
+   
     let incomeVal = incomeFixed.value;
     let expenseVal = expenseFixed.value;
     let savingsVal = savingsFixed.value;
