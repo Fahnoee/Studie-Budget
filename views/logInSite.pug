@@ -11,7 +11,7 @@ block navbar
                 img(src="./images/studieLogoHjoerneHvid.png", alt="Good Pic", id="logo")
           div.rightrestricted
             li
-              a.el(href='/logIn') Log in
+              a.el(href='/login') Log in
             li 
               a.el(href='/signUp') Sign up
             li
@@ -22,6 +22,9 @@ block content
   //link(rel='stylesheet', href='/stylesheets/layout.css')
   div.centerColum
     h1 Log into your account
+    if error
+        div.alert
+          | #{error}
     form(action="/login" method="POST")
         div.username
             label(for="username") Enter username:
@@ -33,4 +36,16 @@ block content
             input(type="submit" value="Log in")
         div.dontHaveAccount
             button.btn(type="button" onclick="goToSignUp()") Don't have an account? 
-    script(src='/javascripts/frontpage.js') 
+    script(src='/javascripts/frontpage.js')
+  //script.
+      const bigError = document.querySelector('.bob');
+      // Function to create and show an alert
+      function showAlert(message) {
+          // Display the message using the alert function
+          alert(message);
+      }
+
+      // Example usage
+      if (bigError.textContent) {
+        showAlert(bigError.textContent);
+      };

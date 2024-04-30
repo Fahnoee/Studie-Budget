@@ -5,14 +5,17 @@ function goToOverview() {
 }
 
 function goToSignUp() {
-  // Navigate to the signUpPage
+  // Navigate to the signUp page
   window.location.href = '/signUp'; 
 }
 
 function goToLogIn() {
-  // Navigate to the signUpPage
-  window.location.href = '/logIn'; 
+  // Navigate to the logIn page
+  window.location.href = '/login'; 
 }
 
-
+function goToLogInFailed() {
+  // Navigate to the logInFailed page
+  window.location.href = '/logInFailed'; 
+}
 
