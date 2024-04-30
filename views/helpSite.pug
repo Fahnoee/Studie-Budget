@@ -11,11 +11,12 @@ block content
 
         div.topRow
             div.intro 
-                p Welcome to the help page, here you have the opportunity to view a user manual, a video, and below there is a FAQ. If this does not solve your problems, you are welcome to send an email to: <strong>ITsupportStudentBudget@help.com</strong>
+                p Welcome to the help page, here you have the opportunity to view a user manual, a video, and below there is a FAQ. If this does not solve your problems, you are welcome to send an email to: <strong>ITsupportStudentBudget@help.com</strong>. We suggest you watch the video firstly.
         
         div.middleRow
             div.pdfColumn 
-                p Her skal der stå en tekst og et link til en user manual 
+                p(style='font-weight: bold;') Usermanual as a pdf:
+                a(href='/Usermanual.pdf', download='Usermanual.pdf') To Download User Manual click here.
         
             div.videoColumn 
                 p(style='font-weight: bold;') Video guide
@@ -24,12 +25,27 @@ block content
                     script(src="overviewScripts.js", defer)
 
         div.bottomRow 
-            p FAQ
+            p <strong>FAQ</strong>
             div.q1
                 p1 How do I start using the site?
-                p2 - First you need to create an Account. When you have done that We encourage you to watch our tutorial video above, Here a standart bugdet is being set up from scratch.
+                br
+                p2 - First you need to create an Account. When you have done that We encourage you to watch our tutorial video above, here a standart bugdet is being set up from scratch.
             div.q2
                 p1 How do i recover my password?
-                p2 - At the moment the only way to recover your account if you forgot your password is to contact our support team on mail: ITsupportStudentBudget@help.com
-
-
+                br
+                p2 - At the moment the only way to recover your account if you forgot your password is to contact our support team on mail: ITsupportStudentBudget@help.com.
+            div.q3
+                p1 Do you have any finalcial tips?  
+                br
+                p2 - Yes, these tips are available on the top bar. Here you will have acces to articels that can help you understand share-handeling, help you set up a basic budget and much more.
+            div.q4
+                p1 I have an idear for a feature for the webpage, how can i reach you?  
+                br
+                p2 - As the team behind Student Budget continues development, we would love to hear your opinions and recommendations on the website. 
+                br
+                p2 You are always welcome to contact us at: ITsupportStudentBudget@help.com.
+            div.q4
+                p1 How does the month system work in the top of the "overview"-page? 
+                br
+                p2 - It's in case you want to review old budgets, as the webpage resets your account upon entering a new month, so your budget is ready for immediate use. You can navigate using the arrows on the sides at the top of the site.
+            
