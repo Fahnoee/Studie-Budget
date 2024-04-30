@@ -168,10 +168,20 @@ deleteBtnEditCategory.onclick = async () => {
     username,
     category: dropdownEdit.value,
   };
-  await deleteCategory(dataPackage);
-  editCategoryDialog.close();
-  await updateCategory();
-  await updateUserValuesView();
+  
+  // Confirmation dialog to see if user wants to delete a category
+  const confirmation = window.confirm("Are you sure you want to delete this category?");
+  
+  if (confirmation) {  // User clicked OK, proceed with deletion
+    await deleteCategory(dataPackage);
+    editCategoryDialog.close();
+    await updateCategory();
+    await updateUserValuesView();
+
+  } else {
+    console.log("did nothing")
+  
+  }
 };
 
 closeBtnEditCategory.onclick = () => {
