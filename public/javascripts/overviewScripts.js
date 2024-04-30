@@ -62,6 +62,7 @@ const closeBtnCategory = document.querySelector('.close-btn-category');
 const saveBtnCategory = document.querySelector('.save-btn-category');
 
 // EDIT CATEGORIES
+const categories = document.querySelector(".categories");
 const editCategoryDialog = document.querySelector('.edit-category-dialog');
 const editCategoryBtn = document.querySelector('.show-edit-categories');
 const deleteBtnEditCategory = document.querySelector('.delete-btn-category-edit');
@@ -209,10 +210,7 @@ saveBtnEditCategory.onclick = async () => {
 
   await editCategoryToBackend();
   await updateUserValuesView();
-  await fetchCategories();
- 
-  
-
+  await refreshCategories();
 };
 
 //#####################
@@ -220,7 +218,6 @@ saveBtnEditCategory.onclick = async () => {
 //##################### 
 // Function for updating values of categories in html and database
 async function updateCategory() {
-  const categories = document.querySelector(".categories");
   const paragraphs = categories.querySelectorAll("p");
   const pies = categories.querySelectorAll(".pie");
   const categoryData = await fetchAndProcessCategoryData();
@@ -694,6 +691,29 @@ async function updateHistory(category) {
   }
 }
 
+// Function for deleting history table and then creating it again with the new entries
+async function refreshHistory() {
+  const allTableElements = table.querySelectorAll('p, tr, td, button, dialog, h3, input, div'); // Q-Select all elements currently in the table
+  console.log('Table: ', allTableElements);
+  allTableElements.forEach(element => {
+    element.remove();
+  });
+
+  await updateCategory();
+  await updateUserValuesView();
+  await fetchHistory();
+}
+
+async function refreshCategories() {
+  const allCategoryElements = categories.querySelectorAll('div, span, p'); // Q-Select all elements currently in the table
+  console.log('Category: ', allCategoryElements);
+  allCategoryElements.forEach(element => {
+    element.remove();
+  });
+  await fetchCategories();
+  await refreshHistory();
+}
+
 //#####################
 // HISTORY TABLE
 //#####################
@@ -839,10 +859,9 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
     }
     await deleteCustomData(dataPackage);
 
-    editHistoryDialog.close();
-    // refreshHistory();
+    editHistoryDialog.close();  // Close dialog
+
     if(!(category === "Income")){
-      console.log('Hej Expense');
       let newExpenseData = {
         username: username,
         category: category,
@@ -872,19 +891,16 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
 
       if(newName){
         newIncomeData.customIncome[0].name = newName;
-      } else {
-        newIncomeData.customIncome[0].name = 0;
-      }
-      
-      if(newValue){
-        newIncomeData.customIncome[0].amount = newValue;
-      } else {
-        newIncomeData.customIncome[0].amount = 0;
       }
 
-      console.log('Hej Income');
+      if(newValue){
+        newIncomeData.customIncome[0].amount = newValue;
+      }
+
       await updateCustomIncome(newIncomeData)
     }
+
+    await refreshHistory();
   }; 
 
   // Adds funcunality to the "delete" button
@@ -894,16 +910,9 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
       category: category,
       customData: [data],
     }
-    await deleteCustomData(dataPackage);    
-  });
 
-}
-
-function refreshHistory() {
-  const allTableElements = table.querySelectorAll();
-  console.log('Table: ', allTableElements);
-  allTableElements.forEach(element => {
-    // delete(element);
+    await deleteCustomData(dataPackage);
+    await refreshHistory();
   });
 }
 
