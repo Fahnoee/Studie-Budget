@@ -938,14 +938,20 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
 
   // Adds funcunality to the "delete" button
   deleteBtn.addEventListener('click', async () => {
-    let dataPackage = {
-      username: username,
-      category: category,
-      customData: [data],
-    }
+    const confirmation = window.confirm(`Are you sure you want to delete the entry "${data.name}"?`);
 
-    await deleteCustomData(dataPackage);
-    await refreshHistory();
+    if(confirmation) {
+      let dataPackage = {
+        username: username,
+        category: category,
+        customData: [data],
+      }
+
+      await deleteCustomData(dataPackage);
+      await refreshHistory();
+    } else {
+      console.log("User cancelled deletion");
+    }
   });
 }
 
