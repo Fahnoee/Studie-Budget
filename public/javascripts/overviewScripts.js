@@ -169,8 +169,11 @@ deleteBtnEditCategory.onclick = async () => {
     category: dropdownEdit.value,
   };
   
-  // Confirmation dialog to see if user wants to delete a category
-  const confirmation = window.confirm("Are you sure you want to delete this category?");
+  // Get the category name
+  const categoryName = dropdownEdit.value;
+
+  // Confirmation dialog with dynamic category name
+  const confirmation = window.confirm(`Are you sure you want to delete the category "${categoryName}"?`);
   
   if (confirmation) {  // User clicked OK, proceed with deletion
     await deleteCategory(dataPackage);
