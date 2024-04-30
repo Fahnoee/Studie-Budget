@@ -62,6 +62,7 @@ const closeBtnCategory = document.querySelector('.close-btn-category');
 const saveBtnCategory = document.querySelector('.save-btn-category');
 
 // EDIT CATEGORIES
+const categories = document.querySelector(".categories");
 const editCategoryDialog = document.querySelector('.edit-category-dialog');
 const editCategoryBtn = document.querySelector('.show-edit-categories');
 const deleteBtnEditCategory = document.querySelector('.delete-btn-category-edit');
@@ -119,10 +120,23 @@ closeBtnFixed.onclick = () => {
 // };
 
 
-categoryBtn.onclick = () => {
-  console.log("Activated");
-  addCategoryDialog.showModal();
-  console.log("Category Name: " + categoryName.value);
+categoryBtn.onclick = async () => {
+  let month = currentMonthIndex + 1; // JavaScript months are 0-indexed, add 1 for consistency with common representations
+  let year = currentYear;
+  const monthlyBudget = await fetchMonthlyBudget(month, year);
+  incomeFixed.value = monthlyBudget.income || 0;
+  expenseFixed.value = monthlyBudget.expenses || 0;
+  savingsFixed.value = monthlyBudget.savings || 0;
+
+  if (incomeFixed.value == '0' && expenseFixed.value == '0' && savingsFixed.value == '0') {
+    alert("Please set up fixed income and expenses first in the primary budget overview");
+    return;
+  }
+  else {
+    console.log("Activated");
+    addCategoryDialog.showModal();
+    console.log("Category Name: " + categoryName.value);
+  }
 };
 
 closeBtnCategory.onclick = () => {
@@ -157,10 +171,30 @@ saveBtnCategory.onclick = async () => {
   }
 };
 
-
 editCategoryBtn.onclick = async () => {
   await dropDownFetchCategoriesExpense(dropdownEdit);
-  editCategoryDialog.showModal();
+  let month = currentMonthIndex + 1;
+  let year = currentYear;
+  let data = await fetchDatabase(); // Fetch data from the database
+  //let categories = Object.keys(data.customExpenses);
+  const monthlyBudget = await fetchMonthlyBudget(month, year);
+  incomeFixed.value = monthlyBudget.income || 0;
+  expenseFixed.value = monthlyBudget.expenses || 0;
+  savingsFixed.value = monthlyBudget.savings || 0;
+
+
+  if (incomeFixed.value == '0' && expenseFixed.value == '0' && savingsFixed.value == '0') {
+    alert("Please set up fixed income and expenses first in the primary budget overview");
+    return;
+  }
+
+  if (!data.customExpenses || Object.keys(data.customExpenses).length === 0) {
+    alert("No category found. Please create category first.");
+    return;
+  } else {
+
+    editCategoryDialog.showModal();
+  }
 };
 
 deleteBtnEditCategory.onclick = async () => {
@@ -180,7 +214,7 @@ deleteBtnEditCategory.onclick = async () => {
     editCategoryDialog.close();
     await updateCategory();
     await updateUserValuesView();
-
+    await refreshCategories();
   } else {
     console.log("did nothing")
   
@@ -194,9 +228,9 @@ closeBtnEditCategory.onclick = () => {
 };
 
 saveBtnEditCategory.onclick = async () => {
-  
+
   editCategoryDialog.close();
-  
+
   if (isNaN(editCategoryGoal.value)) {
     alert("Please enter valid number for limit.");
     return; // Exit function if any input is not a number
@@ -209,10 +243,7 @@ saveBtnEditCategory.onclick = async () => {
 
   await editCategoryToBackend();
   await updateUserValuesView();
-  await fetchCategories();
- 
-  
-
+  await refreshCategories();
 };
 
 //#####################
@@ -220,7 +251,6 @@ saveBtnEditCategory.onclick = async () => {
 //##################### 
 // Function for updating values of categories in html and database
 async function updateCategory() {
-  const categories = document.querySelector(".categories");
   const paragraphs = categories.querySelectorAll("p");
   const pies = categories.querySelectorAll(".pie");
   const categoryData = await fetchAndProcessCategoryData();
@@ -694,6 +724,29 @@ async function updateHistory(category) {
   }
 }
 
+// Function for deleting history table and then creating it again with the new entries
+async function refreshHistory() {
+  const allTableElements = table.querySelectorAll('p, tr, td, button, dialog, h3, input, div'); // Q-Select all elements currently in the table
+  console.log('Table: ', allTableElements);
+  allTableElements.forEach(element => {
+    element.remove();
+  });
+
+  await updateCategory();
+  await updateUserValuesView();
+  await fetchHistory();
+}
+
+async function refreshCategories() {
+  const allCategoryElements = categories.querySelectorAll('div, span, p'); // Q-Select all elements currently in the table
+  console.log('Category: ', allCategoryElements);
+  allCategoryElements.forEach(element => {
+    element.remove();
+  });
+  await fetchCategories();
+  await refreshHistory();
+}
+
 //#####################
 // HISTORY TABLE
 //#####################
@@ -823,7 +876,7 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
       return; // Exit function if any input is not a number
     }
     if (valueInput.value < 0) {
-      valueInput.value *= -1;
+      valueInput.value *= (-1);
     }
 
     //If user should enter a negative number, it will be converted
@@ -839,10 +892,9 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
     }
     await deleteCustomData(dataPackage);
 
-    editHistoryDialog.close();
-    // refreshHistory();
+    editHistoryDialog.close();  // Close dialog
+
     if(!(category === "Income")){
-      console.log('Hej Expense');
       let newExpenseData = {
         username: username,
         category: category,
@@ -872,19 +924,16 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
 
       if(newName){
         newIncomeData.customIncome[0].name = newName;
-      } else {
-        newIncomeData.customIncome[0].name = 0;
-      }
-      
-      if(newValue){
-        newIncomeData.customIncome[0].amount = newValue;
-      } else {
-        newIncomeData.customIncome[0].amount = 0;
       }
 
-      console.log('Hej Income');
+      if(newValue){
+        newIncomeData.customIncome[0].amount = newValue;
+      }
+
       await updateCustomIncome(newIncomeData)
     }
+
+    await refreshHistory();
   }; 
 
   // Adds funcunality to the "delete" button
@@ -894,16 +943,9 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
       category: category,
       customData: [data],
     }
-    await deleteCustomData(dataPackage);    
-  });
 
-}
-
-function refreshHistory() {
-  const allTableElements = table.querySelectorAll();
-  console.log('Table: ', allTableElements);
-  allTableElements.forEach(element => {
-    // delete(element);
+    await deleteCustomData(dataPackage);
+    await refreshHistory();
   });
 }
 
@@ -911,6 +953,8 @@ function refreshHistory() {
 // EVENT HANDLERS
 //##################### 
 async function setupEventListeners() {
+
+
   document.querySelector('.show-popup-fixed').onclick = () => {
     document.querySelector('.popup-container-fixed').classList.add("active");
   };
@@ -979,9 +1023,21 @@ async function setupEventListeners() {
     savingsFixed.value = localStorage.getItem('savingsFixed') || '';
   };
 
-  document.querySelector('.show-popup-income').onclick = () => {
-    document.querySelector('.popup-container-income').classList.add("active");
-    //dropDownFetchCategoriesIncome();
+  document.querySelector('.show-popup-income').onclick = async () => {
+    let month = currentMonthIndex + 1; // JavaScript months are 0-indexed, add 1 for consistency with common representations
+    let year = currentYear;
+    const monthlyBudget = await fetchMonthlyBudget(month, year);
+    incomeFixed.value = monthlyBudget.income || 0;
+    expenseFixed.value = monthlyBudget.expenses || 0;
+    savingsFixed.value = monthlyBudget.savings || 0;
+
+    if (incomeFixed.value == '0' && expenseFixed.value == '0' && savingsFixed.value == '0') {
+      alert("Please set up fixed income and expenses first in the primary budget overview");
+      return;
+    }
+    else {
+      document.querySelector('.popup-container-income').classList.add("active");
+    }
   };
   document.querySelector('.close-btn-income').onclick = () => {
     document.querySelector('.popup-container-income').classList.remove("active");
@@ -998,7 +1054,7 @@ async function setupEventListeners() {
     let value = valueCustomIncome.value;
     if (value < 0) {
       value = value * -1;
-    } 
+    }
 
     let date = getFormattedDate();
     let id = Date.now().toString();
@@ -1019,10 +1075,27 @@ async function setupEventListeners() {
   };
 
   document.querySelector('.show-popup-expense').onclick = async () => {
-    document.querySelector('.popup-container-expense').classList.add("active");
-    await dropDownFetchCategoriesExpense(dropdownExpense);
-  };
+    await dropDownFetchCategoriesExpense(dropdownEdit);
+    let data = await fetchDatabase(); // Fetch data from the database
+    let month = currentMonthIndex + 1; // JavaScript months are 0-indexed, add 1 for consistency with common representations
+    let year = currentYear;
+    const monthlyBudget = await fetchMonthlyBudget(month, year);
+    incomeFixed.value = monthlyBudget.income || 0;
+    expenseFixed.value = monthlyBudget.expenses || 0;
+    savingsFixed.value = monthlyBudget.savings || 0;
 
+    if (incomeFixed.value == '0' && expenseFixed.value == '0' && savingsFixed.value == '0') {
+      alert("Please set up fixed income and expenses first in the primary budget overview");
+      return;
+    }
+    if (!data.customExpenses || Object.keys(data.customExpenses).length === 0) {
+      alert("No category found. Please create category first.");
+      return;
+    } else {
+      document.querySelector('.popup-container-expense').classList.add("active");
+      await dropDownFetchCategoriesExpense(dropdownExpense);
+    };
+  }
   document.querySelector('.close-btn-expense').onclick = () => {
     document.querySelector('.popup-container-expense').classList.remove("active");
   };
@@ -1038,14 +1111,14 @@ async function setupEventListeners() {
       alert("Please enter valid number for expenses.");
       return; // Exit function if any input is not a number
     }
-    
+
     let value = valueCustomExpense.value;
 
     //if user enters negative number, it will be converted to positive
     if (value < 0) {
       value = value * -1;
-    } 
-    
+    }
+
     let name = nameCustomExpense.value;
     let date = getFormattedDate();
     let id = Date.now().toString();
