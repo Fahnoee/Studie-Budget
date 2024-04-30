@@ -761,9 +761,10 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
       newData.customExpense[0].amount = newValue;
     };
   
-    await updateCustomExpense(newData)
+    // refreshHistory();
     editHistoryDialog.close();
-  };
+    await updateCustomExpense(newData)
+  }; 
 
   // Adds funcunality to the "delete" button
   deleteBtn.addEventListener('click', async () => {
@@ -775,6 +776,14 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
     await deleteCustomData(dataPackage);    
   });
 
+}
+
+function refreshHistory() {
+  const allTableElements = table.querySelectorAll();
+  console.log('Table: ', allTableElements);
+  allTableElements.forEach(element => {
+    // delete(element);
+  });
 }
 
 //#####################
