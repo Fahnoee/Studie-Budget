@@ -739,6 +739,14 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
       return; // Exit function if any input is not a number
     }
 
+    console.log("kig her");
+    console.log(editHistoryValue.value);
+    //If user should enter a negative number, it will be converted
+    if (editHistoryValue.value < 0) {
+      editHistoryValue.value = editHistoryValue.value * (-1);
+    }
+
+
     let dataPackage = {
       username: username,
       category: category,
