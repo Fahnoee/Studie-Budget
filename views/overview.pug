@@ -76,23 +76,14 @@ block content
     div.buttons
       button.close-btn-category-edit CLOSE 
       button.save-btn-category-edit SAVE
-  
-  //- dialog().edit-history
-  //-   h3 Edit history
-  //-   p Edit name
-  //-     input.name-edit-history(style="float: right")
-  //-   p Edit value
-  //-     input.value-edit-history(style="float: right")
-  //-   div.buttons
-  //-     button.close-btn-history-edit CLOSE 
-  //-     button.save-btn-history-edit SAVE
     
   
   main
     div.all
       h1= title
       div.row
-        div.column 
+        // BIG CIRCLE
+        div.column
           h2 Primary budget overview
           div.pie-line
             div.pie.animate(style="--w: 300px")
@@ -102,12 +93,13 @@ block content
               p.savings
           div
           button.show-popup-fixed Set-up fixed income and expenses
+        // CATEGORIES
         div.column
           h2 Categories
           div.categories
             button.add-circle(style="margin-bottom: 7%;") +
           button.show-edit-categories Edit/Delete category
-             
+        // HISTORY
         div.column
           h2 Custom expense history
           div.history
