@@ -3,7 +3,11 @@ const router = express.Router();
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.render('helpSite', { title: 'Help Tutorial' });
+  if (req.session.username) {
+    res.render('helpSite', { title: 'Help Tutorial', username: req.session.username });
+  } else {
+    res.redirect('/login');
+  }
 });
 
 
