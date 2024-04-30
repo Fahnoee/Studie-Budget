@@ -21,39 +21,34 @@ p {
 
 .middleRow {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     margin-top: 1%;
 }
 
 .pdfColumn {
-    width: 48%;
-    /* Adjusted to accommodate for spacing */
+    width: 48%;              /* Adjusted to accommodate for spacing */
     display: flex;
     justify-content: center;
     text-align: left;
+    flex-direction: column;  /* Make the column layout vertical */
+    align-items: center;     /* Center items horizontally */
 }
 
 .videoColumn {
-    width: 48%;
-    /* Adjusted to accommodate for spacing */
+    width: 48%;              /* Adjusted to accommodate for spacing */
     display: flex;
     justify-content: center;
     text-align: left;
-    flex-direction: column;
-    /* Make the column layout vertical */
-    align-items: center;
-    /* Center items horizontally */
+    flex-direction: column;  /* Make the column layout vertical */
+    align-items: center;     /* Center items horizontally */
 }
 
 .bottomRow {
-    text-align: left;
-    /* Ensure text alignment is left */
     margin-top: 5%;
     display: flex;
     justify-content: center;
-    /* Center horizontally */
-    flex-direction: column;
-    /* Stack items vertically */
+    align-items: center;     /* Center elements both vertical and horizontal */
+    flex-direction: column;  /* Stack the elementes in a column */
 }
 
 
@@ -65,18 +60,14 @@ p {
 }
 
 .bottomRow p2 {
+    margin-top: 2px;
     color: #585858;
     /* Adjusted color for a lighter gray */
 
 }
 
-.q1 {
-    max-width: 48%;
-    margin-bottom: 1%;
-
-}
-
-.q2 {
+.q1, .q2, .q3, .q4{
+    width: 48%;
     max-width: 48%;
     margin-bottom: 1%;
 }
