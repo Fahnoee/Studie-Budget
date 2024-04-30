@@ -235,8 +235,10 @@ p {
   border-radius: 5px;
   cursor: pointer;
   margin: 5%;
-  background-color: rgb(113, 180, 192);
-  color: white;
+  background-color: lightblue;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  color:rgb(50, 50, 50);
+  font-weight: bold;
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
@@ -244,7 +246,7 @@ p {
 }
 
 .show-popup-income:hover {
-  background-color: rgb(66, 105, 112); 
+  background-color: rgb(114, 141, 151); 
 }
 
 .popup-container-income {
@@ -325,8 +327,10 @@ p {
   border-radius: 5px;
   cursor: pointer;
   margin: 5%;
-  background-color: rgb(113, 180, 192);
-  color: white;
+  background-color: lightblue;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  color:rgb(50, 50, 50);
+  font-weight: bold;
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
@@ -334,7 +338,7 @@ p {
 }
 
 .show-popup-expense:hover {
-  background-color: rgb(66, 105, 112); 
+  background-color: rgb(114, 141, 151); 
 }
 
 
@@ -504,11 +508,19 @@ p {
   cursor: pointer;
   margin: 5%;
   font-family: sans-serif;
-  background-color: grey;
-  color: white;
+  background-color: lightblue;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  color:rgb(50, 50, 50);
+  font-weight: bold;
   width: auto;
+  height: 50px;
   transition: background-color 0.3s ease;
 }
+
+.show-edit-categories:hover {
+  background-color: rgb(114, 141, 151); 
+}
+
 
 /*///////////////*/
 /* History Table */
