@@ -1328,6 +1328,11 @@ async function saveMonthlyBudget(month, year, income, expenses, savings) {
   });
 }
 
+
+
+
+
+
 function glowButton(buttons) {
   let current = 0; // Start with the first button
   let colorPicked = false;
@@ -1407,6 +1412,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Check URL for the startTutorial query parameter
   const urlParams = new URLSearchParams(window.location.search);
   const startTutorial = urlParams.get('startTutorial');
+  const skipButton = document.querySelector('.skip-tutorial-btn'); // Get the skip button
   if (startTutorial === 'true') {
     localStorage.setItem('startTutorial', 'true');
     // Optionally, you might want to remove the query parameter from the URL here
@@ -1414,6 +1420,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (localStorage.getItem('startTutorial') === 'true') {
+    skipButton.style.display = 'block'; // Show skip button only if tutorial is active
+
     const buttons = [
       document.querySelector('.show-popup-fixed'),
       document.querySelector('.income-fixed'),
@@ -1445,10 +1453,24 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelector('.close-btn-category-edit'),
     ];
     glowButton(buttons);
-    localStorage.removeItem('startTutorial');
+
+    skipButton.addEventListener('click', () => {
+      localStorage.removeItem('startTutorial'); // Remove the tutorial flag
+      window.location.reload(); // Reload the page
+    });
+  } else {
+    skipButton.style.display = 'none'; // Hide skip button if not in tutorial
   }
 });
-
+document.querySelector('.skip-tutorial-btn').addEventListener('click', () => {
+  localStorage.removeItem('startTutorial'); // Remove the tutorial flag from localStorage
+  // Optionally, reset any tutorial-specific styles or states
+  document.querySelectorAll('.glow-effect').forEach(button => {
+      button.classList.remove('glow-effect');
+  });
+  // Hide the tutorial UI elements or redirect the user
+  window.location.reload(); // Reload the page or redirect as needed
+});
 //#####################
 // INITIALIZATION
 //##################### 

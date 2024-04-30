@@ -693,3 +693,15 @@ p {
   50% { box-shadow: 0 0 30px 10px #33ccff; }
   100% { box-shadow: 0 0 10px 5px #33ccff; }
 }
+
+.skip-tutorial-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
