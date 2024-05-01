@@ -1342,7 +1342,11 @@ async function saveMonthlyBudget(month, year, income, expenses, savings) {
 function glowButton(buttons) {
   let current = 0; // Start with the first button
   let colorPicked = false;
-
+  const progressBar = document.querySelector('.progress-bar-fill');
+  const updateProgressBar = () => {
+    const progressPercentage = (current / (buttons.length - 3)) * 100;
+    progressBar.style.width = `${progressPercentage}%`;
+  };
   // Initially disable all non-input buttons
   buttons.forEach(button => {
     if (button.tagName !== 'INPUT') {
@@ -1352,6 +1356,7 @@ function glowButton(buttons) {
 
   const nextButton = () => {
     // Disable the previous button and enable the current one
+    updateProgressBar();
     if (current > 0) {
       if (buttons[current - 1].tagName !== 'INPUT') {
         buttons[current - 1].disabled = true; // Disable the previous button if it's not an input
@@ -1376,11 +1381,14 @@ function glowButton(buttons) {
         buttons[current].addEventListener('click', handleClick);
       }
     } else {
-      // Re-enable all buttons at the end of the tutorial
+      // Re-enable all buttons and remove tutorial flag when tutorial is completed normally
       buttons.forEach(button => {
         button.disabled = false;
         button.classList.remove('glow-effect');
       });
+      localStorage.removeItem('startTutorial'); // Ensure tutorial does not reactivate on login
+      document.querySelector('.skip-tutorial-btn').style.display = 'none'; // Hide skip button
+      window.location.reload(); // Reload the page
     }
   };
 
@@ -1421,7 +1429,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const skipButton = document.querySelector('.skip-tutorial-btn'); // Get the skip button
   if (startTutorial === 'true') {
     localStorage.setItem('startTutorial', 'true');
-    // Optionally, you might want to remove the query parameter from the URL here
     history.replaceState(null, '', location.pathname);
   }
 
@@ -1453,15 +1460,15 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelector('.name-edit'),
       document.querySelector('.goal-edit'),
       document.querySelector('.save-btn-category-edit'),
-      // CLose buttons should not run in tutorial
+      // Close buttons should not run in tutorial
       document.querySelector('.close-btn-fixed'),
       document.querySelector('.close-btn-category'),
       document.querySelector('.close-btn-category-edit'),
     ];
     glowButton(buttons);
-
     skipButton.addEventListener('click', () => {
       localStorage.removeItem('startTutorial'); // Remove the tutorial flag
+      skipButton.style.display = 'none'; // Hide skip button
       window.location.reload(); // Reload the page
     });
   } else {

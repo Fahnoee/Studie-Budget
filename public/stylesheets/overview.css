@@ -711,3 +711,18 @@ p {
   border-radius: 5px;
   cursor: pointer;
 }
+
+.progress-bar {
+  width: 100%;
+  background-color: #ddd;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.progress-bar-fill {
+  height: 20px;
+  background-color: #4CAF50;
+  border-radius: 5px;
+  width: 0%; /* Initial width */
+  transition: width 0.4s ease-in-out;
+}
