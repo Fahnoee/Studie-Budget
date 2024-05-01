@@ -45,6 +45,7 @@ p {
 
 .bottomRow {
     margin-top: 5%;
+    margin-bottom: 3%;
     display: flex;
     justify-content: center;
     align-items: center;     /* Center elements both vertical and horizontal */
