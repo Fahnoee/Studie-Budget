@@ -810,7 +810,7 @@ dialog {
 
 .progress-bar {
   position: absolute;
-  bottom: 150px;
+  bottom: 75px;
   left: 50%;
   transform: translateX(-50%);
   width: 80%;
@@ -824,7 +824,7 @@ dialog {
 
 .progress-label {
   position: absolute;
-  bottom: 150px;
+  bottom: 75px;
   left: 50%;
   transform: translateX(-50%);
   color: #333;
