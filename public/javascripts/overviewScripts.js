@@ -1404,14 +1404,14 @@ function glowButton(buttons) {
   const handleInput = () => {
     if (buttons[current].value.trim() !== '' && !isNaN(buttons[current].value)) {
       current++;
-      nextButton();
+      setTimeout(nextButton, 500); // Add a delay of 500ms
     }
   };
 
   const handleFreeTextInput = () => {
     if (buttons[current].value.trim() !== '') {
       current++;
-      nextButton();
+      setTimeout(nextButton, 500); // Add a delay of 500ms
     }
   };
 

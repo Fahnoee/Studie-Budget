@@ -10,11 +10,11 @@ block content
       h3 Edit income / expenses 
       p Use . for decimals
       p Edit fixed monthly income: 
-        input.income-fixed
+        input.income-fixed(type='number')
       p Edit fixed monthly expense: 
-        input.expense-fixed
+        input.expense-fixed(type='number')
       p Edit monthly saving goal
-        input.savings-fixed
+        input.savings-fixed(type='number')
       div.buttons
         button.close-btn-fixed CLOSE
         button.save-btn-fixed SAVE
@@ -28,7 +28,7 @@ block content
       p Enter name: 
         input.name-income
       p Enter value:
-        input.value-income
+        input.value-income(type='number')
       div.buttons
         button.close-btn-income CLOSE
         button.save-btn-income SAVE
@@ -42,7 +42,7 @@ block content
       p Enter name: 
         input.name-expense
       p Enter value:
-        input.value-expense
+        input.value-expense(type='number')
       div.buttons
         button.close-btn-expense CLOSE
         button.save-btn-expense SAVE
@@ -57,7 +57,7 @@ block content
     p Enter category: 
       input.category-name
     p Enter limit: 
-      input.category-goal
+      input.category-goal(type='number')
     p Choose color: 
       input.category-color(type="color")
     div.buttons
@@ -72,7 +72,7 @@ block content
     p Edit name
       input.name-edit(style="float: right")
     p Edit limit
-      input.goal-edit(style="float: right")
+      input.goal-edit(style="float: right", type='number')
     div.buttons
       button.close-btn-category-edit CLOSE 
       button.save-btn-category-edit SAVE
