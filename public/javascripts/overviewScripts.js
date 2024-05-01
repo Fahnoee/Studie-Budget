@@ -1343,9 +1343,17 @@ function glowButton(buttons) {
   let current = 0; // Start with the first button
   let colorPicked = false;
   const progressBar = document.querySelector('.progress-bar-fill');
+  const progressContainer = document.querySelector('.progress-bar');
+  const progressLabel = document.querySelector('.progress-label'); // Get the progress label
   const updateProgressBar = () => {
-    const progressPercentage = (current / (buttons.length - 3)) * 100;
+    const progressPercentage = Math.round((current / (buttons.length - 3)) * 100);
     progressBar.style.width = `${progressPercentage}%`;
+    progressBar.textContent = progressPercentage + '%'; // Display percentage
+    if(progressPercentage === 100) {
+      progressBar.textContent = 'Tutorial Completed'; // Change text when tutorial is complete
+      progressContainer.style.display = 'none'; // Hide progress bar when tutorial is complete
+      progressLabel.style.display = 'none'; // Hide progress label when tutorial is complete
+    }
   };
   // Initially disable all non-input buttons
   buttons.forEach(button => {
@@ -1388,6 +1396,8 @@ function glowButton(buttons) {
       });
       localStorage.removeItem('startTutorial'); // Ensure tutorial does not reactivate on login
       document.querySelector('.skip-tutorial-btn').style.display = 'none'; // Hide skip button
+      progressContainer.style.display = 'none'; // Hide progress bar
+      progressLabel.style.display = 'none'; // Hide progress label
       window.location.reload(); // Reload the page
     }
   };
@@ -1427,6 +1437,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   const startTutorial = urlParams.get('startTutorial');
   const skipButton = document.querySelector('.skip-tutorial-btn'); // Get the skip button
+  const progressContainer = document.querySelector('.progress-bar'); // Get the progress bar container
+  const progressLabel = document.querySelector('.progress-label'); // Get the progress label
   if (startTutorial === 'true') {
     localStorage.setItem('startTutorial', 'true');
     history.replaceState(null, '', location.pathname);
@@ -1434,6 +1446,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (localStorage.getItem('startTutorial') === 'true') {
     skipButton.style.display = 'block'; // Show skip button only if tutorial is active
+    progressContainer.style.display = 'block'; // Show progress bar only if tutorial is active
+    progressLabel.style.display = 'block'; // Show progress label only if tutorial is active
 
     const buttons = [
       document.querySelector('.show-popup-fixed'),
@@ -1469,10 +1483,14 @@ document.addEventListener('DOMContentLoaded', () => {
     skipButton.addEventListener('click', () => {
       localStorage.removeItem('startTutorial'); // Remove the tutorial flag
       skipButton.style.display = 'none'; // Hide skip button
+      progressContainer.style.display = 'none'; // Hide progress bar
+      progressLabel.style.display = 'none'; // Hide progress label
       window.location.reload(); // Reload the page
     });
   } else {
     skipButton.style.display = 'none'; // Hide skip button if not in tutorial
+    progressContainer.style.display = 'none'; // Hide progress bar if not in tutorial
+    progressLabel.style.display = 'none'; // Hide progress label if not in tutorial
   }
 });
 document.querySelector('.skip-tutorial-btn').addEventListener('click', () => {
@@ -1482,6 +1500,8 @@ document.querySelector('.skip-tutorial-btn').addEventListener('click', () => {
       button.classList.remove('glow-effect');
   });
   // Hide the tutorial UI elements or redirect the user
+  document.querySelector('.progress-bar').style.display = 'none'; // Hide progress bar
+  document.querySelector('.progress-label').style.display = 'none'; // Hide progress label
   window.location.reload(); // Reload the page or redirect as needed
 });
 //#####################
