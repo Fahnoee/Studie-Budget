@@ -537,6 +537,22 @@ dialog {
   background-color: black;
 }
 
+.delete-btn-category-edit {
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5%;
+  font-family: sans-serif;
+  background-color: grey;
+  color: white;
+  width: auto;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn-category-edit:hover {
+  background-color: #505050;
+}
+
 .category-text {
   position: absolute;
   top: -20px;
