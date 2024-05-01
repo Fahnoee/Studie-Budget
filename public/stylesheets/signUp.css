@@ -32,7 +32,7 @@ input[type="text"], input[type="password"], input[type="submit"] {
 }
 
 input[type="submit"] {
-    background-color: #0056b3; /* Darker shade for hover effect */
+    background-color: #007bff; /* Darker shade for hover effect */
     color: white;
     cursor: pointer;
 }  
