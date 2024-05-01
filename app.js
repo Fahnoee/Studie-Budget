@@ -172,7 +172,7 @@ app.post('/login', async (req, res) => {
     res.redirect('/overview'); // Redirect to the overview page if user login is successful
 
   } catch (error) {
-    if (error.message === 'User not found or password incorrect') {
+    if (error.message == 'Error finding user: User not found or password incorrect') {
       // Render a view with a retry option and an error alert
       res.render('logInSite', { 
         error: 'User dont exists. Please choose a different username.', 
