@@ -11,36 +11,40 @@ const API_ENDPOINTS = {
     deleteUser: "/api/deleteuser",
 }
 
-/*
 openDeleteUserDialogBtn.onclick = async () => {
     deleteUserDialog.showModal();
 
 };
-*/
+
 noDeleteUserDialogBtn.onclick = async () => {
     deleteUserDialog.close();
 };
 
 yesDeleteUserDialogBtn.onclick = async () => {
-    await deleteUser(username);
+
+    await deleteUser({username});
     deleteUserDialog.close();
+    window.location.replace("/");
 };
 
 async function deleteUser(username) {
-    return fetchData("/api/deleteuser", {
+    return fetchData(API_ENDPOINTS.deleteUser, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
     },
       body: JSON.stringify(username),
-    });
+  });
 }
+  console.log(username);
+  console.log(JSON.stringify(username));
 
 async function fetchData(url, options = {}) {
     try {
       const response = await fetch(url, options);
       console.log(url);
       console.log(options);
+      console.log("RESPONSE:", response);
       if (!response.ok) {
         throw new Error("Network response was not ok", response);
       }
@@ -64,8 +68,5 @@ darkmodeBtn.onclick = () => {
   alert("Not implemented. Coming soon!");
 }
 
-openDeleteUserDialogBtn.onclick = async () => {
-    alert("Not implemented. Coming soon!");
-}
 
 
