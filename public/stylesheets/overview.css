@@ -553,12 +553,23 @@ dialog {
   background-color: #505050;
 }
 
-.category-text {
+.category-title {
+  width: 115px;
+  max-height: 20px;
+  margin-top: 10px;
+  overflow-x: scroll;
   position: absolute;
+  text-align: center;
   top: -20px;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 15px;
+}
+
+.category-text {
+  max-width: 95px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .categories {

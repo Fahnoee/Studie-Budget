@@ -259,7 +259,7 @@ async function updateCategory() {
   let i = 0;
   Object.entries(categoryData).forEach(([category, items]) => {
     setPiePercentage((items.totalExpense / items.goal * 100), pies[i]);
-    paragraphs[i].textContent = items.totalExpense + "/" + items.goal;
+    paragraphs[i].textContent = items.totalExpense + " / " + items.goal;
     i++;
   });
 }
@@ -334,7 +334,7 @@ async function spawnCategory(categoryTitle, color) {
 
     // Create span element
     const span = document.createElement('span');
-    span.classList.add('category-text'); // Set class to "category-text" to position title above circle
+    span.classList.add('category-title'); // Set class to "category-text" to position title above circle
     span.textContent = categoryTitle; // Set title to user input
 
     // Create a div element for the pie chart 
@@ -347,6 +347,7 @@ async function spawnCategory(categoryTitle, color) {
 
     // Create paragraph element
     const paragraph = document.createElement('p');
+    paragraph.classList.add('category-text');
     paragraph.textContent = 0;   // Set the goal for the category
 
     // Append the paragraph to the pie div
@@ -669,13 +670,13 @@ async function updateUserValuesView() {
       totalCustomIncome += items.totalIncome;
     });
 
-    let netExpenses = (monthlyBudget.expenses + totalCustomExpense - totalCustomIncome);
+    let netExpenses = (monthlyBudget.expenses + totalCustomExpense);
 
     totalAmount.textContent = "Fixed Income: " + monthlyBudget.income;
     spentAmount.textContent = "Net expenses: " + netExpenses;
-    leftAmount.textContent = "Available: " + (monthlyBudget.income - netExpenses - monthlyBudget.savings);
+    leftAmount.textContent = "Available: " + (monthlyBudget.income - netExpenses - monthlyBudget.savings + totalCustomIncome);
     savingsAmount.textContent = "Savings: " + monthlyBudget.savings;
-    setPiePercentage(((netExpenses + monthlyBudget.savings) / (monthlyBudget.income) * 100), pie);
+    setPiePercentage(((netExpenses + monthlyBudget.savings) / (monthlyBudget.income + totalCustomIncome) * 100), pie);
 
   } catch (error) {
     console.error("Error: ", error);
