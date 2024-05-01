@@ -7,6 +7,14 @@ p {
   font-size: large;
 }
 
+dialog {
+  width: 500px;
+  padding: 30px;
+  border-radius: 6px; 
+  transition: 4s, ease;
+  border: none;
+}
+
 .column {
   float: left;
   width: 33.33%;
@@ -26,6 +34,11 @@ p {
   text-align: center;
 }
 
+.buttons {
+  display: flex;
+  justify-content: center;
+}
+
 /*////////////*/
 /* PIE CHARTS */
 /*////////////*/
@@ -33,7 +46,7 @@ p {
 :root {
   --b: 15px; /* Adjust as needed */
   --p: 0; /* Adjust as needed */
-  --c: #0092e6; /* Adjust as needed */
+  --c: #0820ffab; /* Adjust as needed */
   --l: 18%;  /*radius for small circles to their black dot*/
 }
 
@@ -122,6 +135,7 @@ p {
   border-radius: 50%;
   border: none;
   background-color: rgb(210, 210, 210);
+  transition: background-color 0.3s ease;
   place-content: center;
   font-size: 25px;
   cursor: pointer;
@@ -148,8 +162,9 @@ p {
   padding-right: 4%;
   font-family: sans-serif;
   /* font-style: italic; */
-  background-color: #add8e6;
-  color: black;
+  background-color: #0820ffab;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
+  color: white;
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
@@ -157,7 +172,7 @@ p {
 }
 
 .show-popup-fixed:hover {
-  background-color: #71b5cc;
+  background-color: #091dd6;
 }
 
 .popup-container-fixed {
@@ -186,7 +201,7 @@ p {
   width: 500px;
   background: white;
   border-radius: 6px; 
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   transform: scale(0);
   padding: 30px;
 }
@@ -201,24 +216,30 @@ p {
 .popup-box-fixed .close-btn-fixed {
   width: 45%;
   height: 40px;
-  background: rgb(193, 200, 203);
+  background: white;
   border-radius: 6px; 
   border: none;
   outline: none;
   margin-right: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
+  color: black;
 }
 
 .popup-box-fixed .save-btn-fixed {
   width: 45%;
   height: 40px;
-  background: lightblue;
+  background: #333;
   border-radius: 6px; 
   border: none;
   outline: none;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
+  color: white;
+}
+
+.popup-box-fixed .save-btn-fixed:hover {
+  background-color: black;
 }
 
 .popup-box-fixed .buttons-fixed{
@@ -240,17 +261,17 @@ p {
   margin: 5%;
   padding-left: 4%;
   padding-right: 4%;
-  background-color: #add8e6;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-  color:rgb(50, 50, 50);
+  background-color: #33b249d4;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
   border: none;
+  color: white;
 }
 
 .show-popup-income:hover {
-  background-color: #71b5cc; 
+  background-color: #06911dd4; 
 }
 
 .popup-container-income {
@@ -279,7 +300,7 @@ p {
   width: 500px;
   background: white;
   border-radius: 6px; 
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   transform: scale(0);
   padding: 30px;
 }
@@ -294,24 +315,30 @@ p {
 .popup-box-income .close-btn-income {
   width: 45%;
   height: 40px;
-  background: rgb(193, 200, 203);
+  background: white;
   border-radius: 6px; 
   border: none;
   outline: none;
   margin-right: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
+  color: black;
 }
 
 .popup-box-income .save-btn-income {
   width: 45%;
   height: 40px;
-  background: lightblue;
+  background: #333;
   border-radius: 6px; 
   border: none;
   outline: none;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
+  color: white;
+}
+
+.popup-box-income .save-btn-income:hover {
+  background-color: black;
 }
 
 .popup-box-income .buttons-income{
@@ -333,17 +360,17 @@ p {
   margin: 5%;
   padding-left: 4%;
   padding-right: 4%;
-  background-color: #add8e6;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-  color:rgb(50, 50, 50);
+  background-color: #ec3328d9;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
   border: none;
+  color: white;
 }
 
 .show-popup-expense:hover {
-  background-color: #71b5cc; 
+  background-color: #cd310e
 }
 
 
@@ -373,7 +400,7 @@ p {
   width: 500px;
   background: white;
   border-radius: 6px; 
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   transform: scale(0);
   padding: 30px;
 }
@@ -388,24 +415,30 @@ p {
 .popup-box-expense .close-btn-expense {
   width: 45%;
   height: 40px;
-  background: rgb(193, 200, 203);
+  background: white;
   border-radius: 6px; 
   border: none;
   outline: none;
   margin-right: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
+  color: black;
 }
 
 .popup-box-expense .save-btn-expense {
   width: 45%;
   height: 40px;
-  background: lightblue;
+  background: #333;
   border-radius: 6px; 
   border: none;
   outline: none;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
+  color: white;
+}
+
+.popup-box-expense .save-btn-expense:hover {
+  background-color: black;
 }
 
 .popup-box-expense .buttons-expense{
@@ -449,47 +482,59 @@ p {
 .close-btn-category {
   width: 45%;
   height: 40px;
-  background: rgb(193, 200, 203);
+  background: white;
   border-radius: 6px; 
   border: none;
   outline: none;
   margin-right: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
+  color: black;
 }
 
 .save-btn-category {
   width: 45%;
   height: 40px;
-  background: lightblue;
+  background: #333;
   border-radius: 6px; 
   border: none;
   outline: none;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
+  color: white;
+}
+
+.save-btn-category:hover {
+  background-color: black;
 }
 
 .close-btn-category-edit {
   width: 45%;
   height: 40px;
-  background: rgb(193, 200, 203);
+  background: white;
   border-radius: 6px; 
   border: none;
   outline: none;
   margin-right: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
+  color: black;
 }
 
 .save-btn-category-edit {
   width: 45%;
   height: 40px;
-  background: lightblue;
+  background: #333;
   border-radius: 6px; 
   border: none;
   outline: none;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
+  color: white;
+}
+
+.save-btn-category-edit:hover{
+  background-color: black;
 }
 
 .category-text {
@@ -515,16 +560,16 @@ p {
   padding-left: 4%;
   padding-right: 4%;
   font-family: sans-serif;
-  background-color: #add8e6;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-  color:rgb(50, 50, 50);
+  background-color: #333;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
+  color: white;
   width: auto;
   height: 50px;
   transition: background-color 0.3s ease;
 }
 
 .show-edit-categories:hover {
-  background-color: #71b5cc; 
+  background-color: #000000; 
 }
 
 
@@ -544,6 +589,34 @@ p {
   margin: auto;
 }
 
+.close-btn-history-edit {
+  width: 45%;
+  height: 40px;
+  background: white;
+  border-radius: 6px; 
+  border: none;
+  outline: none;
+  margin-right: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
+  cursor: pointer; 
+  color: black;
+}
+
+.save-btn-history-edit {
+  width: 45%;
+  height: 40px;
+  background: #333;
+  border-radius: 6px; 
+  border: none;
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
+  cursor: pointer; 
+  color: white;
+}
+
+.save-btn-history-edit:hover {
+  background-color: black;
+}
 
 /*::-webkit-scrollbar {
   width: 0px;
@@ -682,11 +755,12 @@ p {
 
 #prevMonth::before {
   content: "←";
-  padding-right: 5px; /* Added padding to separate the arrow from the text */
+  padding-right: 1px; /* Added padding to separate the arrow from the text */
 }
 
 #nextMonth::before {
   content: "→";
-  padding-left: 5px; /* Added padding to separate the arrow from the text */
+  padding-left: 1px; /* Added padding to separate the arrow from the text */
 }
+
 
