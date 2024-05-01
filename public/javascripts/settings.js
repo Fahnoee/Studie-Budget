@@ -7,29 +7,28 @@ const deleteUserDialog = document.querySelector('.delete-user-dialog');
 const noDeleteUserDialogBtn = document.querySelector('.no-btn-delete');
 const yesDeleteUserDialogBtn = document.querySelector('.yes-btn-delete');
 
-/*
 const API_ENDPOINTS = {
     deleteUser: "/api/deleteuser",
 }
-
 
 openDeleteUserDialogBtn.onclick = async () => {
     deleteUserDialog.showModal();
 
 };
-*/
+
 noDeleteUserDialogBtn.onclick = async () => {
     deleteUserDialog.close();
 };
 
 yesDeleteUserDialogBtn.onclick = async () => {
-    await deleteUser(username);
+
+    await deleteUser({username});
     deleteUserDialog.close();
+    window.location.replace("/");
 };
 
-
 async function deleteUser(username) {
-    return fetchData("/api/test421231", {
+    return fetchData(API_ENDPOINTS.deleteUser, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -56,13 +55,6 @@ async function fetchData(url, options = {}) {
     }
 }
 
-let test = {
-  username: username,
-}
-//deleteUser("martin");
-
-
-
 //popup for buttons not implemented on the setting site
 dyslexiaBtn.onclick = () => {
   alert("Not implemented. Coming soon!");
@@ -76,8 +68,5 @@ darkmodeBtn.onclick = () => {
   alert("Not implemented. Coming soon!");
 }
 
-openDeleteUserDialogBtn.onclick = async () => {
-    alert("Not implemented. Coming soon!");
-}
 
 
