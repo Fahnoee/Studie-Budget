@@ -594,7 +594,7 @@ dialog {
 /*///////////////*/
 
 .history {
-  width: fit-content;
+  width: 100%;
   height: 320px;
   position: relative;
   /* background-color: gray; */
@@ -603,6 +603,10 @@ dialog {
   align-items: center;
   overflow-y: auto;
   margin: auto;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #ddd;
+  border-radius: 5px;
 }
 
 .close-btn-history-edit {
@@ -641,8 +645,8 @@ dialog {
 
 
 .styled-table {
-  width: fit-content;
-  max-width: 90%;
+  width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
   display: block;
   justify-content: center;
@@ -667,8 +671,8 @@ dialog {
 .styled-table tr {
   display: flex;
   justify-content: space-between;
-  border: 1px solid #ddd;
-  width: 375px;
+  border-bottom: 1px solid #ddd;
+  width: 100%;
 }
 .styled-table td:nth-child(even) {
   text-align: right;
@@ -685,6 +689,7 @@ dialog {
   background-color: #f2f2f2; /* or any other shade of gray you prefer */
   font-weight: bold; /* Gør teksten fed */
   border-bottom: none;
+  padding-top: 5px;
 }
 .styled-table tr:nth-child(4n-2) {
   border-top: none;
@@ -692,6 +697,7 @@ dialog {
 .styled-table tr:nth-child(4n-3) {
   font-weight: bold; /* Gør teksten fed */
   border-bottom: none;
+  padding-top: 5px;
 }
 
 .styled-table tr:nth-child(4n-1) + tr:nth-child(4n-2) {
