@@ -1312,10 +1312,15 @@ async function fetchMonthlyBudget(month, year) {
 
 async function updateBudgetView(month, year) {
   const monthlyBudget = await fetchMonthlyBudget(month, year);
-  incomeFixed.value = monthlyBudget.income || 0;
-  expenseFixed.value = monthlyBudget.expenses || 0;
-  savingsFixed.value = monthlyBudget.savings || 0;
-  // Update the UI elements here as needed
+  if (monthlyBudget.income > 0) {
+    incomeFixed.value = monthlyBudget.income;
+  }
+  if (monthlyBudget.expenses > 0) {
+    expenseFixed.value = monthlyBudget.expenses;
+  }
+  if (monthlyBudget.savings > 0) {
+    savingsFixed.value = monthlyBudget.savings;
+  }
 }
 
 async function saveMonthlyBudget(month, year, income, expenses, savings) {
@@ -1329,6 +1334,176 @@ async function saveMonthlyBudget(month, year, income, expenses, savings) {
   });
 }
 
+
+
+
+
+
+function glowButton(buttons) {
+  let current = 0; // Start with the first button
+  let colorPicked = false;
+  const progressBar = document.querySelector('.progress-bar-fill');
+  const progressContainer = document.querySelector('.progress-bar');
+  const progressLabel = document.querySelector('.progress-label'); // Get the progress label
+  const updateProgressBar = () => {
+    const progressPercentage = Math.round((current / (buttons.length - 3)) * 100);
+    progressBar.style.width = `${progressPercentage}%`;
+    progressBar.textContent = progressPercentage + '%'; // Display percentage
+    if(progressPercentage === 100) {
+      progressBar.textContent = 'Tutorial Completed'; // Change text when tutorial is complete
+      progressContainer.style.display = 'none'; // Hide progress bar when tutorial is complete
+      progressLabel.style.display = 'none'; // Hide progress label when tutorial is complete
+    }
+  };
+  // Initially disable all non-input buttons
+  buttons.forEach(button => {
+    if (button.tagName !== 'INPUT') {
+      button.disabled = true;
+    }
+  });
+
+  const nextButton = () => {
+    // Disable the previous button and enable the current one
+    updateProgressBar();
+    if (current > 0) {
+      if (buttons[current - 1].tagName !== 'INPUT') {
+        buttons[current - 1].disabled = true; // Disable the previous button if it's not an input
+      }
+      buttons[current - 1].classList.remove('glow-effect'); // Remove glow from previous button
+    }
+
+    if (current < buttons.length - 3) {
+      buttons[current].disabled = false; // Enable the current button
+      buttons[current].classList.add('glow-effect'); // Add glow to current button
+      if (buttons[current].tagName === 'INPUT') {
+        if (buttons[current].type === 'color') {
+          buttons[current].removeEventListener('input', handleColorPicker);
+          buttons[current].addEventListener('input', handleColorPicker);
+        } else if (buttons[current].classList.contains('category-name') || buttons[current].classList.contains('name-expense') || buttons[current].classList.contains('name-income') || buttons[current].classList.contains('name-edit')) {
+          buttons[current].removeEventListener('input', handleInput);
+          buttons[current].addEventListener('input', handleFreeTextInput);
+        } else {
+          buttons[current].addEventListener('input', handleInput);
+        }
+      } else {
+        buttons[current].addEventListener('click', handleClick);
+      }
+    } else {
+      // Re-enable all buttons and remove tutorial flag when tutorial is completed normally
+      buttons.forEach(button => {
+        button.disabled = false;
+        button.classList.remove('glow-effect');
+      });
+      localStorage.removeItem('startTutorial'); // Ensure tutorial does not reactivate on login
+      document.querySelector('.skip-tutorial-btn').style.display = 'none'; // Hide skip button
+      progressContainer.style.display = 'none'; // Hide progress bar
+      progressLabel.style.display = 'none'; // Hide progress label
+      window.location.reload(); // Reload the page
+    }
+  };
+
+  const handleInput = () => {
+    if (buttons[current].value.trim() !== '' && !isNaN(buttons[current].value)) {
+      current++;
+      nextButton();
+    }
+  };
+
+  const handleFreeTextInput = () => {
+    if (buttons[current].value.trim() !== '') {
+      current++;
+      nextButton();
+    }
+  };
+
+  const handleColorPicker = (event) => {
+    if (!colorPicked) {
+      colorPicked = true;
+      current++;
+      nextButton();
+    }
+  };
+
+  const handleClick = () => {
+    current++;
+    nextButton();
+  };
+
+  nextButton(); // Start the sequence
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Check URL for the startTutorial query parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  const startTutorial = urlParams.get('startTutorial');
+  const skipButton = document.querySelector('.skip-tutorial-btn'); // Get the skip button
+  const progressContainer = document.querySelector('.progress-bar'); // Get the progress bar container
+  const progressLabel = document.querySelector('.progress-label'); // Get the progress label
+  if (startTutorial === 'true') {
+    localStorage.setItem('startTutorial', 'true');
+    history.replaceState(null, '', location.pathname);
+  }
+
+  if (localStorage.getItem('startTutorial') === 'true') {
+    skipButton.style.display = 'block'; // Show skip button only if tutorial is active
+    progressContainer.style.display = 'block'; // Show progress bar only if tutorial is active
+    progressLabel.style.display = 'block'; // Show progress label only if tutorial is active
+
+    const buttons = [
+      document.querySelector('.show-popup-fixed'),
+      document.querySelector('.income-fixed'),
+      document.querySelector('.expense-fixed'),
+      document.querySelector('.savings-fixed'),
+      document.querySelector('.save-btn-fixed'),
+      document.querySelector('.add-circle'),
+      document.querySelector('.category-name'),
+      document.querySelector('.category-goal'),
+      document.querySelector('.category-color'),
+      document.querySelector('.save-btn-category'),
+      document.querySelector('.show-popup-expense'),
+      document.querySelector('.dropdown-expense'),
+      document.querySelector('.name-expense'),
+      document.querySelector('.value-expense'),
+      document.querySelector('.save-btn-expense'),
+      document.querySelector('.show-popup-income'),
+      document.querySelector('.name-income'),
+      document.querySelector('.value-income'),
+      document.querySelector('.save-btn-income'),
+      document.querySelector('.show-edit-categories'),
+      document.querySelector('.dropdown-edit'),
+      document.querySelector('.name-edit'),
+      document.querySelector('.goal-edit'),
+      document.querySelector('.save-btn-category-edit'),
+      // Close buttons should not run in tutorial
+      document.querySelector('.close-btn-fixed'),
+      document.querySelector('.close-btn-category'),
+      document.querySelector('.close-btn-category-edit'),
+    ];
+    glowButton(buttons);
+    skipButton.addEventListener('click', () => {
+      localStorage.removeItem('startTutorial'); // Remove the tutorial flag
+      skipButton.style.display = 'none'; // Hide skip button
+      progressContainer.style.display = 'none'; // Hide progress bar
+      progressLabel.style.display = 'none'; // Hide progress label
+      window.location.reload(); // Reload the page
+    });
+  } else {
+    skipButton.style.display = 'none'; // Hide skip button if not in tutorial
+    progressContainer.style.display = 'none'; // Hide progress bar if not in tutorial
+    progressLabel.style.display = 'none'; // Hide progress label if not in tutorial
+  }
+});
+document.querySelector('.skip-tutorial-btn').addEventListener('click', () => {
+  localStorage.removeItem('startTutorial'); // Remove the tutorial flag from localStorage
+  // Optionally, reset any tutorial-specific styles or states
+  document.querySelectorAll('.glow-effect').forEach(button => {
+      button.classList.remove('glow-effect');
+  });
+  // Hide the tutorial UI elements or redirect the user
+  document.querySelector('.progress-bar').style.display = 'none'; // Hide progress bar
+  document.querySelector('.progress-label').style.display = 'none'; // Hide progress label
+  window.location.reload(); // Reload the page or redirect as needed
+});
 //#####################
 // INITIALIZATION
 //##################### 

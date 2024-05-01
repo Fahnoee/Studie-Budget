@@ -25,6 +25,7 @@ const frontpageRouter = require("./routes/frontpage");
 const signUpRouter = require("./routes/signUpSide");
 const logInRouter = require("./routes/logInSite");
 const helpSiteRouter = require("./routes/helpSite");
+const settingRouter = require("./routes/settingSite");
 
 const controller = require("./controllers/budgetController.js");
 
@@ -172,7 +173,7 @@ app.post('/login', async (req, res) => {
     res.redirect('/overview'); // Redirect to the overview page if user login is successful
 
   } catch (error) {
-    if (error.message === 'User not found or password incorrect') {
+    if (error.message == 'Error finding user: User not found or password incorrect') {
       // Render a view with a retry option and an error alert
       res.render('logInSite', { 
         error: 'User dont exists. Please choose a different username.', 
@@ -199,7 +200,7 @@ app.post('/signup', async (req, res) => {
   try {
     await controller.createUserWithBudget(String(username), String(password));
     req.session.username = username.toLowerCase();
-    res.redirect('/overview'); // Redirect to the overview page if user creation is successful
+    res.redirect('/overview?startTutorial=true');
     
   } catch (error) {
     if (error.message === 'User already exists') {
@@ -281,6 +282,7 @@ app.use("/financialTips", financialTipsRouter);
 app.use("/signup", signUpRouter);
 app.use("/login", logInRouter);
 app.use("/Help", helpSiteRouter);
+app.use("/Settings", settingRouter);
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {

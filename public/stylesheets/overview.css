@@ -763,4 +763,65 @@ dialog {
   padding-left: 1px; /* Added padding to separate the arrow from the text */
 }
 
+.glow-effect {
+  animation: glow-animation 2s infinite;
+}
+
+@keyframes glow-animation {
+  0% { box-shadow: 0 0 10px 5px #33ccff; }
+  50% { box-shadow: 0 0 30px 10px #33ccff; }
+  100% { box-shadow: 0 0 10px 5px #33ccff; }
+}
+
+.skip-tutorial-btn {
+  position: fixed;
+  top: 100px; /* Adjusted to be below the navbar */
+  right: 30px;
+  padding: 10px 20px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.progress-bar {
+  position: absolute;
+  bottom: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  background-color: #ddd;
+  border-radius: 5px;
+  height: 20px;
+  text-align: center;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Added shadow */
+}
+
+.progress-label {
+  position: absolute;
+  bottom: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #333;
+  font-size: 18px;
+  font-weight: bold; /* Make text bold */
+  font-family: 'Arial', sans-serif; /* Set a standard font family */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* Subtle text shadow for depth */
+  padding: 5px 10px; /* Padding around the text */
+  background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent background */
+  border-radius: 5px; /* Rounded corners */
+}
+
+
+.progress-bar-fill {
+  position: relative; /* Set relative positioning for the parent */
+  height: 100%;
+  background: linear-gradient(to right, #4caf50, #81c784);
+  border-radius: 5px;
+  width: 0%;
+  transition: width 0.4s ease-in-out;
+}
 
