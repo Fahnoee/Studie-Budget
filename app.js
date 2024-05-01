@@ -25,6 +25,7 @@ const frontpageRouter = require("./routes/frontpage");
 const signUpRouter = require("./routes/signUpSide");
 const logInRouter = require("./routes/logInSite");
 const helpSiteRouter = require("./routes/helpSite");
+const settingRouter = require("./routes/settingSite");
 
 const controller = require("./controllers/budgetController.js");
 
@@ -281,6 +282,7 @@ app.use("/financialTips", financialTipsRouter);
 app.use("/signup", signUpRouter);
 app.use("/login", logInRouter);
 app.use("/Help", helpSiteRouter);
+app.use("/Settings", settingRouter);
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {
