@@ -2,6 +2,10 @@ body {
     background-color: #f0f2f5; /* Light grey background */
 }
 
+.pass-warning {
+    font-size: x-small;
+}
+
 .centerColum {
     display: flex;
     flex-direction: column;
