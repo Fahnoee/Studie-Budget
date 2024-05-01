@@ -1337,8 +1337,6 @@ async function saveMonthlyBudget(month, year, income, expenses, savings) {
 
 
 
-
-
 function glowButton(buttons) {
   let current = 0; // Start with the first button
   let colorPicked = false;
@@ -1509,3 +1507,4 @@ window.onload = function () {
   videoContainer.innerHTML = ''; // Clear the existing content
   videoContainer.appendChild(iframe);
 }
+

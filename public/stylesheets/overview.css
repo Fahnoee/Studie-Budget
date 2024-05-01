@@ -705,9 +705,14 @@ p {
   top: 20px;
   right: 20px;
   padding: 10px;
-  background-color: #f44336;
+  background-color: #f42415;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.skip-tutorial-btn:hover {
+  background-color: rgb(153, 26, 17);
 }
