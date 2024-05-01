@@ -1444,8 +1444,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (localStorage.getItem('startTutorial') === 'true') {
-    alert(`Welcome to Studie Budget \n
-    Follow the glow to complete the tutorial or press the skip tutorial button to skip the tutorial.`);
+    alert(`Welcome to Studie Budget \n\nFollow the glow to complete the tutorial or press the skip tutorial button to skip the tutorial.`);
     skipButton.style.display = 'block'; // Show skip button only if tutorial is active
     progressContainer.style.display = 'block'; // Show progress bar only if tutorial is active
     progressLabel.style.display = 'block'; // Show progress label only if tutorial is active
