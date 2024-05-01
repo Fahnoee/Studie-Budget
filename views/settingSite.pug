@@ -3,7 +3,46 @@ extends layout
 block content
   html 
   link(rel='stylesheet', href='/stylesheets/settingSite.css')
+  dialog().delete-user-dialog
+    h3 Are you sure you want to delete this user?
+    p Deleting the user will also erase all budget data.
+      div.buttons
+        button.no-btn-delete NO 
+        button.yes-btn-delete YES
+    
 
   main
     div.all
-        h1 Settings
+        div.header
+            h1= title
+      
+        div.columns
+            column.left 
+                
+        
+            column.middle
+                div.delete
+                    p #[Strong Delete user]
+                    p This feature will delete your account and all its data.
+                    button.delete-button Delete user
+                    
+                div.dyslexia
+                    p #[Strong Dyslexic mode]
+                    p This feature will adjust all text on the website accordingly for users who suffers from dyslexia.
+                    button.dyslexia-button Toggle dyslexia mode
+
+                div.colorblind
+                    p #[Strong Colorblind mode]
+                    p This feature will adjust the colors of the website accordingly for users who suffers from colorblindness.
+                    button.colorblind-button Toggle colorblind mode
+                    
+                div.darkmode
+                    p #[Strong Dark / Bright mode]
+                    p This feature will change the website to dark or bright mode.
+                    button.darkmode-button Toggle dark / bright mode
+
+            column.right
+              
+    script.
+      let username = "#{username}";
+    script(src='/javascripts/settings.js')

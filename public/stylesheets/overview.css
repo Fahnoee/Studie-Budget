@@ -775,15 +775,21 @@ dialog {
 
 .skip-tutorial-btn {
   position: fixed;
+
   top: 100px; /* Adjusted to be below the navbar */
   right: 30px;
   padding: 10px 20px;
-  background-color: #f44336;
+  background-color: #f42415;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   z-index: 1001;
+  transition: background-color 0.3s ease;
+}
+
+.skip-tutorial-btn:hover {
+  background-color: rgb(153, 26, 17);
 }
 
 .progress-bar {
