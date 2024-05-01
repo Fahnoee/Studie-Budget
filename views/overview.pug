@@ -8,12 +8,13 @@ block content
   div.popup-container-fixed
     div.popup-box-fixed
       h3 Edit income / expenses 
-      p Use . for decimals
+      p Enter the amount of your fixed monthly incomes/expenses. For example, salary or rent.
+      p Use . for decimals.
       p Edit fixed monthly income: 
         input.income-fixed(type='number')
       p Edit fixed monthly expense: 
         input.expense-fixed(type='number')
-      p Edit monthly saving goal
+      p Edit monthly saving goal:
         input.savings-fixed(type='number')
       div.buttons
         button.close-btn-fixed CLOSE
@@ -21,11 +22,11 @@ block content
   
   div.popup-container-income
     div.popup-box-income
-      h3 Enter an income
+      h3 Enter a single income
       p Use . for decimals
       //p Add category: 
         select.dropdown-income
-      p Enter name: 
+      p Enter name (e.g. Yard work, Bike sale): 
         input.name-income
       p Enter value:
         input.value-income(type='number')
@@ -35,11 +36,11 @@ block content
 
   div.popup-container-expense
     div.popup-box-expense
-      h3 Enter an expense
+      h3 Enter a single expense
       p Use . for decimals
       p Choose category: 
         select.dropdown-expense
-      p Enter name: 
+      p Enter name (e.g. Coffee in the park): 
         input.name-expense
       p Enter value:
         input.value-expense(type='number')
@@ -54,9 +55,9 @@ block content
 
   dialog().add-category-dialog
     h3 Create category
-    p Enter category: 
+    p Enter category name (e.g. Food, Party): 
       input.category-name
-    p Enter limit: 
+    p Enter monthly spending limit:
       input.category-goal(type='number')
     p Choose color: 
       input.category-color(type="color")
