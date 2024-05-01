@@ -140,6 +140,22 @@ app.post("/api/deletecategory", (req,res) => {
     });
 });
 
+// Deleting categories from database
+app.post("/api/deleteuser", (req,res) => {
+  let username = req.body;
+  controller
+    .deleteUser(username)
+    .then((result) => {
+      // Budget update successful
+      console.log("User deleted successfully: \n" + result);
+      res.json({ message: "User deleted successfully: \n" + result });
+    })
+    .catch((error) => {
+      // If anything goes wrong
+      res.status(500).json({ message: "Error deleting user.", error });
+    });
+});
+
 
 
 //###########################
@@ -176,7 +192,7 @@ app.post('/login', async (req, res) => {
     if (error.message == 'Error finding user: User not found or password incorrect') {
       // Render a view with a retry option and an error alert
       res.render('logInSite', { 
-        error: 'User dont exists. Please choose a different username.', 
+        error: 'Login is invalid, please try again.', 
         retryUrl: '/logIn',
         alert: 'Error: Password or Username is incorrect'
       });
