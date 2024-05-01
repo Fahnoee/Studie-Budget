@@ -140,11 +140,11 @@ app.post("/api/deletecategory", (req,res) => {
     });
 });
 
-// Deleting categories from database
-app.post("/api/deleteuser", (req,res) => {
-  let username = req.body;
+app.post("/api/test421231", (req,res) => {
+  let data = req.body;
+  console.log("TEST HER", data.username);
   controller
-    .deleteUser(username)
+    .deleteUser(data.username)
     .then((result) => {
       // Budget update successful
       console.log("User deleted successfully: \n" + result);
@@ -155,7 +155,6 @@ app.post("/api/deleteuser", (req,res) => {
       res.status(500).json({ message: "Error deleting user.", error });
     });
 });
-
 
 
 //###########################
