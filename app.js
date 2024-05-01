@@ -199,7 +199,7 @@ app.post('/signup', async (req, res) => {
   try {
     await controller.createUserWithBudget(String(username), String(password));
     req.session.username = username.toLowerCase();
-    res.redirect('/overview'); // Redirect to the overview page if user creation is successful
+    res.redirect('/overview?startTutorial=true');
     
   } catch (error) {
     if (error.message === 'User already exists') {
