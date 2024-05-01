@@ -1396,6 +1396,7 @@ function glowButton(buttons) {
       document.querySelector('.skip-tutorial-btn').style.display = 'none'; // Hide skip button
       progressContainer.style.display = 'none'; // Hide progress bar
       progressLabel.style.display = 'none'; // Hide progress label
+      alert('Tutorial completed. You can now start using Studie Budget. \nIn case you get stuck, please visit the help page.');
       window.location.reload(); // Reload the page
     }
   };
