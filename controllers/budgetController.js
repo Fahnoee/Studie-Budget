@@ -105,7 +105,7 @@ async function addCustomExpense(username, { category, items }, newName) {
             if(items[0].value){
                 budget.customExpenses[category][0].value = items[0].value;
             }
-            if(newName){
+            if(newName && newName !== category ){
                 budget.customExpenses[newName] = budget.customExpenses[category];
                 delete budget.customExpenses[category];
             }
