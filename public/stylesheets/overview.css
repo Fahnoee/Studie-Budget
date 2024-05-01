@@ -775,7 +775,7 @@ dialog {
 
 .month-navigation {
   display: flex;
-  justify-content: space-between; /* Adjusted spacing between elements */
+  justify-content: center; /* Adjusted spacing between elements */
   align-items: center;
   padding: 10px; /* Added padding */
   background-color: #f0f0f0; /* Added background color */
@@ -784,11 +784,13 @@ dialog {
 
 #currentMonth {
   font-weight: bold;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 #prevMonth::before {
   content: "←";
-  padding-right: 1px; /* Added padding to separate the arrow from the text */
+  margin-right: 1px; /* Added padding to separate the arrow from the text */
 }
 
 #nextMonth::before {
@@ -827,7 +829,7 @@ dialog {
 
 .progress-bar {
   position: absolute;
-  bottom: 150px;
+  bottom: 75px;
   left: 50%;
   transform: translateX(-50%);
   width: 80%;
@@ -841,7 +843,7 @@ dialog {
 
 .progress-label {
   position: absolute;
-  bottom: 150px;
+  bottom: 75px;
   left: 50%;
   transform: translateX(-50%);
   color: #333;
