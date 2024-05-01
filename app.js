@@ -140,7 +140,7 @@ app.post("/api/deletecategory", (req,res) => {
     });
 });
 
-app.post("/api/test421231", (req,res) => {
+app.post("/api/deleteuser", (req,res) => {
   let data = req.body;
   console.log("TEST HER", data.username);
   controller
