@@ -1505,10 +1505,10 @@ document.querySelector('.skip-tutorial-btn').addEventListener('click', () => {
   document.querySelector('.progress-label').style.display = 'none'; // Hide progress label
   window.location.reload(); // Reload the page or redirect as needed
 });
+
 //#####################
 // INITIALIZATION
 //##################### 
-
 async function initialize() {
   currentYear = new Date().getFullYear(); // Ensure currentYear is set
   await setupEventListeners();

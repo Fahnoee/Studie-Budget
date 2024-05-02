@@ -556,8 +556,9 @@ dialog {
 .category-title {
   width: 115px;
   max-height: 20px;
-  margin-top: 10px;
-  overflow-x: scroll;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  overflow-x: hidden;
   position: absolute;
   text-align: center;
   top: -20px;
