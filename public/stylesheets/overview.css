@@ -46,7 +46,7 @@ dialog {
 :root {
   --b: 15px; /* Adjust as needed */
   --p: 0; /* Adjust as needed */
-  --c: #5b69ff; /* Adjust as needed */
+  --c: #2061d3; /* Adjust as needed */
   --l: 18%;  /*radius for small circles to their black dot*/
 }
 
@@ -162,7 +162,7 @@ dialog {
   padding-right: 4%;
   font-family: sans-serif;
   /* font-style: italic; */
-  background-color: #0820ffab;
+  background-color: #0b57d0;
   box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   color: white;
   width: auto;
@@ -172,7 +172,7 @@ dialog {
 }
 
 .show-popup-fixed:hover {
-  background-color: #091dd6;
+  background-color: #0b51c3;
 }
 
 .popup-container-fixed {
@@ -221,25 +221,29 @@ dialog {
   border: none;
   outline: none;
   margin-right: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .25);
+  box-shadow: 0 0 10px #00000040;
   cursor: pointer; 
   color: black;
+}
+
+.popup-box-fixed .close-btn-fixed:hover {
+  background-color: #fbfbfb;
 }
 
 .popup-box-fixed .save-btn-fixed {
   width: 45%;
   height: 40px;
-  background: #333;
+  background: #add8e6;
   border-radius: 6px; 
   border: none;
   outline: none;
   box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
-  color: white;
+  color: black;
 }
 
 .popup-box-fixed .save-btn-fixed:hover {
-  background-color: black;
+  background-color: #a2cddb;
 }
 
 .popup-box-fixed .buttons-fixed{
@@ -325,20 +329,24 @@ dialog {
   color: black;
 }
 
+.popup-box-income .close-btn-income:hover {
+  background-color: #fbfbfb;
+}
+
 .popup-box-income .save-btn-income {
   width: 45%;
   height: 40px;
-  background: #333;
+  background: #add8e6;
   border-radius: 6px; 
   border: none;
   outline: none;
   box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
-  color: white;
+  color: black;
 }
 
 .popup-box-income .save-btn-income:hover {
-  background-color: black;
+  background-color: #a2cddb;
 }
 
 .popup-box-income .buttons-income{
@@ -425,20 +433,24 @@ dialog {
   color: black;
 }
 
+.popup-box-expense .close-btn-expense:hover {
+  background-color: #fbfbfb;
+}
+
 .popup-box-expense .save-btn-expense {
   width: 45%;
   height: 40px;
-  background: #333;
+  background: #add8e6;
   border-radius: 6px; 
   border: none;
   outline: none;
   box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
-  color: white;
+  color: black;
 }
 
 .popup-box-expense .save-btn-expense:hover {
-  background-color: black;
+  background-color: #a2cddb;
 }
 
 .popup-box-expense .buttons-expense{
@@ -492,20 +504,24 @@ dialog {
   color: black;
 }
 
+.close-btn-category:hover {
+  background-color: #fbfbfb;
+}
+
 .save-btn-category {
   width: 45%;
   height: 40px;
-  background: #333;
+  background: #add8e6;
   border-radius: 6px; 
   border: none;
   outline: none;
   box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
-  color: white;
+  color: black;
 }
 
 .save-btn-category:hover {
-  background-color: black;
+  background-color: #a2cddb;
 }
 
 .close-btn-category-edit {
@@ -521,20 +537,24 @@ dialog {
   color: black;
 }
 
+.close-btn-category-edit:hover {
+  background-color: #fbfbfb;
+}
+
 .save-btn-category-edit {
   width: 45%;
   height: 40px;
-  background: #333;
+  background: #add8e6;
   border-radius: 6px; 
   border: none;
   outline: none;
   box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   cursor: pointer; 
-  color: white;
+  color: black;
 }
 
 .save-btn-category-edit:hover{
-  background-color: black;
+  background-color: #a2cddb;
 }
 
 .delete-btn-category-edit {
@@ -587,7 +607,7 @@ dialog {
   padding-left: 4%;
   padding-right: 4%;
   font-family: sans-serif;
-  background-color: #333;
+  background-color: #0b57d0;
   box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   color: white;
   width: auto;
@@ -596,7 +616,7 @@ dialog {
 }
 
 .show-edit-categories:hover {
-  background-color: #000000; 
+  background-color: #0b51c3; 
 }
 
 
@@ -633,10 +653,14 @@ dialog {
   color: black;
 }
 
+.close-btn-history-edit:hover {
+  background-color: #fbfbfb;
+}
+
 .save-btn-history-edit {
   width: 45%;
   height: 40px;
-  background: #333;
+  background: #add8e6;
   border-radius: 6px; 
   border: none;
   outline: none;
@@ -646,7 +670,7 @@ dialog {
 }
 
 .save-btn-history-edit:hover {
-  background-color: black;
+  background-color: #a2cddb;
 }
 
 /*::-webkit-scrollbar {
