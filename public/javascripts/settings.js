@@ -7,8 +7,11 @@ const deleteUserDialog = document.querySelector('.delete-user-dialog');
 const noDeleteUserDialogBtn = document.querySelector('.no-btn-delete');
 const yesDeleteUserDialogBtn = document.querySelector('.yes-btn-delete');
 
+const logOutBtn = document.querySelector('.log-out-button')
+
 const API_ENDPOINTS = {
     deleteUser: "/api/deleteuser",
+    logOut: "/api/logout",
 }
 
 openDeleteUserDialogBtn.onclick = async () => {
@@ -53,6 +56,23 @@ async function fetchData(url, options = {}) {
       console.error("Fetch Data error:", error);
       throw error;
     }
+}
+
+async function deleteUsernameFromSession() {
+  return fetchData("/api/logout", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    }
+  });
+}
+
+logOutBtn.onclick = async() => {
+
+  console.log("success");
+  deleteUsernameFromSession();
+  username = undefined;
+  window.location.replace("/");  
 }
 
 //popup for buttons not implemented on the setting site

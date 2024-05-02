@@ -156,6 +156,11 @@ app.post("/api/deleteuser", (req,res) => {
     });
 });
 
+app.post("/api/logout", (req,res) => {
+
+  req.session.username = undefined;
+  res.json({ message: "User logged out successfully: \n" + result });
+});
 
 //###########################
 // READING DATA FROM MONGO-DB
