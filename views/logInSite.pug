@@ -11,9 +11,9 @@ block navbar
                 img(src="./images/studieLogoHjoerneHvid.png", alt="Good Pic", id="logo")
           div.rightrestricted
             li
-              a.el(href='/login') Log in
+              a.el(href='/login') Log In
             li 
-              a.el(href='/signUp') Sign up
+              a.el(href='/signUp') Sign Up
             li
 
 block content
@@ -25,6 +25,7 @@ block content
     if error
         div.alert
           | #{error}
+    p
     form(action="/login" method="POST")
         div.username
             label(for="username") Enter username:

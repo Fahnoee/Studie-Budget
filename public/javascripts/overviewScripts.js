@@ -182,7 +182,6 @@ editCategoryBtn.onclick = async () => {
   expenseFixed.value = monthlyBudget.expenses || 0;
   savingsFixed.value = monthlyBudget.savings || 0;
 
-
   if (incomeFixed.value == '0' && expenseFixed.value == '0' && savingsFixed.value == '0') {
     alert("Please set up fixed income and expenses first in the primary budget overview");
     return;
