@@ -90,14 +90,15 @@ block content
         // BIG CIRCLE
         div.column
           h2 Primary budget overview
-          div.pie-line
+          div.pie-line#tooltip
+            span(class="tooltiptext") Total: 0/0
             div.pie.animate(style="--w: 300px")
               p.total 
               p.spent 
               p.left 
               p.savings
           div
-          button.show-popup-fixed Set-up fixed income and expenses
+          button.show-popup-fixed Set-up monthly income and expenses
         // CATEGORIES
         div.column
           h2 Categories

@@ -145,6 +145,49 @@ dialog {
   background-color: rgb(194, 193, 193);
 }
 
+/* Tooltip container */
+#tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+#tooltip .tooltiptext {
+  visibility: hidden;
+  width: fit-content;
+  background-color: #007BFF;
+  color: #fff;
+  text-align: center;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: medium;
+ 
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  width: fit-content;
+  bottom: 105%;
+  left: 50%;
+  margin-left: -75px; /* Use half of the width plus padding ((120+20)/2 + a little extra = 75), to center the tooltip */
+}
+
+/* Bottom arrow */
+#tooltip .tooltiptext::after {
+  content: " ";
+  position: absolute;
+  top: 100%; /* At the bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #007BFF transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+#tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
 /*////////////////*/
 /* POPUP CSS CODE */
 /*////////////////*/
