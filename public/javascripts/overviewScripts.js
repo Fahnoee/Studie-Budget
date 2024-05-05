@@ -34,6 +34,7 @@ const saveBtnFixed = document.querySelector('.save-btn-fixed');
 const incomeFixed = document.querySelector(".income-fixed");
 const expenseFixed = document.querySelector(".expense-fixed");
 const savingsFixed = document.querySelector(".savings-fixed");
+const toolTip = document.querySelector(".tooltiptext");
 
 // EXPENSE
 const showPopupCustomExpense = document.querySelector('.show-popup-expense');
@@ -129,7 +130,7 @@ categoryBtn.onclick = async () => {
   savingsFixed.value = monthlyBudget.savings || 0;
 
   if (incomeFixed.value == '0' && expenseFixed.value == '0' && savingsFixed.value == '0') {
-    alert("Please set up fixed income and expenses first in the primary budget overview");
+    alert("Please set up monthly income and expenses first in the primary budget overview");
     return;
   }
   else {
@@ -183,7 +184,7 @@ editCategoryBtn.onclick = async () => {
   savingsFixed.value = monthlyBudget.savings || 0;
 
   if (incomeFixed.value == '0' && expenseFixed.value == '0' && savingsFixed.value == '0') {
-    alert("Please set up fixed income and expenses first in the primary budget overview");
+    alert("Please set up monthly income and expenses first in the primary budget overview");
     return;
   }
 
@@ -671,7 +672,8 @@ async function updateUserValuesView() {
 
     let netExpenses = (monthlyBudget.expenses + totalCustomExpense);
 
-    totalAmount.textContent = "Fixed Income: " + monthlyBudget.income;
+    toolTip.textContent = "Total: " + (netExpenses + monthlyBudget.savings) + " / " + (monthlyBudget.income + totalCustomIncome);
+    totalAmount.textContent = "Monthly Income: " + monthlyBudget.income;
     spentAmount.textContent = "Net expenses: " + netExpenses;
     leftAmount.textContent = "Available: " + (monthlyBudget.income - netExpenses - monthlyBudget.savings + totalCustomIncome);
     savingsAmount.textContent = "Savings: " + monthlyBudget.savings;
@@ -1038,7 +1040,7 @@ async function setupEventListeners() {
     savingsFixed.value = monthlyBudget.savings || 0;
 
     if (incomeFixed.value == '0' && expenseFixed.value == '0' && savingsFixed.value == '0') {
-      alert("Please set up fixed income and expenses first in the primary budget overview");
+      alert("Please set up monthly income and expenses first in the primary budget overview");
       return;
     }
     else {
@@ -1091,7 +1093,7 @@ async function setupEventListeners() {
     savingsFixed.value = monthlyBudget.savings || 0;
 
     if (incomeFixed.value == '0' && expenseFixed.value == '0' && savingsFixed.value == '0') {
-      alert("Please set up fixed income and expenses first in the primary budget overview");
+      alert("Please set up monthly income and expenses first in the primary budget overview");
       return;
     }
     if (!data.customExpenses || Object.keys(data.customExpenses).length === 0) {
