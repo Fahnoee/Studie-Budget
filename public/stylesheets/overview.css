@@ -46,7 +46,7 @@ dialog {
 :root {
   --b: 15px; /* Adjust as needed */
   --p: 0; /* Adjust as needed */
-  --c: #2061d3; /* Adjust as needed */
+  --c: #007BFF; /* Adjust as needed */
   --l: 18%;  /*radius for small circles to their black dot*/
 }
 
@@ -162,7 +162,7 @@ dialog {
   padding-right: 4%;
   font-family: sans-serif;
   /* font-style: italic; */
-  background-color: #0b57d0;
+  background-color: #007BFF;
   box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   color: white;
   width: auto;
@@ -265,7 +265,7 @@ dialog {
   margin: 5%;
   padding-left: 4%;
   padding-right: 4%;
-  background-color: #33b249d4;
+  background-color: #4CAF50;
   box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   width: auto;
   height: 50px;
@@ -275,7 +275,7 @@ dialog {
 }
 
 .show-popup-income:hover {
-  background-color: #06911dd4; 
+  background-color: #39903c; 
 }
 
 .popup-container-income {
@@ -368,7 +368,7 @@ dialog {
   margin: 5%;
   padding-left: 4%;
   padding-right: 4%;
-  background-color: #ec3328d9;
+  background-color: #F1564B;
   box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   width: auto;
   height: 50px;
@@ -607,7 +607,7 @@ dialog {
   padding-left: 4%;
   padding-right: 4%;
   font-family: sans-serif;
-  background-color: #0b57d0;
+  background-color: #007BFF;
   box-shadow: 0 0 10px rgba(0, 0, 0, .25);
   color: white;
   width: auto;

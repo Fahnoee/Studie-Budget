@@ -61,16 +61,16 @@
     padding-left: 4%;
     padding-right: 4%;
     font-family: sans-serif;
-    background-color: #f44336;
+    background-color: #F1564B;
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-    color:rgb(50, 50, 50);
+    color:white;
     width: auto;
     height: 50px;
     transition: background-color 0.3s ease;
   }
 
   .delete-button:hover {
-    background-color: rgb(153, 26, 17);
+    background-color: #cd310e;
   }
 
   .yes-btn-delete {
