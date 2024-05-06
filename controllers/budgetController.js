@@ -25,7 +25,8 @@ async function fetchUserBudgetId(username) {
 }
 
 /**
- * Creates a new user with a default budget.
+ * Creates a new user with a default budget initialized with the current month and year.
+ * The default budget includes initial values for income, expenses, savings, and an array of monthly records.
  * @async
  * @param {string} username - The username for the new user.
  * @param {string} password - The password for the new user.
