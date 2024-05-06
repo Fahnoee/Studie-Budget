@@ -134,9 +134,7 @@ categoryBtn.onclick = async () => {
     return;
   }
   else {
-    console.log("Activated");
     addCategoryDialog.showModal();
-    console.log("Category Name: " + categoryName.value);
   }
 };
 
@@ -164,7 +162,7 @@ saveBtnCategory.onclick = async () => {
   else {
     addCategoryDialog.close();
     await inputCategoryToBackend();
-    await spawnCategory(categoryName.value, categoryColor.value);  // Create category
+    spawnCategory(categoryName.value, categoryColor.value);  // Create category
     await updateCategory();
     await updateUserValuesView();
     categoryName.value = "";
@@ -173,7 +171,7 @@ saveBtnCategory.onclick = async () => {
 };
 
 editCategoryBtn.onclick = async () => {
-  await dropDownFetchCategoriesExpense(dropdownEdit);
+  await dropDownFetchCategories(dropdownEdit);
   let month = currentMonthIndex + 1;
   let year = currentYear;
   let data = await fetchDatabase(); // Fetch data from the database
@@ -255,7 +253,6 @@ async function updateCategory() {
   const pies = categories.querySelectorAll(".pie");
   const categoryData = await fetchAndProcessCategoryData();
 
-
   let i = 0;
   Object.entries(categoryData).forEach(([category, items]) => {
     setPiePercentage((items.totalExpense / items.goal * 100), pies[i]);
@@ -291,14 +288,13 @@ async function fetchAndProcessCategoryData() {
 async function inputCategoryToBackend() {
   let name = "##GOAL##";
   let items = [{ "name": name, "value": categoryGoal.value, "color": categoryColor.value }];
-  console.log(categoryColor.value);
 
   goalData = {
     username,
     customExpense: items,
     category: categoryName.value,
   }
-  await updateCustomExpense(goalData); //Sends the goal data to backend
+  await updateCustomExpense(goalData); // Sends the goal data to backend
 }
 
 async function editCategoryToBackend() {
@@ -311,76 +307,60 @@ async function editCategoryToBackend() {
     category: dropdownEdit.value,
     newName: editCategoryName.value,
   }
-  console.log(goalData);
-  await updateCustomExpense(goalData); //Sends the goal data to backend  
+  await updateCustomExpense(goalData); // Sends the goal data to backend  
 }
 
 
 // Function for creating a new catogory in the html and the database
-async function spawnCategory(categoryTitle, color) {
-  try {
-    // Find the container for categories
-    const categoriesContainer = document.querySelector('.categories');
+function spawnCategory(categoryTitle, color) {
+  // Removes the "add category" button. It is later added again
+  const button = categories.querySelector('button');
+  button.remove();
 
-    //Removes the "add category"
-    const button = categoriesContainer.querySelector('button');
-    button.remove();
+  // Create elements for the category
+  const categoryDiv = document.createElement('div');
+  categoryDiv.classList.add('pie-line');  // Set class to "pie-line" to create grey circle
+  categoryDiv.style.setProperty('--b', '10px');
+  categoryDiv.style.marginBottom = '7%';
 
-    // Create elements for the category
-    const categoryDiv = document.createElement('div');
-    categoryDiv.classList.add('pie-line');  // Set class to "pie-line" to create grey circle
-    categoryDiv.style.setProperty('--b', '10px');
-    categoryDiv.style.marginBottom = '7%';
+  // Create span element
+  const span = document.createElement('span');
+  span.classList.add('category-title'); // Set class to "category-text" to position title above circle
+  span.textContent = categoryTitle; // Set title to user input
 
-    // Create span element
-    const span = document.createElement('span');
-    span.classList.add('category-title'); // Set class to "category-text" to position title above circle
-    span.textContent = categoryTitle; // Set title to user input
+  // Create a div element for the pie chart 
+  const pie = document.createElement('div');
+  pie.classList.add('pie', 'animate'); // Add classes for styling 
+  pie.style.setProperty('--w', '105px');  // Set size of circle
+  pie.style.setProperty('--b', '10px');  // Set size of circle
+  pie.style.setProperty('--l', '1%');  // Set size of circle
+  setPieColor(pie, color)
 
-    // Create a div element for the pie chart 
-    const pie = document.createElement('div');
-    pie.classList.add('pie', 'animate'); // Add classes for styling 
-    pie.style.setProperty('--w', '105px');  // Set size of circle
-    pie.style.setProperty('--b', '10px');  // Set size of circle
-    pie.style.setProperty('--l', '1%');  // Set size of circle
-    setPieColor(pie, color)
+  // Create paragraph element
+  const paragraph = document.createElement('p');
+  paragraph.classList.add('category-text');
+  paragraph.textContent = 0;   // Set the goal for the category
 
-    // Create paragraph element
-    const paragraph = document.createElement('p');
-    paragraph.classList.add('category-text');
-    paragraph.textContent = 0;   // Set the goal for the category
+  // Append the paragraph to the pie div
+  pie.appendChild(paragraph)
 
-    // Append the paragraph to the pie div
-    pie.appendChild(paragraph)
+  // Append the span and pie div to the category div
+  categoryDiv.appendChild(span);
+  categoryDiv.appendChild(pie);
 
-    // Append the span and pie div to the category div
-    categoryDiv.appendChild(span);
-    categoryDiv.appendChild(pie);
+  // Append the category div to the categories container
+  categories.appendChild(categoryDiv);
 
-    // Append the category div to the categories container
-    categoriesContainer.appendChild(categoryDiv);
+  // Lastly, add back the new category button
+  const newButton = document.createElement('button');
+  newButton.classList.add('add-circle');
+  newButton.style.marginBottom = '7%';
+  newButton.textContent = '+';
+  categories.appendChild(newButton);
 
-    // Lastly, add back the new category button
-    const newButton = document.createElement('button');
-    newButton.classList.add('add-circle');
-    newButton.style.marginBottom = '7%';
-    newButton.textContent = '+';
-    categoriesContainer.appendChild(newButton);
-
-    newButton.addEventListener('click', () => {
-      console.log("activated")
-      addCategoryDialog.showModal();
-      console.log("category Name:" + categoryName.value)
-    });
-
-    return newButton;
-
-    // Optionally, you can return the category element if you need to manipulate it further
-    // return categoryDiv;
-  } catch (error) {
-    console.log("Error: " + error);
-    throw error;
-  }
+  newButton.addEventListener('click', () => {
+    addCategoryDialog.showModal();
+  });
 }
 
 //#####################
@@ -388,7 +368,7 @@ async function spawnCategory(categoryTitle, color) {
 //##################### 
 //// These functions fetch categories from the database, and places them into a dropdown menu
 
-async function dropDownFetchCategoriesExpense(dropdown) {
+async function dropDownFetchCategories(dropdown) {
   try {
     dropdown.innerHTML = ''; // Clear existing options
     let data = await fetchDatabase();                  //Fetches data from database
@@ -404,24 +384,9 @@ async function dropDownFetchCategoriesExpense(dropdown) {
   }
 }
 
-/*async function dropDownFetchCategoriesIncome() {
-  try {
-    dropdownIncome.innerHTML = ''; // Clear existing options
-    let data = await fetchDatabase();
-    let categories = Object.keys(data.customIncomes);
-    categories.forEach(category => {
-      let option = document.createElement("option");
-      option.textContent = category;
-      dropdownIncome.appendChild(option);
-    });
-  } catch (error) {
-    console.error('An error occurred fetching categories from database:', error);
-  }
-}*/
-
-//#####################
+//###################
 // Utility Functions
-//##################### 
+//###################
 async function fetchData(url, options = {}) {
   try {
     const response = await fetch(url, options);
@@ -470,7 +435,6 @@ async function fetchDatabase() {
     },
   });
 }
-
 async function fetchCategories() {
   try {
     const data = await fetchDatabase();
@@ -696,8 +660,6 @@ async function updateHistory(category) {
       if (expenses.length > 0) {
         const lastExpense = expenses[expenses.length - 1];
 
-        console.log(category);
-        console.log(lastExpense);
         createTable(lastExpense, category, 1);
       } else {
         console.log('No expenses in this category yet.');
@@ -712,8 +674,6 @@ async function updateHistory(category) {
       if (incomes.length > 0) {
         const lastIncome = incomes[incomes.length - 1];
 
-        console.log(category);
-        console.log(lastIncome);
         createTable(lastIncome, category, 1);
       } else {
         console.log('No expenses in this category yet.');
@@ -729,7 +689,6 @@ async function updateHistory(category) {
 // Function for deleting history table and then creating it again with the new entries
 async function refreshHistory() {
   const allTableElements = table.querySelectorAll('p, tr, td, button, dialog, h3, input, div'); // Q-Select all elements currently in the table
-  console.log('Table: ', allTableElements);
   allTableElements.forEach(element => {
     element.remove();
   });
@@ -741,7 +700,6 @@ async function refreshHistory() {
 
 async function refreshCategories() {
   const allCategoryElements = categories.querySelectorAll('div, span, p'); // Q-Select all elements currently in the table
-  console.log('Category: ', allCategoryElements);
   allCategoryElements.forEach(element => {
     element.remove();
   });
@@ -753,7 +711,6 @@ async function refreshCategories() {
 // HISTORY TABLE
 //#####################
 function createTable(data, category, newOrOld = 0) {  // data formated as {name, amount, date, _id, category}
-  console.log(data);
   let simpleDate = new Date(data.date).toDateString().slice(4);    // Slice to remove the name of the day
 
   //#######################
@@ -1083,7 +1040,7 @@ async function setupEventListeners() {
   };
 
   document.querySelector('.show-popup-expense').onclick = async () => {
-    await dropDownFetchCategoriesExpense(dropdownEdit);
+    await dropDownFetchCategories(dropdownEdit);
     let data = await fetchDatabase(); // Fetch data from the database
     let month = currentMonthIndex + 1; // JavaScript months are 0-indexed, add 1 for consistency with common representations
     let year = currentYear;
@@ -1101,7 +1058,7 @@ async function setupEventListeners() {
       return;
     } else {
       document.querySelector('.popup-container-expense').classList.add("active");
-      await dropDownFetchCategoriesExpense(dropdownExpense);
+      await dropDownFetchCategories(dropdownExpense);
     };
   }
   document.querySelector('.close-btn-expense').onclick = () => {
