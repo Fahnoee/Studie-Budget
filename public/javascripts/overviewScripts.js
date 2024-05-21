@@ -3,12 +3,13 @@
 //#####################
 const body = document.querySelector('body');
 const pie = document.querySelector('.pie');
-let currentYear = new Date().getFullYear();
-let currentMonthIndex = new Date().getMonth();
 const totalAmount = document.querySelector(".total");
 const spentAmount = document.querySelector(".spent");
 const leftAmount = document.querySelector(".left");
 const savingsAmount = document.querySelector(".savings");
+
+let currentYear = new Date().getFullYear();
+let currentMonthIndex = new Date().getMonth();
 
 const API_ENDPOINTS = {
   fetchBudget: "/api/budget/:budgetID",
@@ -16,8 +17,8 @@ const API_ENDPOINTS = {
   addCustomIncome: "/api/addcustom/income",
   deleteData: "/api/deletecustom",
   fetchCustomExpensesByMonthAndYear: "/api/customexpenses/:month/:year",
-  fetchMonthlyBudget: "/api/monthlybudget/:month/:year", // Added new API endpoint for fetching monthly budget
-  updateMonthlyBudget: "/api/update_monthly_budget", // Added new API endpoint for updating monthly budget
+  fetchMonthlyBudget: "/api/monthlybudget/:month/:year", 
+  updateMonthlyBudget: "/api/update_monthly_budget",
   fetchCustomIncomesByMonthAndYear: "/api/customeincomes/:month/:year",
   deleteCategory: "/api/deletecategory",
 };
@@ -75,11 +76,6 @@ const dropdownEdit = document.querySelector('.dropdown-edit');
 
 // HISTORY
 const table = document.querySelector('.styled-table');
-// const editHistoryDialog = document.querySelector('.edit-history');
-// const editHistoryName = document.querySelector('.name-edit-history');
-// const editHistoryValue = document.querySelector('.value-edit-history');
-// const closeBtnEditHistory = document.querySelector('.close-btn-history-edit');
-// const saveBtnEditHistory = document.querySelector('.save-btn-history-edit');
 
 //#####################
 // FUNCTIONS FOR POPUP
@@ -92,34 +88,11 @@ showPopupFixed.onclick = () => {
   expenseFixed.value = localStorage.getItem('expenseFixed') || '';
   savingsFixed.value = localStorage.getItem('savingsFixed') || '';
 };
+
 // Function for the Close Button
 closeBtnFixed.onclick = () => {
   popupContainerFixed.classList.remove("active");    // Deactivates popup by removing class from div
 };
-
-// Function for the Save Button
-// saveBtnFixed.onclick = async () => {
-//   console.log("Not a number");
-
-//   const currentMonth = String(currentMonthIndex + 1).padStart(2, '0'); // Ensure month is in MM format
-//   const income = incomeFixed.value || 0;
-//   const expenses = expenseFixed.value || 0;
-//   const savings = savingsFixed.value || 0;
-
-
-
-//   // Call saveMonthlyBudget with the current month, year, and the new values
-//   await saveMonthlyBudget(currentMonth, currentYear, income, expenses, savings)
-//     .then(response => {
-//       console.log(response.message); // Log success message
-//       // Optionally, update the UI to reflect changes or notify the user of success
-//     })
-//     .catch(error => {
-//       console.error("Failed to update monthly budget:", error);
-//       // Handle error (e.g., show error message to the user)
-//     });
-// };
-
 
 categoryBtn.onclick = async () => {
   let month = currentMonthIndex + 1; // JavaScript months are 0-indexed, add 1 for consistency with common representations
@@ -131,7 +104,6 @@ categoryBtn.onclick = async () => {
 
   if (incomeFixed.value == '0' && expenseFixed.value == '0' && savingsFixed.value == '0') {
     alert("Please set up monthly income and expenses first in the primary budget overview");
-    return;
   }
   else {
     addCategoryDialog.showModal();
@@ -172,11 +144,11 @@ saveBtnCategory.onclick = async () => {
 
 editCategoryBtn.onclick = async () => {
   await dropDownFetchCategories(dropdownEdit);
-  let month = currentMonthIndex + 1;
-  let year = currentYear;
-  let data = await fetchDatabase(); // Fetch data from the database
-  //let categories = Object.keys(data.customExpenses);
+  const month = currentMonthIndex + 1;
+  const year = currentYear;
+  const data = await fetchDatabase(); // Fetch data from the database
   const monthlyBudget = await fetchMonthlyBudget(month, year);
+
   incomeFixed.value = monthlyBudget.income || 0;
   expenseFixed.value = monthlyBudget.expenses || 0;
   savingsFixed.value = monthlyBudget.savings || 0;
@@ -213,9 +185,6 @@ deleteBtnEditCategory.onclick = async () => {
     await updateCategory();
     await updateUserValuesView();
     await refreshCategories();
-  } else {
-    console.log("did nothing")
-
   }
 };
 
@@ -263,7 +232,7 @@ async function updateCategory() {
 
 async function fetchAndProcessCategoryData() {
   // Use currentMonthIndex and currentYear from the global scope
-  const month = String(currentMonthIndex + 1).padStart(2, '0');
+  const month = String(currentMonthIndex + 1);
   const year = currentYear.toString();
 
   const expenses = await fetchCustomExpensesByMonthAndYear(username, month, year);
@@ -435,6 +404,7 @@ async function fetchDatabase() {
     },
   });
 }
+
 async function fetchCategories() {
   try {
     const data = await fetchDatabase();
@@ -449,7 +419,6 @@ async function fetchCategories() {
     throw error;
   }
 }
-
 
 async function updateCustomExpense(dataExpense) {
   return fetchData(API_ENDPOINTS.addCustomExpense, {
@@ -515,7 +484,7 @@ async function categoryAvailableCheck(categoryInput) {
 //Function to get all costume income and add them together
 async function fetchAndProcessIncomeData() {
   // Use currentMonthIndex and currentYear from the global scope
-  const month = String(currentMonthIndex + 1).padStart(2, '0');
+  const month = String(currentMonthIndex + 1);
   const year = currentYear.toString();
 
   const incomes = await fetchCustomIncomesByMonthAndYear(username, month, year);
@@ -572,7 +541,7 @@ async function fetchHistory() {
     arrayOfHistories.sort((a, b) => new Date(b.date) - new Date(a.date));  // Sort array after timestamp
 
     arrayOfHistories.forEach(history => {   // Create table for each income and expense entry in database
-      createTable(history, history.category, 0); // TODO: Add parameter for editBtn
+      createTable(history, history.category, 0); 
     });
 
   } catch (error) {
@@ -615,7 +584,7 @@ async function fetchCustomIncomesByMonthAndYear(username, month, year) {
 //##################### 
 async function updateUserValuesView() {
   try {
-    const currentMonth = String(currentMonthIndex + 1).padStart(2, '0');
+    const currentMonth = String(currentMonthIndex + 1);
     // Use currentYear directly without redeclaring it
     const yearString = currentYear.toString();
     const monthlyBudget = await fetchMonthlyBudget(currentMonth, yearString);
@@ -660,7 +629,7 @@ async function updateHistory(category) {
       if (expenses.length > 0) {
         const lastExpense = expenses[expenses.length - 1];
 
-        createTable(lastExpense, category, 1);
+        createTable(lastExpense, category, 1); // 1 for true means new input
       } else {
         console.log('No expenses in this category yet.');
       }
@@ -673,8 +642,7 @@ async function updateHistory(category) {
       const incomes = data.customIncomes[category];   // Put array of expenses in category into variable
       if (incomes.length > 0) {
         const lastIncome = incomes[incomes.length - 1];
-
-        createTable(lastIncome, category, 1);
+        createTable(lastIncome, category, 1); 
       } else {
         console.log('No expenses in this category yet.');
       }
@@ -918,8 +886,6 @@ function createTable(data, category, newOrOld = 0) {  // data formated as {name,
 // EVENT HANDLERS
 //##################### 
 async function setupEventListeners() {
-
-
   document.querySelector('.show-popup-fixed').onclick = () => {
     document.querySelector('.popup-container-fixed').classList.add("active");
   };
@@ -1125,38 +1091,6 @@ async function setupEventListeners() {
   });
 }
 
-
-// TEST TIL DELETE CUSTOM (BEHOLD)
-
-let items1 = [{
-  name: "idtest",
-  amount: 700,
-  date: "2024-4-22 10",
-  _id: "1713808910591"
-}]
-let items2 = [{
-  name: "test6",
-  amount: 700,
-  date: "2024-4-22 10",
-  _id: "1714380055527"
-}]
-
-let dataForDeletionIncome = {
-  username,
-  customData: items1,
-  category: "income",
-  incomeOrExpense: "income",
-}
-let dataForDeletionExpense = {
-  username,
-  customData: items2,
-  category: "mad",
-  incomeOrExpense: "expense",
-}
-
-//deleteCustomData(dataForDeletionIncome);
-//deleteCustomData(dataForDeletionExpense);
-
 // Save to localStorage on input change
 incomeFixed.addEventListener('input', function () {
   localStorage.setItem('incomeFixed', this.value);
@@ -1221,7 +1155,7 @@ savingsFixed.addEventListener('input', function () {
 document.addEventListener('DOMContentLoaded', async () => {
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   let currentMonthName = monthNames[currentMonthIndex];
-
+  // #id .class
   const prevMonthButton = document.querySelector('#prevMonth');
   const currentMonthSpan = document.querySelector('#currentMonth');
   const nextMonthButton = document.querySelector('#nextMonth');
@@ -1241,7 +1175,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       currentMonthIndex -= 1;
     }
     await updateMonthDisplay();
-    // await fetchAndProcessCategoryData();
     await updateUserValuesView();
     await updateCategory();
   });
@@ -1254,11 +1187,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       currentMonthIndex += 1;
     }
     await updateMonthDisplay();
-    // await fetchAndProcessCategoryData();
     await updateUserValuesView();
     await updateCategory();
   });
 });
+
 async function fetchMonthlyBudget(month, year) {
   const url = API_ENDPOINTS.fetchMonthlyBudget.replace(':month', month).replace(':year', year);
   return fetchData(url, {
@@ -1269,6 +1202,7 @@ async function fetchMonthlyBudget(month, year) {
   });
 }
 
+// work in progress TODO
 async function updateBudgetView(month, year) {
   const monthlyBudget = await fetchMonthlyBudget(month, year);
   if (monthlyBudget.income > 0) {
@@ -1302,6 +1236,7 @@ function glowButton(buttons) {
   const progressBar = document.querySelector('.progress-bar-fill');
   const progressContainer = document.querySelector('.progress-bar');
   const progressLabel = document.querySelector('.progress-label'); // Get the progress label
+
   const updateProgressBar = () => {
     const progressPercentage = Math.round((current / (buttons.length - 3)) * 100);
     progressBar.style.width = `${progressPercentage}%`;
@@ -1438,7 +1373,9 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelector('.close-btn-category'),
       document.querySelector('.close-btn-category-edit'),
     ];
+
     glowButton(buttons);
+
     skipButton.addEventListener('click', () => {
       localStorage.removeItem('startTutorial'); // Remove the tutorial flag
       skipButton.style.display = 'none'; // Hide skip button
@@ -1452,6 +1389,7 @@ document.addEventListener('DOMContentLoaded', () => {
     progressLabel.style.display = 'none'; // Hide progress label if not in tutorial
   }
 });
+
 document.querySelector('.skip-tutorial-btn').addEventListener('click', () => {
   localStorage.removeItem('startTutorial'); // Remove the tutorial flag from localStorage
   // Optionally, reset any tutorial-specific styles or states

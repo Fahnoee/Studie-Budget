@@ -49,9 +49,6 @@ async function createUserWithBudget(username, password) {
 
     // Set default values for the budget, including an initial monthly record
     const defaultBudget = {
-        income: 0,
-        expenses: 0,
-        savings: 0,
         customExpenses: {},
         customIncome: {},
         monthlyRecords: [{
@@ -96,8 +93,8 @@ async function addCustomExpense(username, { category, items }, newName) {
         }
         // Initialize the category if it doesn't exist
         if (!budget.customExpenses[category]) {
-            console.log("TEST ##1");
             budget.customExpenses[category] = [];
+            // Sends Limit and items
             items.forEach(item => budget.customExpenses[category].push(item));
             // Mark the customExpenses field as modified
             budget.markModified('customExpenses');
@@ -115,7 +112,6 @@ async function addCustomExpense(username, { category, items }, newName) {
         
         // Add the new items to the category
         else {
-            console.log("TEST ##3");
             items.forEach(item => budget.customExpenses[category].push(item));
             // Mark the customExpenses field as modified
             budget.markModified('customExpenses');
@@ -184,7 +180,7 @@ async function addCustomIncome(username, { category, items }) {
  */
 async function findUserByUsernameAndPassword(username, password) {
     try {
-        const user = await User.findOne({ name: username, password: password });
+        const user = await User.findOne({ name: username, password: password }).exec();
         if (!user) {
             throw new Error('User not found or password incorrect');
         }
@@ -203,7 +199,7 @@ async function findUserByUsernameAndPassword(username, password) {
 async function deleteUser(username) {
     try {
         // Find the user by username
-        const user = await User.findOne({ name: username });
+        const user = await User.findOne({ name: username }).exec();
         if (!user) {
             throw new Error(`User ${username} not found`);
         }
@@ -216,14 +212,6 @@ async function deleteUser(username) {
         throw new Error(`Error deleting user ${username}: ${error.message}`);
     }
 }
-
-
-// Example usage of the updateBudget function
-// updateBudget(username, {
-//     income: income,
-//     expenses: expenses,
-//     goal: goal
-// });
 
 async function fetchCustomExpensesByMonthAndYear(username, month, year) {
     try {
@@ -245,7 +233,6 @@ async function fetchCustomExpensesByMonthAndYear(username, month, year) {
                 return false;
             });
         }
-
 
         return filteredExpenses;
     } catch (error) {
@@ -273,7 +260,6 @@ async function fetchCustomIncomesByMonthAndYear(username, month, year) {
                 return false;
             });
         }
-
 
         return filteredIncomes;
     } catch (error) {
@@ -336,7 +322,7 @@ async function deleteCategory(username, categoryName){
 
         if (budget.customExpenses[categoryName]) {
             await budget.updateOne(
-                { $unset: { [`customExpenses.${categoryName}`]: 1 } } // Removes field from database
+                { $unset: { [`customExpenses.${categoryName}`]: true } } // Removes field from database
             );
             console.log(`Category "${categoryName}" deleted from database`);
         } else {
