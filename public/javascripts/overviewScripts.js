@@ -200,9 +200,9 @@ saveBtnEditCategory.onclick = async () => {
 
   //checks if user tries to rename a category into and already esisting
   if (editCategoryName.value == dropdownEdit.value) {
-    console.log("Shit check sorry");
+    console.log("Debug off category into category");
   } else if (await categoryAvailableCheck(editCategoryName.value)) {
-    alert("Category name is allready in use.");
+    alert("Category name is already in use.");
     return; // Exit function if any input is not a number
   }
 
