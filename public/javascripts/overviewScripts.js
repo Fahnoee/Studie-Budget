@@ -198,6 +198,12 @@ saveBtnEditCategory.onclick = async () => {
 
   editCategoryDialog.close();
 
+  if (categoryAvailableCheck(editCategoryGoal.value)) {
+    alert("Category name is allready in use.");
+    return; // Exit function if any input is not a number
+  }
+
+
   if (isNaN(editCategoryGoal.value)) {
     alert("Please enter valid number for limit.");
     return; // Exit function if any input is not a number
