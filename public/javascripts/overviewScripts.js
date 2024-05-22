@@ -198,6 +198,14 @@ saveBtnEditCategory.onclick = async () => {
 
   editCategoryDialog.close();
 
+  //Todo, implement a check so categories cant be renamed into eachother
+  if (editCategoryName.value == dropdownEdit.value)
+    return;
+  else if (await categoryAvailableCheck(editCategoryName.value)) {
+    alert("Category name is allready in use.");
+    return; // Exit function if any input is not a number
+  }
+
   if (isNaN(editCategoryGoal.value)) {
     alert("Please enter valid number for limit.");
     return; // Exit function if any input is not a number
