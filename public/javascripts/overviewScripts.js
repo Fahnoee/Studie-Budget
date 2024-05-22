@@ -199,12 +199,9 @@ saveBtnEditCategory.onclick = async () => {
   editCategoryDialog.close();
 
   //checks if user tries to rename a category into and already esisting
-  if (editCategoryName.value == dropdownEdit.value)
+  if (editCategoryName.value == dropdownEdit.value) {
     return;
-  else if (await categoryAvailableCheck(editCategoryName.value)) {
-
-  if (categoryAvailableCheck(editCategoryGoal.value)) {
-
+  } else if (await categoryAvailableCheck(editCategoryGoal.value)) {
     alert("Category name is allready in use.");
     return; // Exit function if any input is not a number
   }
