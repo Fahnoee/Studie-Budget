@@ -1701,91 +1701,56 @@ async function saveMonthlyBudget(month, year, income, expenses, savings) {
  * @param {HTMLElement[]} buttons - An array of buttons to highlight in sequence.
  */
 function glowButton(buttons) {
-  let current = 0; // Track the current button in the sequence
-  let colorPicked = false; // Track if a color picker has been used
-  const progressBar = document.querySelector('.progress-bar-fill'); // Get the progress bar fill element
-  const progressContainer = document.querySelector('.progress-bar'); // Get the progress bar container
-  const progressLabel = document.querySelector('.progress-label'); // Get the progress label
+  let current = 0;
+  let colorPicked = false;
+  const progressBar = document.querySelector('.progress-bar-fill');
+  const progressContainer = document.querySelector('.progress-bar');
+  const progressLabel = document.querySelector('.progress-label');
 
-  // Update the progress bar based on the current step
   const updateProgressBar = () => {
     const progressPercentage = Math.round((current / (buttons.length - 3)) * 100);
     progressBar.style.width = `${progressPercentage}%`;
-    progressBar.textContent = progressPercentage + '%'; // Display the progress percentage
+    progressBar.textContent = progressPercentage + '%';
 
     if (progressPercentage === 100) {
-      progressBar.textContent = 'Tutorial Completed'; // Change text when tutorial is complete
-      progressContainer.style.display = 'none'; // Hide the progress bar when the tutorial is complete
-      progressLabel.style.display = 'none'; // Hide the progress label when the tutorial is complete
+      completeTutorial();
     }
   };
 
-  // Initially disable all non-input buttons
-  buttons.forEach(button => {
-    if (button.tagName !== 'INPUT') {
-      button.disabled = true;
-    }
-  });
+  const completeTutorial = () => {
+    progressBar.textContent = 'Tutorial Completed';
+    progressContainer.style.display = 'none';
+    progressLabel.style.display = 'none';
+    alert('Tutorial completed. You can now start using Studie Budget. \nIn case you get stuck, please visit the help page.');
+    window.location.reload();
+  };
 
-  // Move to the next button in the sequence
-  const nextButton = () => {
-    // Update the progress bar
-    updateProgressBar();
+  const disableAllButtons = () => {
+    buttons.forEach(button => {
+      if (button.tagName !== 'INPUT') {
+        button.disabled = true;
+      }
+    });
+  };
 
-    // Disable and remove the glow effect from the previous button
-    if (current > 0) {
-      if (buttons[current - 1].tagName !== 'INPUT') {
-        buttons[current - 1].disabled = true; // Disable the previous button if it's not an input
-      }
-      buttons[current - 1].classList.remove('glow-effect'); // Remove glow from the previous button
-    }
-    // Highlight the current button and enable it
-    if (current < buttons.length - 3) {
-      buttons[current].disabled = false; // Enable the current button
-      buttons[current].classList.add('glow-effect'); // Add glow to current button
-      if (buttons[current].tagName === 'INPUT') {
-        if (buttons[current].type === 'color') {
-          buttons[current].removeEventListener('input', handleColorPicker);
-          buttons[current].addEventListener('input', handleColorPicker);
-        } else if (buttons[current].classList.contains('category-name') || buttons[current].classList.contains('name-expense') || buttons[current].classList.contains('name-income') || buttons[current].classList.contains('name-edit')) {
-          buttons[current].removeEventListener('input', handleInput);
-          buttons[current].addEventListener('input', handleFreeTextInput);
-        } else {
-          buttons[current].addEventListener('input', handleInput);
-        }
-      } else {
-        buttons[current].addEventListener('click', handleClick);
-      }
-    } else {
-      // Re-enable all buttons and remove tutorial flag when tutorial is completed normally
-      buttons.forEach(button => {
-        button.disabled = false;
-        button.classList.remove('glow-effect');
-      });
-      localStorage.removeItem('startTutorial'); // Ensure tutorial does not reactivate on login
-      document.querySelector('.skip-tutorial-btn').style.display = 'none'; // Hide skip button
-      progressContainer.style.display = 'none'; // Hide progress bar
-      progressLabel.style.display = 'none'; // Hide progress label
-      alert('Tutorial completed. You can now start using Studie Budget. \nIn case you get stuck, please visit the help page.');
-      window.location.reload(); // Reload the page
-    }
+  const enableButton = (button) => {
+    button.disabled = false;
+    button.classList.add('glow-effect');
+  };
+
+  const disableButton = (button) => {
+    button.disabled = true;
+    button.classList.remove('glow-effect');
   };
 
   const handleInput = () => {
-    if (buttons[current].value.trim() !== '' && !isNaN(buttons[current].value)) {
-      current++;
-      setTimeout(nextButton, 500); // Add a delay of 500ms
-    }
-  };
-
-  const handleFreeTextInput = () => {
     if (buttons[current].value.trim() !== '') {
       current++;
-      setTimeout(nextButton, 500); // Add a delay of 500ms
+      setTimeout(nextButton, 500);
     }
   };
 
-  const handleColorPicker = (event) => {
+  const handleColorPicker = () => {
     if (!colorPicked) {
       colorPicked = true;
       current++;
@@ -1798,31 +1763,62 @@ function glowButton(buttons) {
     nextButton();
   };
 
-  nextButton(); // Start the sequence
+  const addEventListeners = (button) => {
+    if (button.tagName === 'INPUT') {
+      if (button.type === 'color') {
+        button.removeEventListener('input', handleColorPicker);
+        button.addEventListener('input', handleColorPicker);
+      } else {
+        button.addEventListener('input', handleInput);
+      }
+    } else {
+      button.addEventListener('click', handleClick);
+    }
+  };
+
+  const nextButton = () => {
+    updateProgressBar();
+
+    if (current > 0) {
+      disableButton(buttons[current - 1]);
+    }
+
+    if (current < buttons.length - 3) {
+      enableButton(buttons[current]);
+      addEventListeners(buttons[current]);
+    } else {
+      buttons.forEach(button => {
+        button.disabled = false;
+        button.classList.remove('glow-effect');
+      });
+      localStorage.removeItem('startTutorial');
+      document.querySelector('.skip-tutorial-btn').style.display = 'none';
+      completeTutorial();
+    }
+  };
+
+  disableAllButtons();
+  nextButton();
 }
 
-// Wait for the DOM to be loaded
 document.addEventListener('DOMContentLoaded', () => {
-  // Check URL for the startTutorial query parameter
   const urlParams = new URLSearchParams(window.location.search);
   const startTutorial = urlParams.get('startTutorial');
-  const skipButton = document.querySelector('.skip-tutorial-btn'); // Get the skip button
-  const progressContainer = document.querySelector('.progress-bar'); // Get the progress bar container
-  const progressLabel = document.querySelector('.progress-label'); // Get the progress label
+  const skipButton = document.querySelector('.skip-tutorial-btn');
+  const progressContainer = document.querySelector('.progress-bar');
+  const progressLabel = document.querySelector('.progress-label');
 
-  // If the startTutorial parameter is present in the URL, save it in localStorage and remove it from the URL
   if (startTutorial === 'true') {
     localStorage.setItem('startTutorial', 'true');
     history.replaceState(null, '', location.pathname);
   }
-  // Check if the tutorial should be active based on localStorage
-  if (localStorage.getItem('startTutorial') === 'true') {
-    alert(`Welcome to Studie Budget \n\nFollow the glow to complete the tutorial or press the skip tutorial button to skip the tutorial.`);
-    skipButton.style.display = 'block'; // Show skip button only if tutorial is active
-    progressContainer.style.display = 'block'; // Show progress bar only if tutorial is active
-    progressLabel.style.display = 'block'; // Show progress label only if tutorial is active
 
-    // List of buttons to be highlighted in the tutorial
+  if (localStorage.getItem('startTutorial') === 'true') {
+    alert('Welcome to Studie Budget \n\nFollow the glow to complete the tutorial or press the skip tutorial button to skip the tutorial.');
+    skipButton.style.display = 'block';
+    progressContainer.style.display = 'block';
+    progressLabel.style.display = 'block';
+
     const buttons = [
       document.querySelector('.show-popup-fixed'),
       document.querySelector('.income-fixed'),
@@ -1848,7 +1844,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelector('.name-edit'),
       document.querySelector('.goal-edit'),
       document.querySelector('.save-btn-category-edit'),
-      // Close buttons should not run in tutorial
       document.querySelector('.close-btn-fixed'),
       document.querySelector('.close-btn-category'),
       document.querySelector('.close-btn-category-edit'),
@@ -1856,34 +1851,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     glowButton(buttons);
 
-    // Event listener for the skip button
     skipButton.addEventListener('click', () => {
-      localStorage.removeItem('startTutorial'); // Remove the tutorial flag
-      // Hide the tutorial UI elements
-      skipButton.style.display = 'none'; // Hide skip button
-      progressContainer.style.display = 'none'; // Hide progress bar
-      progressLabel.style.display = 'none'; // Hide progress label
-      window.location.reload(); // Reload the page
+      localStorage.removeItem('startTutorial');
+      skipButton.style.display = 'none';
+      progressContainer.style.display = 'none';
+      progressLabel.style.display = 'none';
+      window.location.reload();
     });
   } else {
-    // Hide tutorial elements if the tutorial is not active
-    skipButton.style.display = 'none'; // Hide skip button if not in tutorial
-    progressContainer.style.display = 'none'; // Hide progress bar if not in tutorial
-    progressLabel.style.display = 'none'; // Hide progress label if not in tutorial
+    skipButton.style.display = 'none';
+    progressContainer.style.display = 'none';
+    progressLabel.style.display = 'none';
   }
 });
 
-// Additional event listener for the skip button to ensure the tutorial flag is removed and styles reset
 document.querySelector('.skip-tutorial-btn').addEventListener('click', () => {
-  localStorage.removeItem('startTutorial'); // Remove the tutorial flag from localStorage
-  // Optionally, reset any tutorial-specific styles or states
+  localStorage.removeItem('startTutorial');
   document.querySelectorAll('.glow-effect').forEach(button => {
     button.classList.remove('glow-effect');
   });
-  // Hide the tutorial UI elements or redirect the user
-  document.querySelector('.progress-bar').style.display = 'none'; // Hide progress bar
-  document.querySelector('.progress-label').style.display = 'none'; // Hide progress label
-  window.location.reload(); // Reload the page or redirect as needed
+  document.querySelector('.progress-bar').style.display = 'none';
+  document.querySelector('.progress-label').style.display = 'none';
+  window.location.reload();
 });
 
 //#####################
